@@ -1,0 +1,24 @@
+{
+  "name": "vk-to-discord",
+  "version": "1.0.0",
+  "description": "Automatic posting of news from the VK.com to Discord",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrZillaGold/vk-to-discord.git"
+  },
+  "author": "MrZillaGold",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/MrZillaGold/vk-to-discord/issues"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "fs": "0.0.1-security",
+    "webhook-discord": "^3.2.0"
+  },
+  "homepage": "https://github.com/MrZillaGold/vk-to-discord#readme"
+}
