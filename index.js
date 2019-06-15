@@ -15,7 +15,7 @@ axios.get(`https://api.vk.com/method/wall.get?owner_id=${id}&count=1&extended=1&
 }).then(data => {
     let text = data.response.items[0].text;
     let time = data.response.items[0].date;
-	let attachments = (data.response.items[0].attachments === undefined) ? 0 : data.response.items[0].attachments[0].type;
+    let attachments = (data.response.items[0].attachments === undefined) ? 0 : data.response.items[0].attachments[0].type;
 
     let currentDate = new Date(time * 1000);
     let date = currentDate.getDate();
@@ -30,7 +30,7 @@ axios.get(`https://api.vk.com/method/wall.get?owner_id=${id}&count=1&extended=1&
                 .setName("Steve")
                 .setColor("#aabbcc")
                 .setTitle(`${data.response.groups[0].name} | ${postdate}`)
-				.setDescription(text)
+		.setDescription(text)
                 .setImage(data.response.items[0].attachments[0].photo.photo_1280)
                 .setTime(time)
             Hook.send(msg)
@@ -40,10 +40,10 @@ axios.get(`https://api.vk.com/method/wall.get?owner_id=${id}&count=1&extended=1&
                 .setName("Steve")
                 .setColor("#aabbcc")
                 .addField(data.response.groups[0].name)
-				.setDescription(text)
+		.setDescription(text)
                 .setTime()
             Hook.send(msg)
-			news.news = `${time}`
+	    news.news = `${time}`
         }
     }
 }).catch(err => console.log(err));
