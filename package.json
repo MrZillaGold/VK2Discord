@@ -1,5 +1,5 @@
 {
-  "name": "vk-to-discord",
+  "name": "vk2discord",
   "version": "1.0.0",
   "description": "Automatic posting of news from the VK.com to Discord",
   "main": "index.js",
