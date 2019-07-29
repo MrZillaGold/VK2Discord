@@ -7,7 +7,7 @@ const axios = require('axios');
 const news = require("./news.json");
 const webhook = require("webhook-discord");
 const Hook = new webhook.Webhook(url);
-const fs = require("fs")
+const fs = require('fs')
 
 setInterval(() => {
 axios.get(`https://api.vk.com/method/wall.get?owner_id=${id}&count=1&extended=1&access_token=${token}&v=5.60`).then(res => {
@@ -39,8 +39,9 @@ axios.get(`https://api.vk.com/method/wall.get?owner_id=${id}&count=1&extended=1&
             Hook.send(msg)
 	    news.news = `${time}`
         }
+	    console.log('Опубликован новый пост!');
     }
-}).catch(err => console.log(err));
+}).catch(err => console.log(`Возникла ошибка: ${err}. Если не понимаете в чем причина, свяжитесь со мной: https://vk.com/egorlisss`));
 }, time)
 
 setInterval(() => {
