@@ -10,7 +10,7 @@ const Hook = new webhook.Webhook(url);
 const fs = require('fs')
 
 setInterval(() => {
-axios.get(`https://api.vk.com/method/wall.get?owner_id=${id}&count=1&extended=1&access_token=${token}&v=5.60`).then(res => {
+axios.get(`https://api.vk.com/method/wall.get?owner_id=${id}&count=1&extended=1&offset=1&access_token=${token}&v=5.60`).then(res => {
     return res.data;
 }).then(data => {
     let text = data.response.items[0].text;
