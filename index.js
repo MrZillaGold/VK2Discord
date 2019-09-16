@@ -1,5 +1,5 @@
 const token = 'токен'; // Токен от СТРАНИЦЫ ПОЛЬЗОВАТЕЛЯ ВКонтакте, получить можно тут: https://vk.cc/9bJ69C
-let id = '-1'; // ID группы из которой брать новости
+let id = -1; // ID группы из которой брать новости
 const url = 'https://discordapp.com/api/webhooks/'; // Ваш Webhook-URL
 const name = 'WebHook'; // Имя для вашего WebHook, выcвечиваетеся в качестве имени бота.
 const time = 60000; // Интервал получения и отправки новых постов в миллисекундах
@@ -15,7 +15,7 @@ const webhookbuilder = new webhook.MessageBuilder()
     .setColor("#aabbcc");
 
 if (id > 0) {
-    id = `-${id}`;
+    id = -id;
 }
 
 setInterval(() => {
@@ -40,9 +40,7 @@ setInterval(() => {
                 const attachments = data.attachments;
 
                 if(attachments) {
-
                     attachments.forEach(function(item) {
-
                         if (item.photo) {
                             webhookbuilder.setImage(item.photo.sizes.pop().url)
                         }
