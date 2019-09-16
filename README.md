@@ -1,19 +1,9 @@
 Полное покрытие вложений к посту!
 
-## Настройка скрипта:
+[Инструкция для настройки](https://github.com/MrZillaGold/VK2Discord/wiki/%D0%98%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D0%B8%D1%8F)
 
-В начале установите все пакеты `npm i`
-
-Откройте файл index.js через любой редактор и измените значения первых 5 строк на свои данные:
-```js
-const token = 'токен'; // Токен от СТРАНИЦЫ ПОЛЬЗОВАТЕЛЯ ВКонтакте, получить можно тут: https://vk.cc/9bJ69C
-let id = '-1'; // ID группы из которой брать новости
-const url = 'https://discordapp.com/api/webhooks/'; // Ваш Webhook-URL
-const name = 'WebHook'; // Имя для вашего WebHook, выcвечиваетеся в качестве имени бота.
-const time = 60000; // Интервал получения и отправки новых постов в миллисекундах
-```
 ***
 ![Sample](https://sun9-31.userapi.com/c851536/v851536789/1a7475/KITjyRT7JxM.jpg)
 ***
-* [by MrZillaGold](https://vk.com/egorlisss) - по всем вопросам
+* [По всем вопросам](https://vk.com/egorlisss)
 
