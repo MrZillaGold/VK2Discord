@@ -1,4 +1,4 @@
-<p align="center"><img src="https://repository-images.githubusercontent.com/192033596/ae7dd480-d8ab-11e9-97a3-37039e83788b"></p>
+<p align="center"><img src="https://repository-images.githubusercontent.com/192033596/2c44de80-d8b2-11e9-9fc5-03e288f8da72"></p>
 <p align="center"><b>VK2Discord</b></p>
 <p align="center">Полное покрытие вложений к постам!</p>
 
