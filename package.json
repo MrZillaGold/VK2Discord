@@ -1,5 +1,5 @@
 {
-  "name": "vk2discord",
+  "name": "VK2Discord",
   "version": "1.1",
   "description": "Automatic posting of news from the VK.com to Discord",
   "main": "index.js",
@@ -8,17 +8,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MrZillaGold/vk-to-discord.git"
+    "url": "git+https://github.com/MrZillaGold/VK2Discord.git"
   },
   "author": "MrZillaGold",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/MrZillaGold/vk-to-discord/issues"
+    "url": "https://github.com/MrZillaGold/VK2Discord/issues"
   },
   "dependencies": {
     "axios": "^0.19.0",
     "fs": "0.0.1-security",
-    "webhook-discord": "https://github.com/MrZillaGold/webhook-discord.git"
+    "webhook-discord": "^3.2.0"
   },
-  "homepage": "https://github.com/MrZillaGold/vk-to-discord#readme"
+  "homepage": "https://github.com/MrZillaGold/VK2Discord#readme"
 }
