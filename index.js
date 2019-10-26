@@ -39,7 +39,7 @@ setInterval(() => {
                 const attachments = data.attachments;
 
                 if(attachments) {
-                    attachments.forEach(function(item) {
+                    attachments.reverse().forEach(function(item) {
                         if (item.photo) {
                             webhookbuilder.setImage(item.photo.sizes.pop().url)
                         }
