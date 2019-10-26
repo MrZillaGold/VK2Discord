@@ -10,15 +10,14 @@ const webhook = require("webhook-discord");
 const Hook = new webhook.Webhook(url);
 const fs = require('fs');
 
-const webhookbuilder = new webhook.MessageBuilder()
-    .setName(name.slice(0, 32))
-    .setColor("#aabbcc");
-
 if (id > 0) {
     id = -id;
 }
 
 setInterval(() => {
+    const webhookbuilder = new webhook.MessageBuilder()
+        .setName(name.slice(0, 32))
+        .setColor("#aabbcc");
     axios.get(`https://api.vk.com/method/wall.get?owner_id=${id}&count=2&extended=1&access_token=${token}&v=5.101`)
         .then(res => {
             webhookbuilder.setFooter(res.data.response.groups[0].name, res.data.response.groups[0].photo_50);
