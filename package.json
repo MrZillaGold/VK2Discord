@@ -18,7 +18,7 @@
   "dependencies": {
     "axios": "^0.19.0",
     "fs": "0.0.1-security",
-    "webhook-discord": "^3.2.0"
+    "webhook-discord": "^3.5.1"
   },
   "homepage": "https://github.com/MrZillaGold/VK2Discord#readme"
 }
