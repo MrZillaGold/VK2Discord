@@ -25,7 +25,7 @@ setInterval(() => {
     const webhookbuilder = new webhook.MessageBuilder()
         .setName(name.slice(0, 32))
         .setColor(color);
-    axios.get(`https://api.vk.com/method/wall.get?owner_id=${id}&count=2&extended=1&access_token=${token}&v=5.103`)
+    axios.get(`https://api.vk.com/method/wall.get?owner_id=${id}&count=2&extended=1&access_token=${token}&v=5.103${config.filter && "&filter=owner"}`)
         .then(res => {
             if (res.data.error) {
                 const error = res.data.error;
@@ -33,7 +33,7 @@ setInterval(() => {
                 process.exit(-1);
             }
             webhookbuilder.setFooter(res.data.response.groups[0].name, res.data.response.groups[0].photo_50);
-            if (res.data.response.items[1].date > res.data.response.items[0].date) {
+            if (res.data.response.items.length === 2 && res.data.response.items[1].date > res.data.response.items[0].date) {
                 return res.data.response.items[1];
             } else {
                 return res.data.response.items[0];
