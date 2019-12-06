@@ -43,7 +43,7 @@ setInterval(() => {
             if (news.last_post !== data.date && !(news.published_posts.includes(data.date))) {
                 let text = `[Открыть пост ВКонтакте](https://vk.com/wall${data.from_id}_${data.id})\n\n`;
                 if (data.text) {
-                    text += `${data.text}\n\n`;
+                    text += `${data.text.replace(/(?:\[([^]+?)\|([^]+?)])/g, '[$2](https://vk.com/$1)')}\n\n`;
                 }
                 const attachments = data.attachments;
                 if(attachments) {
