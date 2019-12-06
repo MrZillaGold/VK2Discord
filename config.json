@@ -4,5 +4,6 @@
   "webhook_url": "https://discordapp.com/api/webhooks/",
   "bot_name": "VK2DISCORD",
   "color": "#aabbcc",
+  "filter": true,
   "interval": 10000
 }
