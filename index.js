@@ -60,7 +60,7 @@ setInterval(() => {
                             text += parseLinks(repost[0].text);
                         }
 
-                        const attachments = repost.attachments;
+                        const attachments = repost[0].attachments;
                         if (attachments) {
                             text += await getAttachments(attachments);
                         }
@@ -120,9 +120,9 @@ function parseLinks(text) {
 }
 
 function checkTextOnKeywords(keywords, text) {
-    if (keywords.length > 1) {
+    if (keywords.length > 0) {
         return keywords.some(keyword => {
-            return text.match(keyword);
+            return text.match(keyword, 'gi');
         });
     } else {
         return true;
