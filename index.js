@@ -26,55 +26,51 @@ setInterval(() => {
         .setName(name.slice(0, 32))
         .setColor(color);
     axios.get(`https://api.vk.com/method/wall.get?owner_id=${id}&count=2&extended=1&access_token=${token}&v=5.103${config.filter && "&filter=owner"}`)
-        .then(res => {
+        .then(async res => {
             if (res.data.error) {
                 const error = res.data.error;
                 console.log(`[!] Ошибка ВКонтакте:\nКод ошибки: ${error.error_code}\n${error.error_msg}\n\nЕсли не понимаете в чем причина, свяжитесь со мной: https://vk.com/egorlisss`);
                 process.exit(-1);
             }
-            webhookbuilder.setFooter(res.data.response.groups[0].name, res.data.response.groups[0].photo_50);
+
+            let data;
             if (res.data.response.items.length === 2 && res.data.response.items[1].date > res.data.response.items[0].date) {
-                return res.data.response.items[1];
+                data = res.data.response.items[1];
             } else {
-                return res.data.response.items[0];
+                data = res.data.response.items[0];
             }
-        })
-        .then(data => {
+
+
             if (news.last_post !== data.date && !(news.published_posts.includes(data.date))) {
-                let text = `[Открыть пост ВКонтакте](https://vk.com/wall${data.from_id}_${data.id})\n\n`;
+                let text = `[**Открыть пост ВКонтакте**](https://vk.com/wall${data.from_id}_${data.id})\n\n`;
                 if (data.text) {
-                    text += `${data.text.replace(/(?:\[([^]+?)\|([^]+?)])/g, '[$2](https://vk.com/$1)')}\n\n`;
+                    text += parseLinks(data.text);
                 }
+
                 const attachments = data.attachments;
-                if(attachments) {
-                    attachments.reverse().forEach(item => {
-                        if (item.photo) {
-                            webhookbuilder.setImage(item.photo.sizes.pop().url)
-                        }
-                        if (item.poll) {
-                            let answers = "";
-                            item.poll.answers.forEach(item => answers += `\n• ${item.text}`);
-                            text += `\n---\n**Опрос:** [**${item.poll.question}**](https://vk.com/feed?w=poll${item.poll.owner_id}_${item.poll.id})\n**Варианты ответа:**${answers}\n---`;
-                        }
-                        if (item.video) {
-                            text += `\n[:video_camera: Смотреть видео: ${item.video.title}](https://vk.com/video${item.video.owner_id}_${item.video.id})`;
-                        }
-                        if (item.link) {
-                            text += `\n[:link: ${item.link.button_text || "Ссылка"}: ${item.link.title}](${item.link.url})`;
-                        }
-                        if (item.doc) {
-                            text += `\n[:page_facing_up: Документ: ${item.doc.title}](${item.doc.url})`;
-                        }
-                        if (item.audio) {
-                            text += `\n[:musical_note:  Музыка: ${item.audio.artist} - ${item.audio.title}](https://vk.com/search?c[section]=audio&c[q]=${encodeURI(item.audio.artist.replace(/&/g, "и"))}%20-%20${encodeURI(item.audio.title)}&c[performer]=1)`;
-                        }
-                    });
+                if (attachments) {
+                    text += await getAttachments(attachments, webhookbuilder);
                 }
+
+                const repost = data.copy_history[0];
+                if (repost) {
+                    text += `\n>>> [**${res.data.response.groups[1].name}** | Репост записи](https://vk.com/wall${data.from_id}_${data.id})\n\n`;
+                    if (repost.text) {
+                        text += parseLinks(repost.text);
+                    }
+
+                    const attachments = repost.attachments;
+                    if(attachments) {
+                        text += await getAttachments(attachments);
+                    }
+                }
+
                 webhookbuilder.setDescription(text);
+                webhookbuilder.setFooter(res.data.response.groups[0].name, res.data.response.groups[0].photo_50);
 
                 Hook.send(webhookbuilder)
                     .then(() => console.log(`[!] Пост успешно опубликован в Discord канале.`))
-                    .catch(err => console.log(err));
+                    .catch(err => console.log(`[!] Возникла ошибка при отправке поста в канал Discord: ${err}.`));
                 news.last_post = data.date;
                 news.published_posts.unshift(data.date);
                 if (news.published_posts.length >= 15) {
@@ -82,8 +78,39 @@ setInterval(() => {
                 }
                 fs.writeFileSync("./news.json", JSON.stringify(news, null, "\t"));
             } else {
-                console.log(`[!] Новых новостей нет!`);
+                console.log(`[!] Новых записей нет!`);
             }
         })
         .catch(err => console.log(`[!] Возникла ошибка: ${err}. Если не понимаете в чем причина, свяжитесь со мной: https://vk.com/egorlisss`));
 }, interval);
+
+async function getAttachments(attachments, webhookbuilder) {
+    let text = "";
+    await attachments.reverse().forEach(item => {
+        if (item.photo && webhookbuilder) {
+            webhookbuilder.setImage(item.photo.sizes.pop().url)
+        }
+        if (item.poll) {
+            let answers = "";
+            item.poll.answers.forEach(item => answers += `\n• ${item.text}`);
+            text += `\n[:bar_chart: Опрос: ${item.poll.question}](https://vk.com/feed?w=poll${item.poll.owner_id}_${item.poll.id})`;
+        }
+        if (item.video) {
+            text += `\n[:video_camera: Смотреть видео: ${item.video.title}](https://vk.com/video${item.video.owner_id}_${item.video.id})`;
+        }
+        if (item.link) {
+            text += `\n[:link: ${item.link.button_text || "Ссылка"}: ${item.link.title}](${item.link.url})`;
+        }
+        if (item.doc) {
+            text += `\n[:page_facing_up: Документ: ${item.doc.title}](${item.doc.url})`;
+        }
+        if (item.audio) {
+            text += `\n[:musical_note:  Музыка: ${item.audio.artist} - ${item.audio.title}](https://vk.com/search?c[section]=audio&c[q]=${encodeURI(item.audio.artist.replace(/&/g, "и"))}%20-%20${encodeURI(item.audio.title)}&c[performer]=1)`;
+        }
+    });
+    return text;
+}
+
+function parseLinks(text) {
+    return `${text.replace(/(?:\[([^]+?)\|([^]+?)])/g, '[$2](https://vk.com/$1)')}\n\n`
+}
