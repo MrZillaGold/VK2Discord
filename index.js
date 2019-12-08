@@ -33,7 +33,7 @@ setInterval(() => {
                 process.exit(-1);
             }
 
-            if (res.data.response.items) {
+            if (res.data.response.items.length > 0) {
                 let data;
                 if (res.data.response.items.length === 2 && res.data.response.items[1].date > res.data.response.items[0].date) {
                     data = res.data.response.items[1];
@@ -82,7 +82,7 @@ setInterval(() => {
                     console.log(`[!] Новых записей нет или они не соответствуют ключевым словам!`);
                 }
             } else {
-                console.log("[!] Не получено ни одной записи. Проверьте наличие записей в группе или измените значение фильтра в конигурации.")
+                console.log("[!] Не получено ни одной записи. Проверьте наличие записей в группе или измените значение фильтра в конфигурации.")
             }
         })
         .catch(err => console.log(`[!] Возникла ошибка: ${err}. Если не понимаете в чем причина, свяжитесь со мной: https://vk.com/egorlisss`));
