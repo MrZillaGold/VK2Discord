@@ -33,52 +33,56 @@ setInterval(() => {
                 process.exit(-1);
             }
 
-            let data;
-            if (res.data.response.items.length === 2 && res.data.response.items[1].date > res.data.response.items[0].date) {
-                data = res.data.response.items[1];
-            } else {
-                data = res.data.response.items[0];
-            }
-
-
-            if (news.last_post !== data.date && !(news.published_posts.includes(data.date))) {
-                let text = `[**Открыть пост ВКонтакте**](https://vk.com/wall${data.from_id}_${data.id})\n\n`;
-                if (data.text) {
-                    text += parseLinks(data.text);
+            if (res.data.response.items) {
+                let data;
+                if (res.data.response.items.length === 2 && res.data.response.items[1].date > res.data.response.items[0].date) {
+                    data = res.data.response.items[1];
+                } else {
+                    data = res.data.response.items[0];
                 }
 
-                const attachments = data.attachments;
-                if (attachments) {
-                    text += await getAttachments(attachments, webhookbuilder);
-                }
 
-                const repost = data.copy_history[0];
-                if (repost) {
-                    text += `\n>>> [**${res.data.response.groups[1].name}** | Репост записи](https://vk.com/wall${data.from_id}_${data.id})\n\n`;
-                    if (repost.text) {
-                        text += parseLinks(repost.text);
+                if (news.last_post !== data.date && !(news.published_posts.includes(data.date)) && checkTextOnKeywords(config.keywords, data.text)) {
+                    let text = `[**Открыть пост ВКонтакте**](https://vk.com/wall${data.from_id}_${data.id})\n\n`;
+                    if (data.text) {
+                        text += parseLinks(data.text);
                     }
 
-                    const attachments = repost.attachments;
-                    if(attachments) {
-                        text += await getAttachments(attachments);
+                    const attachments = data.attachments;
+                    if (attachments) {
+                        text += await getAttachments(attachments, webhookbuilder);
                     }
-                }
 
-                webhookbuilder.setDescription(text);
-                webhookbuilder.setFooter(res.data.response.groups[0].name, res.data.response.groups[0].photo_50);
+                    const repost = data.copy_history;
+                    if (repost) {
+                        text += `\n>>> [**${res.data.response.groups[1].name}** | Репост записи](https://vk.com/wall${data.from_id}_${data.id})\n\n`;
+                        if (repost[0].text) {
+                            text += parseLinks(repost[0].text);
+                        }
 
-                Hook.send(webhookbuilder)
-                    .then(() => console.log(`[!] Пост успешно опубликован в Discord канале.`))
-                    .catch(err => console.log(`[!] Возникла ошибка при отправке поста в канал Discord: ${err}.`));
-                news.last_post = data.date;
-                news.published_posts.unshift(data.date);
-                if (news.published_posts.length >= 15) {
-                    news.published_posts.splice(-1, 1);
+                        const attachments = repost.attachments;
+                        if (attachments) {
+                            text += await getAttachments(attachments);
+                        }
+                    }
+
+                    webhookbuilder.setDescription(text);
+                    webhookbuilder.setFooter(res.data.response.groups[0].name, res.data.response.groups[0].photo_50);
+
+                    Hook.send(webhookbuilder)
+                        .then(() => console.log(`[!] Пост успешно опубликован в Discord канале.`))
+                        .catch(err => console.log(`[!] Возникла ошибка при отправке поста в канал Discord: ${err}.`));
+                    news.last_post = data.date;
+                    news.published_posts.unshift(data.date);
+                    if (news.published_posts.length >= 15) {
+                        news.published_posts.splice(-1, 1);
+                    }
+                    fs.writeFileSync("./news.json", JSON.stringify(news, null, "\t"));
+                } else {
+                    console.log(`[!] Новых записей нет или они не соответствуют ключевым словам!`);
                 }
-                fs.writeFileSync("./news.json", JSON.stringify(news, null, "\t"));
             } else {
-                console.log(`[!] Новых записей нет!`);
+                console.log("[!] Не получено ни одной записи. Проверьте наличие записей в группе или измените значение фильтра в конигурации.")
             }
         })
         .catch(err => console.log(`[!] Возникла ошибка: ${err}. Если не понимаете в чем причина, свяжитесь со мной: https://vk.com/egorlisss`));
@@ -113,4 +117,14 @@ async function getAttachments(attachments, webhookbuilder) {
 
 function parseLinks(text) {
     return `${text.replace(/(?:\[([^]+?)\|([^]+?)])/g, '[$2](https://vk.com/$1)')}\n\n`
+}
+
+function checkTextOnKeywords(keywords, text) {
+    if (keywords.length > 1) {
+        return keywords.some(keyword => {
+            return text.match(keyword);
+        });
+    } else {
+        return true;
+    }
 }
