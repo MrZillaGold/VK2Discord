@@ -11,14 +11,14 @@ const name = config.bot_name;
 const interval = config.interval;
 const color = config.color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/m) ? config.color : "#aabbcc";
 
-const Hook = new webhook.Webhook(url);
+const WebHook = new webhook.Webhook(url);
 
 if (id > 0) {
     id = -id;
 }
 
-if (interval < 10000) {
-    console.log("[!] Не рекомендуем ставить интервал получения постов меньше 10 секунд, во избежания лимитов ВКонтакте!")
+if (interval < 30000) {
+    console.log("[!] Не рекомендуем ставить интервал получения постов меньше 30 секунд, во избежания лимитов ВКонтакте!")
 }
 
 setInterval(() => {
@@ -48,36 +48,46 @@ setInterval(() => {
                         text += parseLinks(data.text);
                     }
 
-                    const attachments = data.attachments;
-                    if (attachments) {
-                        text += await getAttachments(attachments, webhookbuilder);
+                    let attachments = "";
+                    if (data.attachments) {
+                        attachments += await getAttachments(data.attachments, webhookbuilder);
                     }
 
                     const repost = data.copy_history;
+                    let repostText = "";
+                    let reportAttachments = "";
                     if (repost) {
-                        text += `\n>>> [**${res.data.response.groups[1].name}** | Репост записи](https://vk.com/wall${data.from_id}_${data.id})\n\n`;
+                        repostText += `\n>>> [**${res.data.response.groups[1].name}** | Репост записи](https://vk.com/wall${data.from_id}_${data.id})\n\n`;
                         if (repost[0].text) {
-                            text += parseLinks(repost[0].text);
+                            repostText += parseLinks(repost[0].text);
                         }
-
-                        const attachments = repost[0].attachments;
-                        if (attachments) {
-                            text += await getAttachments(attachments);
+                        if (repost[0].attachments) {
+                            reportAttachments += await getAttachments(repost[0].attachments);
                         }
                     }
 
-                    webhookbuilder.setDescription(text);
+                    const allPost = text + attachments + repostText + reportAttachments;
+                    
+                    webhookbuilder.setDescription(parseText(allPost).length > 2048 ?
+                        (text ? text.slice(0, repostText ? 1021 - attachments.length : 2045 - attachments.length) + (data.text ? "…\n\n" : "") : "")
+                        + attachments
+                        + (repostText ? repostText.slice(0, text ? 1021 - reportAttachments.length : 2045 - reportAttachments.length)  + (repost[0].text ? "…\n\n" : "") : "")
+                        + reportAttachments
+                        :
+                        allPost);
                     webhookbuilder.setFooter(res.data.response.groups[0].name, res.data.response.groups[0].photo_50);
 
-                    Hook.send(webhookbuilder)
-                        .then(() => console.log(`[!] Пост успешно опубликован в Discord канале.`))
+                    WebHook.send(webhookbuilder)
+                        .then(() => {
+                            console.log(`[!] Пост успешно опубликован в Discord канале.`);
+                            news.last_post = data.date;
+                            news.published_posts.unshift(data.date);
+                            if (news.published_posts.length >= 15) {
+                                news.published_posts.splice(-1, 1);
+                            }
+                            fs.writeFileSync("./news.json", JSON.stringify(news, null, "\t"));
+                        })
                         .catch(err => console.log(`[!] Возникла ошибка при отправке поста в канал Discord: ${err}.`));
-                    news.last_post = data.date;
-                    news.published_posts.unshift(data.date);
-                    if (news.published_posts.length >= 15) {
-                        news.published_posts.splice(-1, 1);
-                    }
-                    fs.writeFileSync("./news.json", JSON.stringify(news, null, "\t"));
                 } else {
                     console.log(`[!] Новых записей нет или они не соответствуют ключевым словам!`);
                 }
@@ -117,6 +127,10 @@ async function getAttachments(attachments, webhookbuilder) {
 
 function parseLinks(text) {
     return `${text.replace(/(?:\[([^]+?)\|([^]+?)])/g, '[$2](https://vk.com/$1)')}\n\n`
+}
+
+function parseText(text) {
+    return text.replace(/\[([^]+)]\([^]+\)/g, '$1')
 }
 
 function checkTextOnKeywords(keywords, text) {
