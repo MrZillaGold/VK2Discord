@@ -7,6 +7,7 @@
 <p align="center">
   Перед началом работы настройте config.json!
 </p>
+<p align="center"><a href="https://www.codefactor.io/repository/github/mrzillagold/vk2discord"><img src="https://www.codefactor.io/repository/github/mrzillagold/vk2discord/badge" alt="CodeFactor" /></a></p>
 
 ```js
 {
