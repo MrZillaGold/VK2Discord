@@ -41,7 +41,6 @@ setInterval(() => {
                     data = res.data.response.items[0];
                 }
 
-
                 if (news.last_post !== data.date && !(news.published_posts.includes(data.date)) && checkTextOnKeywords(config.keywords, data.text)) {
                     let text = `[**Открыть пост ВКонтакте**](https://vk.com/wall${data.from_id}_${data.id})\n\n`;
                     if (data.text) {
@@ -67,7 +66,7 @@ setInterval(() => {
                     }
 
                     const allPost = text + attachments + repostText + reportAttachments;
-                    
+
                     webhookbuilder.setDescription(parseText(allPost).length > 2048 ?
                         (text ? text.slice(0, repostText ? 1021 - attachments.length : 2045 - attachments.length) + (data.text ? "…\n\n" : "") : "")
                         + attachments
@@ -101,7 +100,7 @@ setInterval(() => {
 async function getAttachments(attachments, webhookbuilder) {
     let text = "";
     await attachments.reverse().forEach(item => {
-        if (item.photo) {
+        if (item.photo && !webhookbuilder.data.attachments[0].image_url) {
             webhookbuilder.setImage(item.photo.sizes.pop().url)
         }
         if (item.poll) {
