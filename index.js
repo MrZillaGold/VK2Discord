@@ -62,7 +62,7 @@ setInterval(() => {
                             repostText += parseLinks(repost[0].text);
                         }
                         if (repost[0].attachments) {
-                            reportAttachments += await getAttachments(repost[0].attachments);
+                            reportAttachments += await getAttachments(repost[0].attachments, webhookbuilder);
                         }
                     }
 
@@ -101,7 +101,7 @@ setInterval(() => {
 async function getAttachments(attachments, webhookbuilder) {
     let text = "";
     await attachments.reverse().forEach(item => {
-        if (item.photo && webhookbuilder) {
+        if (item.photo) {
             webhookbuilder.setImage(item.photo.sizes.pop().url)
         }
         if (item.poll) {
