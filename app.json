@@ -1,0 +1,64 @@
+{
+  "name": "VK2DISCORD",
+  "description": "Автоматическая публикация записей из VK.COM в канал Discord",
+  "keywords": [
+    "news",
+    "webhooks",
+    "discord",
+    "post",
+    "vk",
+    "vk-to-discord",
+    "bot",
+    "vk2discord"
+  ],
+  "repository": "https://github.com/MrZillaGold/VK2Discord",
+  "env": {
+    "TOKEN": {
+      "description": "Токен от любой страницы ВКонтакте",
+      "required": true
+    },
+    "GROUP_ID": {
+      "description": "ID-Группы ВКонтакте из которой брать записи",
+      "required": true
+    },
+    "WEBHOOK_URL": {
+      "description": "Webhook URL канала Discord",
+      "required": true
+    },
+    "BOT_NAME": {
+      "description": "Имя Webhook, используется в качестве имени бота при отправке записи в Discord",
+      "value": "VK2DISCORD",
+      "required": true
+    },
+    "COLOR": {
+      "description": "Цвет рамки сообщения Discord, в формате HEX",
+      "value": "#aabbcc",
+      "required": true
+    },
+    "KEYWORDS": {
+      "description": "Ключевые слова для выборки постов, через запятую",
+      "required": false
+    },
+    "FILTER": {
+      "description": "Публиковать посты только от именни группы, посты от обычных пользователей пропускаются.",
+      "value": "true",
+      "required": true
+    },
+    "INTERVAL": {
+      "description": "Интервал получения новых постов из ВКонтакте в миллисекундах",
+      "value": "60000",
+      "required": true
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "free"
+    }
+  }
+}
