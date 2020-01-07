@@ -44,7 +44,7 @@ setInterval(() => {
                     data = res.data.response.items[0];
                 }
 
-                if (news.last_post !== data.date && !(news.published_posts.includes(data.date)) && checkTextOnKeywords(process.env.KEYWORDS.join(",") || config.keywords, data.text)) {
+                if (news.last_post !== data.date && !(news.published_posts.includes(data.date)) && checkTextOnKeywords(process.env.KEYWORDS ? process.env.KEYWORDS.join(",") : config.keywords, data.text)) {
                     let text = `[**Открыть пост ВКонтакте**](https://vk.com/wall${data.from_id}_${data.id})\n\n`;
                     if (data.text) {
                         text += parseLinks(data.text);
