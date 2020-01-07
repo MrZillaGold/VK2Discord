@@ -4,12 +4,15 @@ const news = require("./news.json");
 const webhook = require("webhook-discord");
 const fs = require("fs");
 
-const token = config.token;
-let id = config.group_id;
-const url = config.webhook_url;
-const name = config.bot_name;
-const interval = config.interval;
-const color = config.color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/m) ? config.color : "#aabbcc";
+const token = process.env.TOKEN || config.token;
+let id = process.env.GROUP_ID || config.group_id;
+const url = process.env.WEBHOOK_URL || config.webhook_url;
+const name = process.env.BOT_NAME || config.bot_name;
+const interval = process.env.INTERVAL || config.interval;
+const color = process.env.COLOR ? 
+    process.env.COLOR.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/m) ? process.env.COLOR : "#aabbcc" 
+    : 
+    config.color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/m) ? config.color : "#aabbcc";
 
 const WebHook = new webhook.Webhook(url);
 
