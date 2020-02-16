@@ -1,9 +1,9 @@
 function parseLinks(text) {
-    return `${text.replace(/(?:\[([^]+?)\|([^]+?)])/g, "[$2](https://vk.com/$1)")}\n\n`
+    return `${text.replace(/(?:\[([^]+?)\|([^]+?)])/g, "[$2](https://vk.com/$1)")}\n\n`;
 }
 
 function parseText(text) {
-    return text.replace(/\[([^]+)]\([^]+\)/g, "$1")
+    return text.replace(/\[([^]+)]\([^]+\)/g, "$1");
 }
 
 function checkKeywords(keywords, text) {

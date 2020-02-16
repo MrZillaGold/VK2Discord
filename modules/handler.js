@@ -5,10 +5,10 @@ const webhook = require("webhook-discord");
 const vk = new VK();
 const {updates} = vk;
 
-const token = process.env.TOKEN || config.vk.token;
-const groupId = process.env.GROUP_ID || config.vk.group_id;
-const interval = (process.env.INTERVAL || config.interval) * 1000;
-const longpoll = process.env.LONGPOLL || config.vk.longpoll;
+const token = config.vk.token;
+const groupId = config.vk.group_id;
+const interval = config.interval * 1000;
+const longpoll = config.vk.longpoll;
 
 const send = require("./send");
 
@@ -18,7 +18,7 @@ if (interval < 30000) console.log("[!] Не рекомендуем ставит�
 
 vk.setOptions({
     token: token,
-    apiMode: 'parallel'
+    apiMode: "parallel"
 });
 
 
@@ -48,14 +48,14 @@ if (!longpoll) {
 
                     send(webhookBuilder, postData, false);
                 } else {
-                    console.log("[!] Не получено ни одной записи. Проверьте наличие записей в группе или измените значение фильтра в конфигурации.")
+                    console.log("[!] Не получено ни одной записи. Проверьте наличие записей в группе или измените значение фильтра в конфигурации.");
                 }
 
             })
             .catch(err => errorHandler(err));
     }, interval);
 } else {
-    updates.on('new_wall_post', context => {
+    updates.on("new_wall_post", context => {
         const webhookBuilder = new webhook.MessageBuilder();
 
         send(webhookBuilder, context.wall, true);

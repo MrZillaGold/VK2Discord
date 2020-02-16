@@ -6,12 +6,9 @@ const config = require("../config");
 
 const {parseText, getAttachments, parseLinks, checkKeywords, errorHandler} = require("./functions");
 
-const keywords = process.env.KEYWORDS ? process.env.KEYWORDS.split(",") : config.vk.keywords;
-const name = process.env.BOT_NAME || config.discord.bot_name;
-const color = process.env.COLOR ?
-    process.env.COLOR.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/m) ? process.env.COLOR : "#aabbcc"
-    :
-    config.discord.color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/m) ? config.discord.color : "#aabbcc";
+const keywords = config.vk.keywords;
+const name = config.discord.bot_name;
+const color = config.discord.color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/m) ? config.discord.color : "#aabbcc";
 const url = process.env.WEBHOOK_URL || config.discord.webhook_url;
 
 const discord = new webhook.Webhook(url);
