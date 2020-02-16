@@ -9,7 +9,7 @@ const {parseText, getAttachments, parseLinks, checkKeywords, errorHandler} = req
 const keywords = config.vk.keywords;
 const name = config.discord.bot_name;
 const color = config.discord.color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/m) ? config.discord.color : "#aabbcc";
-const url = process.env.WEBHOOK_URL || config.discord.webhook_url;
+const url = config.discord.webhook_url;
 
 const discord = new webhook.Webhook(url);
 
