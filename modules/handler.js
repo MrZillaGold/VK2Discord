@@ -1,4 +1,4 @@
-const {VK} = require('vk-io');
+const {VK} = require("vk-io");
 const config = require("../config");
 const webhook = require("webhook-discord");
 
@@ -17,7 +17,7 @@ const {errorHandler} = require("./functions");
 if (interval < 30000) console.log("[!] Не рекомендуем ставить интервал получения постов меньше 30 секунд, во избежания лимитов ВКонтакте!");
 
 vk.setOptions({
-    token: token,
+    token,
     apiMode: "parallel"
 });
 
