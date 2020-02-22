@@ -14,8 +14,6 @@ const send = require("./send");
 
 const {errorHandler} = require("./functions");
 
-if (interval < 30000) console.log("[!] Не рекомендуем ставить интервал получения постов меньше 30 секунд, во избежания лимитов ВКонтакте!");
-
 vk.setOptions({
     token,
     apiMode: "parallel"
@@ -23,6 +21,8 @@ vk.setOptions({
 
 
 if (!longpoll) {
+    if (interval < 30000) console.log("[!] Не рекомендуем ставить интервал получения постов меньше 30 секунд, во избежания лимитов ВКонтакте!");
+
     setInterval(() => {
         const webhookBuilder = new webhook.MessageBuilder();
 
@@ -37,7 +37,9 @@ if (!longpoll) {
             v: "5.103"
         })
             .then(data => {
-                webhookBuilder.setFooter(data.groups[0].name, data.groups[0].photo_50);
+                if (data.groups.length > 0) {
+                    webhookBuilder.setFooter(data.groups[0].name, data.groups[0].photo_50);
+                } else if (data.profiles.length > 0) webhookBuilder.setFooter(`${data.profiles[0].first_name} ${data.profiles[0].last_name}`, data.profiles[0].photo_50);
 
                 const posts = data.items;
                 const post1 = posts[0];
