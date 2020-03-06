@@ -53,7 +53,7 @@ async function getAttachments(attachments, webhookBuilder, longpoll) {
 }
 
 function errorHandler(error) {
-    console.log(`[!] Возникла ошибка: ${error}. Если не понимаете в чем причина, свяжитесь со мной: https://vk.com/egorlisss`);
+    console.log(`[!] Возникла ошибка: ${error}. Если не понимаете в чем причина, свяжитесь со мной: https://vk.com/id233731786`);
 }
 
 module.exports = {parseLinks, parseText, checkKeywords, getAttachments, errorHandler};
