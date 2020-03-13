@@ -28,7 +28,7 @@ if (!longpoll) {
 
         const groupIdMatch = groupId.match(/^(?:public|group)([\d]+)$/);
         const userIdMatch =  groupId.match(/^id([\d]+)$/);
-        const id = groupIdMatch ? {owner_id: -idMatch[1]} : userIdMatch ? {owner_id: userIdMatch[1]} : {domain: groupId};
+        const id = groupIdMatch ? {owner_id: -groupIdMatch[1]} : userIdMatch ? {owner_id: userIdMatch[1]} : {domain: groupId};
 
         api.wall.get({
             ...id,
