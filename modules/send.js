@@ -4,7 +4,7 @@ const webhook = require("webhook-discord");
 const news = require("../news");
 const config = require("../config");
 
-const {parseText, getAttachments, parseLinks, checkKeywords, errorHandler} = require("./functions");
+const { parseText, getAttachments, parseLinks, checkKeywords, errorHandler } = require("./functions");
 
 const keywords = config.vk.keywords;
 const name = config.discord.bot_name;

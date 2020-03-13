@@ -1,18 +1,18 @@
-const {VK} = require("vk-io");
+const { VK } = require("vk-io");
 const config = require("../config");
 const webhook = require("webhook-discord");
 
 const vk = new VK();
-const {updates} = vk;
+const { updates, api } = vk;
 
 const token = config.vk.token;
+const longpoll = config.vk.longpoll;
 const groupId = config.vk.group_id;
 const interval = config.interval * 1000;
-const longpoll = config.vk.longpoll;
 
 const send = require("./send");
 
-const {errorHandler} = require("./functions");
+const { errorHandler } = require("./functions");
 
 vk.setOptions({
     token,
@@ -26,10 +26,11 @@ if (!longpoll) {
     setInterval(() => {
         const webhookBuilder = new webhook.MessageBuilder();
 
-        const idMatch = groupId.match(/^(?:public|group)([\d]+)$/);
-        const id = idMatch ? {owner_id: idMatch[1]} : {domain: groupId};
+        const groupIdMatch = groupId.match(/^(?:public|group)([\d]+)$/);
+        const userIdMatch =  groupId.match(/^id([\d]+)$/);
+        const id = groupIdMatch ? {owner_id: -idMatch[1]} : userIdMatch ? {owner_id: userIdMatch[1]} : {domain: groupId};
 
-        vk.api.wall.get({
+        api.wall.get({
             ...id,
             count: 2,
             extended: 1,
@@ -37,9 +38,12 @@ if (!longpoll) {
             v: "5.103"
         })
             .then(data => {
-                if (data.groups.length > 0) {
+
+                if (data.groups.length > 0 && groupIdMatch) {
                     webhookBuilder.setFooter(data.groups[0].name, data.groups[0].photo_50);
-                } else if (data.profiles.length > 0) webhookBuilder.setFooter(`${data.profiles[0].first_name} ${data.profiles[0].last_name}`, data.profiles[0].photo_50);
+                } else if (data.profiles.length > 0) {
+                    webhookBuilder.setFooter(`${data.profiles[0].first_name} ${data.profiles[0].last_name}`, data.profiles[0].photo_50);
+                }
 
                 const posts = data.items;
                 const post1 = posts[0];
