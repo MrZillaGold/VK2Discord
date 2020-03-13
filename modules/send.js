@@ -4,7 +4,7 @@ const webhook = require("webhook-discord");
 const news = require("../news");
 const config = require("../config");
 
-const { parseText, getAttachments, parseLinks, checkKeywords, errorHandler } = require("./functions");
+const { getAttachments, parseLinks, checkKeywords, errorHandler } = require("./functions");
 
 const keywords = config.vk.keywords;
 const name = config.discord.bot_name;
@@ -49,7 +49,7 @@ module.exports = async (webhookBuilder, postData, longpoll) => {
 
         const allPost = postText + attachments + repostText + reportAttachments;
 
-        webhookBuilder.setDescription(parseText(allPost).length > 2048 ?
+        webhookBuilder.setDescription(allPost.length > 2048 ?
             (postText ? postText.slice(0, repostText ? 1021 - attachments.length : 2045 - attachments.length) + (postData.text ? "…\n\n" : "") : "")
             + attachments
             + (repostText ? repostText.slice(0, postText ? 1021 - reportAttachments.length : 2045 - reportAttachments.length)  + (repost.text ? "…\n\n" : "") : "")
