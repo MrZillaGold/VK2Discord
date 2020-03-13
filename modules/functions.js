@@ -54,7 +54,6 @@ function errorHandler(error) {
 
 module.exports = {
     parseLinks,
-    parseText,
     checkKeywords,
     getAttachments,
     errorHandler
