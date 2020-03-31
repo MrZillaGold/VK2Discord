@@ -7,7 +7,10 @@
     "longpoll": false
   },
   "discord": {
-    "webhook_url": "https://discordapp.com/api/webhooks/",
+    "webhook_urls": [
+      "https://discordapp.com/api/webhooks/",
+      "https://discordapp.com/api/webhooks/"
+    ],
     "bot_name": "VK2DISCORD",
     "color": "#aabbcc"
   },

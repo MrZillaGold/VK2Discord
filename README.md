@@ -6,6 +6,8 @@
 
 <p align="center">
   Перед началом работы настройте config.json!
+  <br/>
+  Скрипт запускается командой <b>npm start</b>!
 </p>
 <p align="center"><a href="https://www.codefactor.io/repository/github/mrzillagold/vk2discord"><img src="https://www.codefactor.io/repository/github/mrzillagold/vk2discord/badge" alt="CodeFactor" /></a></p>
 
@@ -19,7 +21,11 @@
     "longpoll": false // Использовать Longpoll API. true = Вкл. / false = Выкл.
   },
   "discord": {
-    "webhook_url": "https://discordapp.com/api/webhooks/", // Ваш WebHook URL.
+    "webhook_urls": [
+         "https://discordapp.com/api/webhooks/",
+         "https://discordapp.com/api/webhooks/",
+         ...
+    ], // Ссылки на Webhook, можно использовать несколько ссылок на разные каналы Discord.
     "bot_name": "VK2DISCORD", // Имя вашего WebHook, выcвечиваетеся в качестве имени бота.
     "color": "#aabbcc" // Цвет рамки сообщения Discord в формате HEX.
   },
