@@ -141,7 +141,7 @@ export class Sender {
     }
 
     FixLinks(text) {
-        return decodeURI(`${text.replace(/(?:\[(https:\/\/vk.com\/[^]+?)\|([^]+?)])/g, "[$2]($1)").replace(/(?:\[([^]+?)\|([^]+?)])/g, "[$2](https://vk.com/$1)")}\n\n`);
+        return `${text.replace(/(?:\[(https:\/\/vk.com\/[^]+?)\|([^]+?)])/g, "[$2]($1)").replace(/(?:\[([^]+?)\|([^]+?)])/g, "[$2](https://vk.com/$1)")}\n\n`;
     }
 
     async Send(createdAt) {
