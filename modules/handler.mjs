@@ -10,8 +10,8 @@ if (!longpoll) {
     setInterval(() => {
         const sender = new Sender();
 
-        const groupIdMatch = groupId.match(/^(?:public|group)([\d]+)$/);
-        const userIdMatch =  groupId.match(/^id([\d]+)$/);
+        const groupIdMatch = groupId.match(/^(?:public|club)([\d]+)$/);
+        const userIdMatch = groupId.match(/^id([\d]+)$/);
         const id = groupIdMatch ?
             {
                 owner_id: -groupIdMatch[1]
@@ -36,7 +36,7 @@ if (!longpoll) {
             .then(data => {
                 const builder = new webhook.MessageBuilder();
 
-                if (data.groups.length > 0 && groupIdMatch) { // Устанавливаем footer от типа отправителя записи
+                if (data.groups.length > 0 && (groupIdMatch || !userIdMatch)) { // Устанавливаем footer от типа отправителя записи
                     builder.setFooter(data.groups[0].name, data.groups[0].photo_50);
                 } else if (data.profiles.length > 0) {
                     builder.setFooter(`${data.profiles[0].first_name} ${data.profiles[0].last_name}`, data.profiles[0].photo_50);
