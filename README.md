@@ -53,6 +53,20 @@
       <sub><b>WOT Express</b></sub>
       </a>
     </td>
+    <td align="center">
+      <a href="https://discord.gg/tAca6dX">
+        <img src="https://i.imgur.com/ExjWQCI.png" width="100px;" alt="Dead by Daylight"/>
+        <br/>
+      <sub><b>MINECRAFT RU</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://discord.gg/MfKUp4F">
+        <img src="https://i.imgur.com/FuI3ONC.jpg" width="100px;" alt="Dead by Daylight"/>
+        <br/>
+      <sub><b>VTC QuickFire Corp.</b></sub>
+      </a>
+    </td>
     </tr>
 </table>
 
