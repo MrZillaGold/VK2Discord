@@ -18,11 +18,12 @@ vk.setOptions({
     apiMode: "parallel" // Необходимо исользовать LongPoll версии 5.103
 });
 
-const { updates, api } = vk;
+const { updates, api, snippets } = vk;
 
 export {
     updates,
     api,
+    snippets,
 
     longpoll,
     groupId,
