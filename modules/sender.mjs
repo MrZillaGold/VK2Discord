@@ -33,7 +33,7 @@ export class Sender {
 
             post.text += `[**Открыть запись ВКонтакте**](https://vk.com/wall${longpoll ? postData.authorId : postData.from_id}_${postData.id})\n\n`;
 
-            if (postData.text) post.text += `${this.FixLinks(await this.FixHashtags(postData.text))}\n\n`;
+            if (postData.text) post.text += `${await this.FixMarkdown(this.FixLinks(postData.text))}\n\n`;
 
             if (postData.attachments) post.attachments += await this.ParseAttachments(postData.attachments);
 
@@ -45,7 +45,7 @@ export class Sender {
             if (Repost) {
                 repost.text += `\n\n>>> [**Репост записи**](https://vk.com/wall${longpoll ? Repost.authorId : Repost.from_id}_${Repost.id})\n\n`;
 
-                if (Repost.text) repost.text += `${this.FixLinks(await this.FixHashtags(Repost.text))}\n\n`;
+                if (Repost.text) repost.text += `${await this.FixMarkdown(this.FixLinks(Repost.text))}\n\n`;
 
                 if (Repost.attachments) repost.attachments += await this.ParseAttachments(Repost.attachments);
             }
@@ -144,27 +144,38 @@ export class Sender {
         return text.replace(/(?:\[(https:\/\/vk.com\/[^]+?)\|([^]+?)])/g, "[$2]($1)").replace(/(?:\[([^]+?)\|([^]+?)])/g, "[$2](https://vk.com/$1)");
     }
 
-    async FixHashtags(text) {
+    async FixMarkdown(text) {
         let fixedText = text;
 
         const regExp = /#([^\s]+)@([a-zA-Z_]+)/g;
 
         const matches = regExp.exec(text);
 
+        fixedText = fixedText
+            .replace(/#([^\s]+)/g, (match, p1) => {
+                if (match.match(regExp)) return match;
+
+                return `[#${p1}](https://vk.com/feed?section=search&q=%23${p1})`;
+            });
+
         if (matches) {
             const resource = await snippets.resolveResource(matches[2])
                 .catch(() => null);
 
-            if (resource && resource.type === "group") fixedText = text.replace(regExp, "[#$1@$2](https://vk.com/$2/$1)");
+            if (resource && resource.type === "group") {
+                fixedText = text.replace(regExp, (match, p1, p2) => {
+                    if (p1.match(/[a-zA-Z]+/)) return `[#${p1}@${p2}](https://vk.com/${p2}/${p1})`;
+
+                    return `[#${p1}@${p2}](https://vk.com/wall-${resource.id}?q=%23${p1})`;
+                });
+            }
         }
 
-        fixedText = fixedText.replace(/#([^\s]+)/g, (match, p1) => {
-            if (match.match(regExp)) return match;
-
-            return `[#${p1}](https://vk.com/feed?section=search&q=%23${p1})`;
-        });
-
-        return fixedText;
+        try {
+            return decodeURI(fixedText);
+        } catch {
+            return fixedText;
+        }
     }
 
     async Send(createdAt) {
