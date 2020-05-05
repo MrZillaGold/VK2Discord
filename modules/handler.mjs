@@ -61,7 +61,9 @@ if (!longpoll) {
     updates.on("new_wall_post", context => {
         const sender = new Sender();
 
-        sender.Post(new webhook.MessageBuilder(), context.wall)
+        const { wall } = context;
+
+        if (wall.postType === "post") sender.Post(new webhook.MessageBuilder(), wall);
     });
 
     updates.start()
