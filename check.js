@@ -36,6 +36,16 @@ fs.readdir(path.join(__dirname), (error, files) => {
 
         process.exit(-1);
     }
+
+    if (files.includes("news.json")) {
+        try {
+            require("./news");
+        } catch {
+            createNews();
+        }
+    } else {
+        createNews();
+    }
 });
 
 function createConfig() {
@@ -68,4 +78,8 @@ function createConfig() {
 
 function rename() {
     fs.renameSync("./config.json", "./config_old.json");
+}
+
+function createNews() {
+    fs.writeFileSync("./news.json", JSON.stringify({}, null, "\t"));
 }
