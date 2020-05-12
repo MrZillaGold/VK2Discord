@@ -1,13 +1,14 @@
 import fs from "fs";
 
-import { webhook, name, color, urls/*, sendAll*/ } from "./discord";
-import { keywords, longpoll, filter, snippets } from "./vk";
+import webhook from "webhook-discord";
 
-import { errorHandler } from "./handler";
+import { notify } from "./functions";
 
 import news from "../news";
 
 export class Sender {
+    options = {};
+
     state = {
         post: {
             text: "",
@@ -20,22 +21,29 @@ export class Sender {
         webhookBuilders: []
     };
 
-    async Post(builder, postData) {
+    setOptions(options) {
+        this.options = options;
+    }
+
+    async post(builder, postData) {
         const { post, repost, webhookBuilders } = this.state;
+
+        const { vk, index } = this.options;
+        const { longpoll, filter, group_id } = vk;
 
         webhookBuilders.push(builder);
 
         const createdAt = longpoll ? postData.createdAt : postData.date;
 
-        if (news.last_post !== createdAt && !(news.published_posts.includes(createdAt)) && this.CheckKeywords(postData.text)) { // Проверяем что пост не был опубликован и соответствует ключевым словам
+        if ((news[group_id] && news[group_id].last) !== createdAt && !(news[group_id] && news[group_id].published.includes(createdAt)) && this.checkKeywords(postData.text)) { // Проверяем что пост не был опубликован и соответствует ключевым словам
 
             if (longpoll && filter && postData.authorId === postData.createdUserId) return; // Фильтр на записи только от имени группы для LongPoll
 
             post.text += `[**Открыть запись ВКонтакте**](https://vk.com/wall${longpoll ? postData.authorId : postData.from_id}_${postData.id})\n\n`;
 
-            if (postData.text) post.text += `${await this.FixMarkdown(this.FixLinks(postData.text))}\n\n`;
+            if (postData.text) post.text += `${await this.fixMarkdown(this.fixLinks(postData.text))}\n\n`;
 
-            if (postData.attachments) post.attachments += await this.ParseAttachments(postData.attachments);
+            if (postData.attachments) post.attachments += await this.parseAttachments(postData.attachments);
 
             const Repost = longpoll ?
                 postData.copyHistory ? postData.copyHistory[0] : null
@@ -45,20 +53,23 @@ export class Sender {
             if (Repost) {
                 repost.text += `\n\n>>> [**Репост записи**](https://vk.com/wall${longpoll ? Repost.authorId : Repost.from_id}_${Repost.id})\n\n`;
 
-                if (Repost.text) repost.text += `${await this.FixMarkdown(this.FixLinks(Repost.text))}\n\n`;
+                if (Repost.text) repost.text += `${await this.fixMarkdown(this.fixLinks(Repost.text))}\n\n`;
 
-                if (Repost.attachments) repost.attachments += await this.ParseAttachments(Repost.attachments);
+                if (Repost.attachments) repost.attachments += await this.parseAttachments(Repost.attachments);
             }
 
-            this.Send(createdAt);
+            this.send(createdAt);
         } else {
-            console.log("[!] Новых записей нет или они не соответствуют ключевым словам!");
+            console.log(`[!] Новых записей в кластере #${index} нет или они не соответствуют ключевым словам!`);
         }
     }
 
-    async ParseAttachments(attachments) {
+    async parseAttachments(attachments) {
         const { webhookBuilders } = this.state;
         const builder = webhookBuilders[0];
+
+        const { vk } = this.options;
+        const { longpoll } = vk;
 
         let text = "";
 
@@ -108,13 +119,13 @@ export class Sender {
         });
 
         /*if (sendAll) {
-            await this.ParsePhotos(attachments);
+            await this.parsePhotos(attachments);
         }*/
 
         return text;
     }
 
-    /*async ParsePhotos(attachments) {
+    /*async parsePhotos(attachments) {
         const { webhookBuilders } = this.state;
 
         const photos = attachments.filter(attachment => attachment.type === "photo");
@@ -130,7 +141,10 @@ export class Sender {
         });
     }*/
 
-    CheckKeywords(text) {
+    checkKeywords(text) {
+        const { vk } = this.options;
+        const { keywords } = vk;
+
         if (keywords.length > 0) {
             return keywords.some(keyword => {
                 return text.match(keyword, "gi");
@@ -140,11 +154,16 @@ export class Sender {
         }
     }
 
-    FixLinks(text) {
-        return text.replace(/(?:\[(https:\/\/vk.com\/[^]+?)\|([^]+?)])/g, "[$2]($1)").replace(/(?:\[([^]+?)\|([^]+?)])/g, "[$2](https://vk.com/$1)");
+    fixLinks(text) {
+        return text
+            .replace(/(?:\[(https:\/\/vk.com\/[^]+?)\|([^]+?)])/g, "[$2]($1)")
+            .replace(/(?:\[([^]+?)\|([^]+?)])/g, "[$2](https://vk.com/$1)");
     }
 
-    async FixMarkdown(text) {
+    async fixMarkdown(text) {
+        const { VKIO } = this.options;
+        const { snippets } = VKIO;
+
         let fixedText = text;
 
         const regExp = /#([^\s]+)@([a-zA-Z_]+)/g;
@@ -178,9 +197,17 @@ export class Sender {
         }
     }
 
-    async Send(createdAt) {
+    async send(createdAt) {
         const { post, repost, webhookBuilders } = this.state;
-        const builder = webhookBuilders[0].setName(name).setColor(color);
+
+        const { discord, index, vk } = this.options;
+
+        const { bot_name, color, webhook_urls } = discord;
+        const { group_id } = vk;
+
+        const builder = webhookBuilders[0]
+            .setName(bot_name.slice(0, 32))
+            .setColor(color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/m) ? color : "#aabbcc");
 
         if (post.text.length + post.attachments.length + repost.text.length + repost.attachments.length > 2048) {
             if (post.text) {
@@ -194,17 +221,26 @@ export class Sender {
 
         builder.setDescription(post.text + post.attachments + repost.text + repost.attachments);
 
-        urls.forEach((url, index) => {
+        webhook_urls.forEach((url, channel) => {
             new webhook.Webhook(url)
                 .send(builder)
-                .then(console.log(`[!] Пост успешно опубликован в Discord-канале #${index + 1}.`))
-                .catch((error) => errorHandler(error));
+                .then(console.log(`[VK2DISCORD] Запись от кластера #${index} успешно опубликована в Discord-канале #${channel + 1}.`))
+                .catch((error) => notify(error));
         });
 
-        news.last_post = createdAt;
-        news.published_posts.unshift(createdAt);
+        if (news[group_id]) {
+            news[group_id].last = createdAt;
 
-        if (news.published_posts.length >= 30) news.published_posts.splice(-1, 1);
+            news[group_id].published.unshift(createdAt);
+            news[group_id].published = news[group_id].published.splice(0, 14);
+        } else {
+            news[group_id] = {
+                last: createdAt,
+                published: [
+                    createdAt
+                ]
+            }
+        }
 
         fs.writeFileSync("./news.json", JSON.stringify(news, null, "\t"));
     }

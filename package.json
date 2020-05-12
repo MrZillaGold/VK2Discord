@@ -1,19 +1,18 @@
 {
   "name": "vk2discord",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "description": "Автоматическая публикация постов из VK.COM в канал Discord",
   "main": "index.mjs",
   "scripts": {
-    "start": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node index.mjs"
+    "start": "npm run check && npm run init",
+    "check": "node check.js",
+    "init": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node index.mjs"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MrZillaGold/VK2Discord.git"
   },
-  "author": {
-    "name": "MrZillaGold",
-    "url": "https://vk.com/mrzillagold"
-  },
+  "author": "MrZillaGold <Pronin Egor>",
   "license": "SEE LICENSE IN LICENSE.txt",
   "bugs": {
     "url": "https://github.com/MrZillaGold/VK2Discord/issues"

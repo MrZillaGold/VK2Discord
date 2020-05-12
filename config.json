@@ -1,18 +1,23 @@
 {
-  "vk": {
-    "token": "Токен от станицы или группы ВКонтакте",
-    "group_id": "public1",
-    "keywords": [],
-    "filter": true,
-    "longpoll": false
-  },
-  "discord": {
-    "webhook_urls": [
-      "https://discordapp.com/api/webhooks/",
-      "https://discordapp.com/api/webhooks/"
-    ],
-    "bot_name": "VK2DISCORD",
-    "color": "#aabbcc"
-  },
-  "interval": 30
+	"clusters": [
+		{
+			"vk": {
+				"token": "Токен от станицы или группы ВКонтакте",
+				"group_id": "club1",
+				"keywords": [],
+				"filter": true,
+				"longpoll": false,
+				"interval": 30
+			},
+			"discord": {
+				"webhook_urls": [
+					"https://discordapp.com/api/webhooks/",
+					"https://discordapp.com/api/webhooks/"
+				],
+				"bot_name": "VK2DISCORD",
+				"color": "#aabbcc"
+			}
+		}
+	],
+	"version_dont_modify_me": 1
 }
