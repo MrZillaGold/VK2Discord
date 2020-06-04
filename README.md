@@ -50,7 +50,7 @@
 ```
 
 <p align="center">
-  <b>VK2Discord</b> используют крупные Discord сервера
+  <b>VK2Discord</b> используют крупные Discord сервера и сообщества
 </p>
 
 <table>
@@ -74,6 +74,13 @@
         <img src="https://i.imgur.com/ExjWQCI.png" width="100px;" alt="Dead by Daylight"/>
         <br/>
       <sub><b>MINECRAFT RU</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://vk.com/globalloot">
+        <img src="https://i.imgur.com/m1EF3pN.jpg" width="100px;" alt="GLL"/>
+        <br/>
+      <sub><b>GLL</b></sub>
       </a>
     </td>
     <td align="center">
