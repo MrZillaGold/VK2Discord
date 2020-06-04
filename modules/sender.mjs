@@ -66,7 +66,7 @@ export class Sender {
 
     async parseAttachments(attachments) {
         const { webhookBuilders } = this.state;
-        const builder = webhookBuilders[0];
+        const [builder] = webhookBuilders;
 
         const { vk } = this.options;
         const { longpoll } = vk;
