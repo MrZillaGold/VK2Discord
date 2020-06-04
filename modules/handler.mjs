@@ -35,15 +35,14 @@ export class Handler {
         }
     }
 
-    startInterval(){
+    startInterval() {
         const { api } = this.VKIO;
 
         const { vk, index } = this.cluster;
         const { interval, group_id, filter } = vk;
 
-        if (interval < 30) console.log("[!] Не рекомендуем ставить интервал получения постов меньше 30 секунд, во избежания лимитов ВКонтакте!");
-
         console.log(`[VK2DISCORD] Кластер #${index} будет проверять новые записи с интервалом в ${interval} секунд.`);
+        if (interval < 30) console.log("[!] Не рекомендуем ставить интервал получения постов меньше 30 секунд, во избежания лимитов ВКонтакте!");
 
         setInterval(() => {
             const sender = new Sender();
@@ -81,8 +80,7 @@ export class Handler {
                     }
 
                     const posts = data.items; // Проверяем наличие закрепа, если он есть берем свежую запись
-                    const post1 = posts[0];
-                    const post2 = posts[1];
+                    const [post1, post2] = posts;
 
                     if (posts.length > 0) {
                         const postData = posts.length === 2 && post2.date > post1.date ? post2 : post1;
@@ -95,22 +93,29 @@ export class Handler {
                     }
 
                 })
-                .catch(err => notify(err));
+                .catch(error => notify(error));
         }, interval * 1000);
     }
 
-    startLongPoll() {
+    async startLongPoll() {
         const { index } = this.cluster;
-        const { updates } = this.VKIO;
+
+        const { updates, api } = this.VKIO;
+
+
+        const [{ photo_50, name }] = await api.groups.getById();
 
         updates.on("new_wall_post", context => {
             const { wall } = context;
 
             const sender = new Sender();
+            const builder = new webhook.MessageBuilder();
 
             this.setSenderOptions(sender);
 
-            if (wall.postType === "post") return sender.post(new webhook.MessageBuilder(), wall);
+            builder.setFooter(name, photo_50);
+
+            if (wall.postType === "post") return sender.post(builder, wall);
         });
 
         updates.start()
