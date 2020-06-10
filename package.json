@@ -20,7 +20,7 @@
   "dependencies": {
     "fs": "0.0.1-security",
     "vk-io": "^4.0.0-rc.30",
-    "webhook-discord": "^3.5.1"
+    "webhook-discord": "^3.7.3"
   },
   "homepage": "https://github.com/MrZillaGold/VK2Discord#readme"
 }
