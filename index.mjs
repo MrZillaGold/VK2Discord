@@ -1,18 +1,15 @@
-import { Handler } from "./modules/handler";
+import { Handler } from "./modules/Handler";
 
 import config from "./config";
 
 const { clusters } = config;
 
-console.log("[VK2DISCORD] Запущен.");
-
-clusters.forEach((cluster, index) => {
-    const handler = new Handler();
-
-    handler.setCluster({
+clusters.forEach((cluster, index) =>
+    new Handler({
         ...cluster,
         index: index + 1
-    });
+    })
+        .init()
+);
 
-    handler.init();
-});
+console.log("[VK2DISCORD] Запущен.");
