@@ -1,7 +1,10 @@
-const path = require("path");
-const fs = require("fs");
+import path, { dirname } from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
 
-fs.readdir(path.join(__dirname), (error, files) => {
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+fs.readdir(path.join(__dirname), async (error, files) => {
 
     if (error) {
         return console.log("[!] Ошибка при получении файлов из папки со скриптом. Проверить наличие конфига не удастся.");
@@ -9,9 +12,9 @@ fs.readdir(path.join(__dirname), (error, files) => {
 
     if (files.includes("config.json")) {
         try {
-            const config = require("./config");
+            const config = await import("./config");
 
-            if (config.version_dont_modify_me !== 1) {
+            if (config.default.version_dont_modify_me !== 1) {
                 rename();
 
                 createConfig();
@@ -39,7 +42,7 @@ fs.readdir(path.join(__dirname), (error, files) => {
 
     if (files.includes("news.json")) {
         try {
-            require("./news");
+            await import("./news");
         } catch {
             createNews();
         }

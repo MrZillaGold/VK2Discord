@@ -5,7 +5,7 @@
   "main": "index.mjs",
   "scripts": {
     "start": "npm run check && npm run init",
-    "check": "node check.js",
+    "check": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node check.mjs",
     "init": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node index.mjs"
   },
   "repository": {
