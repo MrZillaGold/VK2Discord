@@ -48,7 +48,7 @@ export class Sender {
             } // Фильтр на записи только от имени группы для LongPoll API
 
             post.text +=
-                `[**Открыть запись ВКонтакте**](https://vk.com/wall${payload.from_id}_${payload.id})\n\n`;
+                `[**Открыть запись ВКонтакте**](https://vk.com/wall${payload.owner_id}_${payload.id})\n\n`;
 
             if (payload.text) {
                 post.text += `${await markdown.fixMarkdown(markdown.fixLinks(payload.text))}\n\n`;
