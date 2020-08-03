@@ -71,13 +71,13 @@ export class Handler {
                 .then(({ groups, profiles, items }) => {
 
                     if (groups.length > 0 && (groupIdMatch || !userIdMatch)) { // Устанавливаем footer от типа отправителя записи
-                        const [group] = groups;
+                        const [{ name, photo_50 }] = groups;
 
-                        sender.builder.setFooter(group.name, group.photo_50);
+                        sender.builder.setFooter(name, photo_50);
                     } else if (profiles.length > 0) {
-                        const [profile] = profiles;
+                        const [{ first_name, last_name, photo_50 }] = profiles;
 
-                        sender.builder.setFooter(`${profile.first_name} ${profile.last_name}`, profile.photo_50);
+                        sender.builder.setFooter(`${first_name} ${last_name}`, photo_50);
                     }
 
                     const [post1, post2] = items;
