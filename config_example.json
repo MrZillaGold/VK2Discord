@@ -1,0 +1,40 @@
+{
+  "clusters": [
+    {
+      "vk": {
+        "token": "99be70a",
+        "group_id": "durov",
+        "keywords": ["собака", "яблоко"],
+        "filter": true,
+        "longpoll": false,
+        "interval": 30
+      },
+      "discord": {
+        "webhook_urls": [
+          "https://discordapp.com/api/webhooks/730807540459241472"
+        ],
+        "bot_name": "VK2DISCORD",
+        "color": "#aabbcc"
+      }
+    },
+    {
+      "vk": {
+        "token": "43bf71a",
+        "group_id": "club1",
+        "keywords": [],
+        "filter": true,
+        "longpoll": true,
+        "interval": 30
+      },
+      "discord": {
+        "webhook_urls": [
+          "https://discordapp.com/api/webhooks/730807540459241472",
+          "https://discordapp.com/api/webhooks/234556456456567632"
+        ],
+        "bot_name": "VK2DISCORD",
+        "color": "#ffbbff"
+      }
+    }
+  ],
+  "version_dont_modify_me": 1
+}

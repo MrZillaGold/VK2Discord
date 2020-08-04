@@ -1,53 +1,22 @@
-<p align="center"><b>VK2Discord</b></p>
-<p align="center">Публикация постов из группы или профиля VK в Discord с полным покрытием вложений к ним.</p>
 <p align="center">
-  <a href="https://github.com/MrZillaGold/VK2Discord/wiki/%D0%98%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D0%B8%D1%8F">Инструкция по настройке</a> | <a href="https://vk.com/id233731786">По всем вопросам</a>
+    <b>VK2Discord</b>
+</p>
+<p align="center">
+    Публикация постов из группы или профиля VK в Discord с полным покрытием вложений к ним.
+</p>
+<p align="center">
+  <a href="https://github.com/MrZillaGold/VK2Discord/wiki/%D0%98%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D0%B8%D1%8F">
+    Инструкция по настройке
+  </a>
 </p>
 
 <p align="center">
-  Перед началом работы настройте config.json!
+  <a href="https://github.com/MrZillaGold/VK2Discord/blob/master/CONFIG_FIELDS.md">
+    Перед началом работы настройте <b>config.json</b>!
+  </a>
   <br/>
   Скрипт запускается командой <b>npm start</b>!
 </p>
-
-```js
-{
-	"clusters": [
-		{
-			"vk": {
-				"token": "Токен от страницы (получить можно тут https://vk.cc/9bJ69C) или группы ВКонтакте",
-				"group_id": "club1", // ID группы или пользователя ВКонтакте от которого брать новости.
-
-				"keywords": [],      // Ключевые слова, через запятую, для публикации записи. 
-				                     // Если этого слова нет в тексте - запись не будет опубликована. 
-				                     // Рекомендую использовать ТОЛЬКО с навигационными хештегами по типу: #news@stevebotmc. 
-				                     // Оставьте массив пустым, если не хотите использовать данную функцию.
-
-				"filter": true,      // Публиковать посты только от именни группы, посты от обычных пользователей пропускаются. 
-				                     // true = Вкл. / false = Выкл. 
-
-				"longpoll": false,   // Использовать Longpoll API. 
-				                     // true = Вкл. / false = Выкл.
-
-				"interval": 30 // Интервал получения новых постов из ВКонтакте в секундах.
-			},
-			"discord": {
-				"webhook_urls": [  // Ссылки на Webhook, можно использовать несколько ссылок на разные каналы Discord.
-					"https://discordapp.com/api/webhooks/",
-					"https://discordapp.com/api/webhooks/"
-				],
-				"bot_name": "VK2DISCORD", // Имя вашего WebHook, выcвечиваетеся в качестве имени бота.
-				"color": "#aabbcc"  // Цвет рамки сообщения Discord в формате HEX.
-			}
-		},
-        {
-        	"vk"... // Вы можете использовать несколько кластеров, например для публикации постов из разных групп ВК.
-                    // Просто перечислите их через запятую.
-        }
-	],
-	"version_dont_modify_me": 1 // Версия конфига, не изменяйте ее.
-}
-```
 
 <p align="center">
   <b>VK2Discord</b> используют крупные Discord сервера и сообщества
@@ -104,7 +73,8 @@
   <img alt="Лицензия Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/>
   </a>
   <br/>
-  VK2DISCORD доступен по 
+  <b>VK2DISCORD</b> доступен по 
   <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
-    лицензии Creative Commons «Attribution-NonCommercial-ShareAlike» («Атрибуция —  Некоммерческое использование — На тех же условиях») 4.0 Всемирная</a>.
+    лицензии Creative Commons «Attribution-NonCommercial-ShareAlike» («Атрибуция —  Некоммерческое использование — На тех же условиях») 4.0 Всемирная
+  </a>.
 </p>
