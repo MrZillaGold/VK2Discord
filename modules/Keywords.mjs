@@ -9,7 +9,9 @@ export class Keywords {
 
         if (keywords.length > 0 && text) {
             return keywords.some(keyword => {
-                return text.match(keyword, "gi");
+                return text.match(
+                    new RegExp(keyword, "gi")
+                );
             });
         } else {
             return true;
