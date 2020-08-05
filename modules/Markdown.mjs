@@ -1,50 +1,34 @@
 export class Markdown {
 
-    constructor(VK) {
-        this.VK = VK;
+    constructor(text) {
+        this.text = text;
     }
 
-    fixLinks(text) {
-        return text.replace(/(?:\[(https:\/\/vk.com\/[^]+?)\|([^]+?)])/g, "[$2]($1)")
-                   .replace(/(?:\[([^]+?)\|([^]+?)])/g, "[$2](https://vk.com/$1)");
-    }
+    fix() {
+        let fixed = this.text;
 
-    async fixMarkdown(text) {
-        const { VK } = this;
-        const { snippets } = VK;
+        fixed = fixed
+            .replace(/(?:\[(https:\/\/vk.com\/[^]+?)\|([^]+?)])/g, "[$2]($1)")
+            .replace(/(?:\[([^]+?)\|([^]+?)])/g, "[$2](https://vk.com/$1)"); // Fix ссылок
 
-        let fixedText = text;
+        fixed = fixed.replace(/(?:^|\s)#([^\s]+)/g, (match, hashtag) => { // Fix хештегов
+            const space = match.startsWith(" ") ? " " : "";
 
-        const hashtagRegExp = /#([^\s]+)@([a-zA-Z_]+)/g;
+            const isNavigationHashtag = match.match(/#([^\s]+)@([a-zA-Z_]+)/);
 
-        const hashtags = hashtagRegExp.exec(text);
+            if (isNavigationHashtag) {
+                const [, hashtag, group] = isNavigationHashtag;
 
-        fixedText = fixedText
-            .replace(/#([^\s]+)/g, (match, p1) => {
-                if (match.match(hashtagRegExp)) return match;
-
-                return `[#${p1}](https://vk.com/feed?section=search&q=%23${p1})`;
-            });
-
-        if (hashtags) {
-            const [, , group] = hashtags;
-
-            const resource = await snippets.resolveResource(group)
-                .catch(() => null);
-
-            if (resource && resource.type === "group") {
-                fixedText = text.replace(hashtagRegExp, (match, p1, p2) => {
-                    if (p1.match(/[a-zA-Z]+/)) return `[#${p1}@${p2}](https://vk.com/${p2}/${p1})`;
-
-                    return `[#${p1}@${p2}](https://vk.com/wall-${resource.id}?q=%23${p1})`;
-                });
+                return `${space}[#${hashtag}@${group}](https://vk.com/${group}/${hashtag})`;
             }
-        }
+
+            return `${space}[#${hashtag}](https://vk.com/feed?section=search&q=%23${hashtag})`;
+        });
 
         try {
-            return decodeURI(fixedText);
+            return decodeURI(fixed);
         } catch {
-            return fixedText;
+            return fixed;
         }
     }
 }

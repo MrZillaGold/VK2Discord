@@ -28,12 +28,10 @@ export class Sender {
 
     async post(payload) {
         const { post, repost } = this.message;
-        const { vk, index, VK } = this.config;
+        const { vk, index } = this.config;
         const builder = this.builder;
 
         const { longpoll, filter, group_id, keywords } = vk;
-
-        const markdown = new Markdown(VK);
 
         const date = payload.date;
 
@@ -51,7 +49,10 @@ export class Sender {
                 `[**Открыть запись ВКонтакте**](https://vk.com/wall${payload.owner_id}_${payload.id})\n\n`;
 
             if (payload.text) {
-                post.text += `${await markdown.fixMarkdown(markdown.fixLinks(payload.text))}\n\n`;
+                post.text += `${
+                    new Markdown(payload.text)
+                        .fix()
+                }\n\n`;
             }
 
             if (payload.attachments) {
@@ -65,7 +66,10 @@ export class Sender {
                     `\n\n>>> [**Репост записи**](https://vk.com/wall${Repost.from_id}_${Repost.id})\n\n`;
 
                 if (Repost.text) {
-                    repost.text += `${await markdown.fixMarkdown(markdown.fixLinks(Repost.text))}\n\n`;
+                    repost.text += `${
+                        new Markdown(Repost.text)
+                            .fix()
+                    }\n\n`;
                 }
 
                 if (Repost.attachments) {
