@@ -65,7 +65,6 @@ function createConfig() {
                 },
                 discord: {
                     webhook_urls: [
-                        "https://discordapp.com/api/webhooks/",
                         "https://discordapp.com/api/webhooks/"
                     ],
                     bot_name: "VK2DISCORD",

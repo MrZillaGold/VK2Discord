@@ -1,6 +1,7 @@
 ### Описание полей объектов в config.json
 
 [Инструкция по настройке](https://github.com/MrZillaGold/VK2Discord/wiki/%D0%98%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D0%B8%D1%8F)
+
 [Заполненный пример config.json](https://github.com/MrZillaGold/VK2Discord/blob/master/config_example.json)
 
 
