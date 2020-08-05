@@ -1,12 +1,13 @@
 {
   "name": "vk2discord",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "Автоматическая публикация постов из VK.COM в канал Discord",
   "main": "index.mjs",
   "scripts": {
     "start": "npm run check && npm run init",
     "check": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node check.mjs",
-    "init": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node index.mjs"
+    "init": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node index.mjs",
+    "test": "mocha --reporter spec"
   },
   "homepage": "https://github.com/MrZillaGold/VK2Discord#readme",
   "repository": {
@@ -19,9 +20,12 @@
     "url": "https://github.com/MrZillaGold/VK2Discord/issues"
   },
   "dependencies": {
-    "fs": "0.0.1-security",
+    "string-replace-async": "^2.0.0",
     "vk-io": "^4.0.0-rc.30",
     "webhook-discord": "^3.7.5"
+  },
+  "devDependencies": {
+    "mocha": "^8.1.1"
   },
   "engines": {
     "node": ">=12.0.0"

@@ -28,7 +28,7 @@ export class Sender {
 
     async post(payload) {
         const { post, repost } = this.message;
-        const { vk, index } = this.config;
+        const { vk, index, VK } = this.config;
         const builder = this.builder;
 
         const { longpoll, filter, group_id, keywords } = vk;
@@ -50,7 +50,7 @@ export class Sender {
 
             if (payload.text) {
                 post.text += `${
-                    new Markdown(payload.text)
+                    await new Markdown(payload.text, VK)
                         .fix()
                 }\n\n`;
             }
@@ -67,7 +67,7 @@ export class Sender {
 
                 if (Repost.text) {
                     repost.text += `${
-                        new Markdown(Repost.text)
+                        await new Markdown(Repost.text, VK)
                             .fix()
                     }\n\n`;
                 }
