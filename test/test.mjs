@@ -98,17 +98,9 @@ describe("Markdown", function() {
 
         it("Проверка текста с одним #хештегом и его переносом", async function() {
             assert.deepStrictEqual(
-                await new Markdown(`
-                Очень длинный текст
-                
-                #hashtag
-                `, vk)
+                await new Markdown(`Очень длинный текст\n#hashtag`, vk)
                     .fix(),
-                `
-                Очень длинный текст
-                
-                [#hashtag](https://vk.com/feed?section=search&q=%23hashtag)
-                `
+                `Очень длинный текст\n[#hashtag](https://vk.com/feed?section=search&q=%23hashtag)`
             );
         });
 
@@ -130,19 +122,9 @@ describe("Markdown", function() {
 
         it("Проверка текста с обычными и навигационными #хештегоми", async function() {
             assert.deepStrictEqual(
-                await new Markdown(`
-                #Очень длинный текст #hashtag
-                #hello #test@stevebot
-                
-                Продолжение #тест@apiclub
-                `, vk)
+                await new Markdown(`#Очень длинный текст #hashtag\n#hello #test@stevebot\nПродолжение #тест@apiclub`, vk)
                     .fix(),
-                `
-                [#Очень](https://vk.com/feed?section=search&q=%23Очень) длинный текст [#hashtag](https://vk.com/feed?section=search&q=%23hashtag)
-                [#hello](https://vk.com/feed?section=search&q=%23hello) [#test@stevebot](https://vk.com/stevebot/test)
-                
-                Продолжение [#тест@apiclub](https://vk.com/wall-1?q=%23тест)
-                `
+                `[#Очень](https://vk.com/feed?section=search&q=%23Очень) длинный текст [#hashtag](https://vk.com/feed?section=search&q=%23hashtag)\n[#hello](https://vk.com/feed?section=search&q=%23hello) [#test@stevebot](https://vk.com/stevebot/test)\nПродолжение [#тест@apiclub](https://vk.com/wall-1?q=%23тест)`
             );
         });
 
@@ -156,19 +138,9 @@ describe("Markdown", function() {
 
         it("Проверка текста c Wiki-ссылками и #хештегами разного формата", async function() {
             assert.deepStrictEqual(
-                await new Markdown(`
-                #hello #test@stevebot
-                #тест@apiclub Очень длинный текст [club1|VK API]
-                
-                [https://vk.com/stevebot|Steve - Minecraft Бот] [id1|test]
-                `, vk)
+                await new Markdown(`#hello #test@stevebot\n#тест@apiclub Очень длинный текст [club1|VK API]\n[https://vk.com/stevebot|Steve - Minecraft Бот] [id1|test]`, vk)
                     .fix(),
-                `
-                [#hello](https://vk.com/feed?section=search&q=%23hello) [#test@stevebot](https://vk.com/stevebot/test)
-                [#тест@apiclub](https://vk.com/wall-1?q=%23тест) Очень длинный текст [VK API](https://vk.com/club1)
-                
-                [Steve - Minecraft Бот](https://vk.com/stevebot) [test](https://vk.com/id1)
-                `
+                `[#hello](https://vk.com/feed?section=search&q=%23hello) [#test@stevebot](https://vk.com/stevebot/test)\n[#тест@apiclub](https://vk.com/wall-1?q=%23тест) Очень длинный текст [VK API](https://vk.com/club1)\n[Steve - Minecraft Бот](https://vk.com/stevebot) [test](https://vk.com/id1)`
             );
         });
     });
