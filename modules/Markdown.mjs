@@ -15,7 +15,7 @@ export class Markdown {
 
         fixed = fixed
             .replace(/(?:\[(https:\/\/vk.com\/[^]+?)\|([^]+?)])/g, "[$2]($1)")
-            .replace(/(?:\[([^]+?)\|([^]+?)])/g, "[$2](https://vk.com/$1)"); // Fix ссылок
+            .replace(/(?:\[([^[]+?)\|([^]+?)])/g, "[$2](https://vk.com/$1)"); // Fix ссылок
 
         fixed = await replaceAsync(fixed, /(?:^|\s)#([^\s]+)/g, async (match, hashtag) => { // Fix хештегов
             const space = match.startsWith("\n") ? "\n" : match.startsWith(" ") ? " " : "";
