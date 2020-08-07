@@ -1,11 +1,11 @@
 import fs from "fs";
 import webhook from "webhook-discord";
 
-import { Markdown } from "./Markdown";
-import { Attachments } from "./Attachments";
-import { Keywords } from "./Keywords";
+import { Markdown } from "./Markdown.mjs";
+import { Attachments } from "./Attachments.mjs";
+import { Keywords } from "./Keywords.mjs";
 
-import news from "../news";
+import news from "../news.json";
 
 export class Sender {
 
@@ -39,11 +39,11 @@ export class Sender {
             (news[group_id] && news[group_id].last) !== date &&
             !(news[group_id] && news[group_id].published.includes(date)) &&
             new Keywords(keywords).check(payload.text)
-        ) { // Проверяем что пост не был опубликован и соответствует ключевым словам
+        ) { // Проверяем что пост не был опубликован ранее и соответствует ключевым словам
 
             if (longpoll && filter && payload.owner_id !== payload.from_id) {
                 return;
-            } // Фильтр на записи только от имени группы для LongPoll API
+            } // Фильтр на записи "Только от имени группы" для LongPoll API
 
             post.text +=
                 `[**Открыть запись ВКонтакте**](https://vk.com/wall${payload.owner_id}_${payload.id})\n\n`;
@@ -96,11 +96,10 @@ export class Sender {
             .setName(bot_name.slice(0, 32))
             .setColor(color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/m) ? color : "#aabbcc");
 
-        webhook_urls.forEach((url) => {
+        for (const url of webhook_urls) { // Почему for? В тестах нужно убедится, что отправка произошла без ошибок, forEach с async не очень
             new webhook.Webhook(url)
-                .send(builder)
-                .catch(console.log);
-        });
+                .send(builder);
+        }
 
         this.pushDate(date); // Сохраняем дату поста, чтобы не публиковать его заново
     }

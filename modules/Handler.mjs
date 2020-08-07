@@ -1,6 +1,6 @@
 import VKIO from "vk-io";
 
-import { Sender } from "./Sender";
+import { Sender } from "./Sender.mjs";
 
 const { VK } = VKIO;
 
