@@ -11,7 +11,11 @@ export class Attachments {
             switch (type) {
                 case "photo":
                     if (!builder.data.attachments[0].image_url) {
-                        builder.setImage(photo.sizes.pop().url);
+                        if (photo.sizes) {
+                            builder.setImage(photo.sizes.pop().url);
+                        } else {
+                            console.log("[!] В записи есть фотографии, но вы не установили версию LongPoll API 5.103 или выше.\nФотографии не будут обработаны.");
+                        }
                     }
                     break;
                 case "video":
