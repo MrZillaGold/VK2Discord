@@ -83,7 +83,7 @@ export class Sender {
         }
     }
 
-    async send(date) {
+    send(date) {
         const { post, repost } = this.message;
         const { discord } = this.config;
         const builder = this.builder;
