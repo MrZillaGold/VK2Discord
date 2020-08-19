@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "string-replace-async": "^2.0.0",
-    "vk-io": "^4.0.0",
+    "vk-io": "^4.0.1",
     "webhook-discord": "^3.7.5"
   },
   "devDependencies": {

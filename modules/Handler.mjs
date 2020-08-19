@@ -8,17 +8,13 @@ export class Handler {
 
     constructor(cluster) {
         this.cluster = cluster;
-
-        this.VK = new VK();
     }
 
     init() {
-        const VK = this.VK;
-
         const { vk } = this.cluster;
         const { longpoll, token } = vk;
 
-        VK.setOptions({
+        this.VK = new VK({
             token,
             apiMode: "parallel"
         });
@@ -102,7 +98,7 @@ export class Handler {
 
         const [{ photo_50, name }] = await api.groups.getById();
 
-        updates.on("new_wall_post", context => {
+        updates.on("wall_post_new", context => {
 
             const { payload } = context;
 

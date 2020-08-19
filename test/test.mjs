@@ -6,6 +6,7 @@ import { Markdown } from "../modules/Markdown.mjs";
 import { Sender } from "../modules/Sender.mjs";
 
 import payload from "./payload.json";
+import news from "../news.json";
 
 const { VK } = VKIO;
 
@@ -25,10 +26,9 @@ const cluster = {
     }
 }
 
-const vk = new VK()
-    .setOptions({
-        token: process.env.TOKEN
-    })
+const vk = new VK({
+    token: process.env.TOKEN
+});
 
 describe("Keywords", function() {
     describe("check();", function() {
@@ -104,29 +104,41 @@ describe("Markdown", function() {
             );
         });
 
-        it("Проверка текста лишь с одним навигационным #хештегом", async function() {
-            assert.deepStrictEqual(
-                await new Markdown("#test@stevebot", vk)
-                    .fix(),
-                "[#test@stevebot](https://vk.com/stevebot/test)"
-            );
-        });
+        if (process.env.TOKEN) {
+            it("Проверка текста лишь с одним навигационным #хештегом", async function() {
+                assert.deepStrictEqual(
+                    await new Markdown("#test@stevebot", vk)
+                        .fix(),
+                    "[#test@stevebot](https://vk.com/stevebot/test)"
+                );
+            });
 
-        it("Проверка текста лишь с одним навигационным #хештегом содержащим кириллицу", async function() {
-            assert.deepStrictEqual(
-                await new Markdown("#тест@stevebot", vk)
-                    .fix(),
-                "[#тест@stevebot](https://vk.com/wall-175914098?q=%23тест)"
-            );
-        });
+            it("Проверка текста лишь с одним навигационным #хештегом содержащим кириллицу", async function() {
+                assert.deepStrictEqual(
+                    await new Markdown("#тест@stevebot", vk)
+                        .fix(),
+                    "[#тест@stevebot](https://vk.com/wall-175914098?q=%23тест)"
+                );
+            });
 
-        it("Проверка текста с обычными и навигационными #хештегоми", async function() {
-            assert.deepStrictEqual(
-                await new Markdown(`#Очень длинный текст #hashtag\n#hello #test@stevebot\nПродолжение #тест@apiclub`, vk)
-                    .fix(),
-                `[#Очень](https://vk.com/feed?section=search&q=%23Очень) длинный текст [#hashtag](https://vk.com/feed?section=search&q=%23hashtag)\n[#hello](https://vk.com/feed?section=search&q=%23hello) [#test@stevebot](https://vk.com/stevebot/test)\nПродолжение [#тест@apiclub](https://vk.com/wall-1?q=%23тест)`
-            );
-        });
+            it("Проверка текста с обычными и навигационными #хештегоми", async function() {
+                assert.deepStrictEqual(
+                    await new Markdown(`#Очень длинный текст #hashtag\n#hello #test@stevebot\nПродолжение #тест@apiclub`, vk)
+                        .fix(),
+                    `[#Очень](https://vk.com/feed?section=search&q=%23Очень) длинный текст [#hashtag](https://vk.com/feed?section=search&q=%23hashtag)\n[#hello](https://vk.com/feed?section=search&q=%23hello) [#test@stevebot](https://vk.com/stevebot/test)\nПродолжение [#тест@apiclub](https://vk.com/wall-1?q=%23тест)`
+                );
+            });
+
+            it("Проверка текста c Wiki-ссылками и #хештегами разного формата", async function() {
+                assert.deepStrictEqual(
+                    await new Markdown(`#hello #test@stevebot\n#тест@apiclub Очень длинный текст [club1|VK API]\n[https://vk.com/stevebot|Steve - Minecraft Бот] [id1|test]`, vk)
+                        .fix(),
+                    `[#hello](https://vk.com/feed?section=search&q=%23hello) [#test@stevebot](https://vk.com/stevebot/test)\n[#тест@apiclub](https://vk.com/wall-1?q=%23тест) Очень длинный текст [VK API](https://vk.com/club1)\n[Steve - Minecraft Бот](https://vk.com/stevebot) [test](https://vk.com/id1)`
+                );
+            });
+        }
+
+
 
         it("Проверка текста c wiki-ссылкой", async function() {
             assert.deepStrictEqual(
@@ -135,28 +147,38 @@ describe("Markdown", function() {
                 "[test](https://vk.com/id1)"
             );
         });
-
-        it("Проверка текста c Wiki-ссылками и #хештегами разного формата", async function() {
-            assert.deepStrictEqual(
-                await new Markdown(`#hello #test@stevebot\n#тест@apiclub Очень длинный текст [club1|VK API]\n[https://vk.com/stevebot|Steve - Minecraft Бот] [id1|test]`, vk)
-                    .fix(),
-                `[#hello](https://vk.com/feed?section=search&q=%23hello) [#test@stevebot](https://vk.com/stevebot/test)\n[#тест@apiclub](https://vk.com/wall-1?q=%23тест) Очень длинный текст [VK API](https://vk.com/club1)\n[Steve - Minecraft Бот](https://vk.com/stevebot) [test](https://vk.com/id1)`
-            );
-        });
     });
 });
 
-describe("Sender", function() {
-    describe("post();", function() {
-        it("Проверка на отсутствие ошибок при отправке записи в Discord", async function() {
-            this.timeout(30000);
+if (process.env.TOKEN) {
+    describe("Sender", function() {
+        describe("post();", function() {
+            it("Проверка на отсутствие ошибок при отправке записи в Discord", async function() {
+                this.timeout(30000);
 
-            await new Sender({
-                ...cluster,
-                index: 1,
-                VK: vk
-            })
-                .post(payload);
+                await new Sender({
+                    ...cluster,
+                    index: 1,
+                    VK: vk
+                })
+                    .post(payload);
+            });
+        });
+
+        describe("pushDate();", function () {
+            it("Проверка на соответствие даты опубликованной записи", async function() {
+                const group = news[cluster.vk.group_id];
+
+                assert.ok(
+                    group.last === payload.date &&
+                    group.published.includes(payload.date)
+                );
+            });
         });
     });
-});
+} else {
+    console.log(`
+    Переменная окружения TOKEN не установлена, тесты с ее использованием пропускаются.
+    Для безопасности, в PR переменные окружения не передаются.
+    `);
+}
