@@ -1,4 +1,7 @@
+import VKIO from "vk-io";
 import replaceAsync from "string-replace-async";
+
+const { resolveResource } = VKIO;
 
 export class Markdown {
 
@@ -9,7 +12,7 @@ export class Markdown {
     }
 
     async fix() {
-        const { snippets } = this.VK;
+        const { api } = this.VK;
 
         let fixed = this.text;
 
@@ -25,7 +28,10 @@ export class Markdown {
             if (isNavigationHashtag) {
                 const [, hashtag, group] = isNavigationHashtag;
 
-                const resource = await snippets.resolveResource(group)
+                const resource = await resolveResource({
+                    resource: group,
+                    api
+                })
                     .catch(() => null);
 
                 if (resource && resource.type === "group") {
