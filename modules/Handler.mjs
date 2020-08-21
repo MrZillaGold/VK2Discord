@@ -32,7 +32,7 @@ export class Handler {
         const { vk, index } = this.cluster;
         const { interval, group_id, filter } = vk;
 
-        console.log(`[VK2DISCORD] Кластер #${index} будет проверять новые записи с интервалом в ${interval} секунд.`);
+        console.log(`[VK2Discord] Кластер #${index} будет проверять новые записи с интервалом в ${interval} секунд.`);
 
         if (interval < 30) {
             console.log("[!] Не рекомендуем ставить интервал получения постов меньше 30 секунд, во избежания лимитов ВКонтакте!");
@@ -66,11 +66,11 @@ export class Handler {
             })
                 .then(({ groups, profiles, items }) => {
 
-                    if (groups.length > 0 && (groupIdMatch || !userIdMatch)) { // Устанавливаем footer от типа отправителя записи
+                    if (groups.length && (groupIdMatch || !userIdMatch)) { // Устанавливаем footer от типа отправителя записи
                         const [{ name, photo_50 }] = groups;
 
                         sender.builder.setFooter(name, photo_50);
-                    } else if (profiles.length > 0) {
+                    } else if (profiles.length) {
                         const [{ first_name, last_name, photo_50 }] = profiles;
 
                         sender.builder.setFooter(`${first_name} ${last_name}`, photo_50);
@@ -78,10 +78,10 @@ export class Handler {
 
                     const [post1, post2] = items;
 
-                    if (items.length > 0) { // Проверяем наличие закрепа, если он есть берем свежую запись
+                    if (items.length) { // Проверяем наличие закрепа, если он есть берем свежую запись
                         const post = items.length === 2 && post2.date > post1.date ? post2 : post1;
 
-                        return sender.post.call(sender, post);
+                        return sender.post(post);
                     } else {
                         console.log("[!] Не получено ни одной записи. Проверьте наличие записей в группе или измените значение фильтра в конфигурации.");
                     }
@@ -107,12 +107,12 @@ export class Handler {
             sender.builder.setFooter(name, photo_50);
 
             if (payload.post_type === "post") {
-                return sender.post.call(sender, payload);
+                return sender.post(payload);
             }
         });
 
         updates.start()
-            .then(() => console.log(`[VK2DISCORD] Кластер #${index} подключен к ВКонтакте с использованием LongPoll!`))
+            .then(() => console.log(`[VK2Discord] Кластер #${index} подключен к ВКонтакте с использованием LongPoll!`))
             .catch(console.log);
     }
 

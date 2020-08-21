@@ -12,4 +12,4 @@ clusters.forEach((cluster, index) =>
         .init()
 );
 
-console.log("[VK2DISCORD] Запущен.");
+console.log("[VK2Discord] Запущен.");

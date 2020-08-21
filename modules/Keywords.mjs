@@ -7,7 +7,7 @@ export class Keywords {
     check(text) {
         const { keywords } = this;
 
-        if (keywords.length > 0 && text) {
+        if (keywords.length && text) {
             return keywords.some(keyword => {
                 return text.match(
                     new RegExp(keyword, "gi")
