@@ -19,7 +19,7 @@ export class Attachments {
                     }
                     break;
                 case "video":
-                    return `\n[:video_camera: Смотреть видео: ${video.title}](https://vk.com/video${video.owner_id}_${video.id})`;
+                    return `\n[:video_camera: Видео: ${video.title}](https://vk.com/video${video.owner_id}_${video.id})`;
                 case "link":
                     return `\n[:link: ${link.button_text || "Ссылка"}: ${link.title}](${link.url})`;
                 case "doc":
