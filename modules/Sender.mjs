@@ -56,7 +56,8 @@ export class Sender {
             }
 
             if (payload.attachments) {
-                post.attachments += new Attachments(payload.attachments).parse(builder);
+                post.attachments += new Attachments(payload.attachments)
+                    .parse(builder);
             }
 
             const Repost = payload.copy_history ? payload.copy_history[0] : null;
@@ -73,7 +74,8 @@ export class Sender {
                 }
 
                 if (Repost.attachments) {
-                    repost.attachments += new Attachments(Repost.attachments).parse(builder);
+                    repost.attachments += new Attachments(Repost.attachments)
+                        .parse(builder);
                 }
             }
 

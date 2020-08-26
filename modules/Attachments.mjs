@@ -12,7 +12,7 @@ export class Attachments {
                 case "photo":
                     if (!builder.data.attachments[0].image_url) {
                         if (photo.sizes) {
-                            builder.setImage(photo.sizes.pop().url);
+                            builder.setImage(this.popAttachment(photo.sizes).url);
                         } else {
                             console.log("[!] В записи есть фотографии, но вы не установили версию LongPoll API 5.103 или выше.\nФотографии не будут обработаны.");
                         }
@@ -23,8 +23,10 @@ export class Attachments {
                 case "link":
                     return `\n[:link: ${link.button_text || "Ссылка"}: ${link.title}](${link.url})`;
                 case "doc":
-                    if (doc.ext === "gif") {
-                        builder.setImage(doc.url);
+                    if (doc.ext === "gif" && !builder.data.attachments[0].image_url) {
+                        const gif = this.popAttachment(doc.preview.photo.sizes).src;
+
+                        builder.setImage(gif);
                     } else {
                         return `\n[:page_facing_up: Документ: ${doc.title}](${doc.url})`;
                     }
@@ -38,5 +40,11 @@ export class Attachments {
             }
         })
             .join("");
+    }
+
+    popAttachment(attachment) {
+        return attachment
+            .sort((a, b) => a.width * a.height - b.width * b.height)
+            .pop();
     }
 }
