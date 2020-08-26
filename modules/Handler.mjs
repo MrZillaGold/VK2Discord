@@ -62,7 +62,7 @@ export class Handler {
                 count: 2,
                 extended: 1,
                 filter: filter ? "owner" : "all",
-                v: "5.103"
+                v: "5.122"
             })
                 .then(({ groups, profiles, items }) => {
 
@@ -112,7 +112,9 @@ export class Handler {
         });
 
         updates.start()
-            .then(() => console.log(`[VK2Discord] Кластер #${index} подключен к ВКонтакте с использованием LongPoll!`))
+            .then(() =>
+                console.log(`[VK2Discord] Кластер #${index} подключен к ВКонтакте с использованием LongPoll!`)
+            )
             .catch(console.log);
     }
 
