@@ -157,7 +157,7 @@ export class Handler {
         if (copyright) {
             const { photo_50 } = await this.getById(copyright.id);
 
-            builder.setFooter(`Источник: ${copyright.name}`, photo_50);
+            builder.setFooter(`Источник: ${copyright.name}`, copyright.id ? photo_50 : null);
         }
     }
 
