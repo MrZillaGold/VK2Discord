@@ -45,9 +45,6 @@ export class Sender {
                 return;
             } // Фильтр на записи "Только от имени группы" для LongPoll API
 
-            post.text +=
-                `[**Открыть запись ВКонтакте**](https://vk.com/wall${payload.owner_id}_${payload.id})\n\n`;
-
             if (payload.text) {
                 post.text += `${
                     await new Markdown(payload.text, VK)

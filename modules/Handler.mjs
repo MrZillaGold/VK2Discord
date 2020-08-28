@@ -64,22 +64,41 @@ export class Handler {
                 filter: filter ? "owner" : "all",
                 v: "5.122"
             })
-                .then(({ groups, profiles, items }) => {
+                .then(async ({ groups, profiles, items }) => {
+                    if (items.length) {
+                        // Проверяем наличие закрепа, если он есть берем свежую запись
+                        const post = items.length === 2 ? items[0].date > items[1].date ? items[0] : items[1] : items[0];
 
-                    if (groups.length && (groupIdMatch || !userIdMatch)) { // Устанавливаем footer от типа отправителя записи
-                        const [{ name, photo_50 }] = groups;
+                        const link = this.getPostLink(post);
 
-                        sender.builder.setFooter(name, photo_50);
-                    } else if (profiles.length) {
-                        const [{ first_name, last_name, photo_50 }] = profiles;
+                        // Устанавливаем автора от типа отправителя записи
+                        if (post.owner_id === post.from_id) {
+                            const [{ name, photo_50 }] = (post.from_id > 0 ?
+                                profiles.filter(({ id }) => id === post.owner_id)
+                                :
+                                groups.filter(({ id }) => id === Math.abs(post.owner_id)))
+                                .map((profile) => {
 
-                        sender.builder.setFooter(`${first_name} ${last_name}`, photo_50);
-                    }
+                                    const { name, photo_50, first_name, last_name } = profile;
 
-                    const [post1, post2] = items;
+                                    if (name) {
+                                        return profile;
+                                    } else {
+                                        return {
+                                            name: `${first_name} ${last_name}`,
+                                            photo_50
+                                        }
+                                    }
+                                });
 
-                    if (items.length) { // Проверяем наличие закрепа, если он есть берем свежую запись
-                        const post = items.length === 2 && post2.date > post1.date ? post2 : post1;
+                            sender.builder.setAuthor(name, photo_50, link);
+                        } else {
+                            const [{ first_name, last_name, photo_50 }] = profiles.filter(({ id }) => id === post.from_id);
+
+                            sender.builder.setAuthor(`${first_name} ${last_name}`, photo_50, link);
+                        }
+
+                        await this.setCopyright(post, sender.builder);
 
                         return sender.post(post);
                     } else {
@@ -94,19 +113,21 @@ export class Handler {
     async startPolling() {
         const { index } = this.cluster;
 
-        const { updates, api } = this.VK;
+        const { updates } = this.VK;
 
-        const [{ photo_50, name }] = await api.groups.getById();
-
-        updates.on("wall_post_new", context => {
+        updates.on("wall_post_new", async (context) => {
 
             const { payload } = context;
 
-            const sender = this.createSender();
-
-            sender.builder.setFooter(name, photo_50);
-
             if (payload.post_type === "post") {
+                const sender = this.createSender();
+
+                const { photo_50, name } = await this.getById(payload.from_id);
+
+                sender.builder.setAuthor(name, photo_50, this.getPostLink(payload));
+
+                await this.setCopyright(payload, sender.builder);
+
                 return sender.post(payload);
             }
         });
@@ -126,5 +147,36 @@ export class Handler {
             ...cluster,
             VK
         });
+    }
+
+    getPostLink({ owner_id, id }) {
+        return `https://vk.com/wall${owner_id}_${id}`;
+    }
+
+    async setCopyright({ copyright }, builder) {
+        if (copyright) {
+            const { photo_50 } = await this.getById(copyright.id);
+
+            builder.setFooter(`Источник: ${copyright.name}`, photo_50);
+        }
+    }
+
+    async getById(id) {
+        const { api } = this.VK;
+
+        return id > 0 ?
+            await api.users.get({
+                user_ids: id,
+                fields: "photo_50"
+            })
+                .then(([{ first_name, last_name, ...user }]) => ({
+                    name: `${first_name} ${last_name}`,
+                    ...user
+                }))
+            :
+            await api.groups.getById({
+                group_id: Math.abs(id)
+            })
+                .then(([group]) => group);
     }
 }
