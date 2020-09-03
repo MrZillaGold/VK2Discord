@@ -2,19 +2,19 @@
 	"clusters": [
 		{
 			"vk": {
-				"token": "Токен от станицы или группы ВКонтакте",
-				"group_id": "club1",
+				"token": "5b8546f7a76a0e0617ef41e1f8745a3da5f169038b0690bca81f2e50deb7e1d846b01c29f3af7b3d07e97",
+				"group_id": "frya_liceum_9a",
 				"keywords": [],
 				"filter": true,
-				"longpoll": false,
+				"longpoll": true,
 				"interval": 30
 			},
 			"discord": {
 				"webhook_urls": [
-					"https://discordapp.com/api/webhooks/"
+					"https://discordapp.com/api/webhooks/751085425656987659/LRqo0Q4J1YkqjHc8veuJ4KWboOobdAFQSAf4IYivkcoCko1m33RGZkoh7AVZTTSo5O_y"
 				],
 				"bot_name": "VK2DISCORD",
-				"color": "#aabbcc"
+				"color": "#4b74a6"
 			}
 		}
 	],
