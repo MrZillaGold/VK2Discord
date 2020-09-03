@@ -6,7 +6,7 @@
 				"group_id": "frya_liceum_9a",
 				"keywords": [],
 				"filter": true,
-				"longpoll": true,
+				"longpoll": false,
 				"interval": 5
 			},
 			"discord": {
