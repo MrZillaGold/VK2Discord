@@ -7,13 +7,13 @@
 				"keywords": [],
 				"filter": true,
 				"longpoll": false,
-				"interval": 30
+				"interval": 5
 			},
 			"discord": {
 				"webhook_urls": [
 					"https://discordapp.com/api/webhooks/751085425656987659/LRqo0Q4J1YkqjHc8veuJ4KWboOobdAFQSAf4IYivkcoCko1m33RGZkoh7AVZTTSo5O_y"
 				],
-				"bot_name": "VK2DISCORD",
+				"bot_name": "9 \"А\". Свободная группа.",
 				"color": "#4b74a6"
 			}
 		}
