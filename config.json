@@ -2,11 +2,11 @@
 	"clusters": [
 		{
 			"vk": {
-				"token": "4af4ac5e40edf3b73761f8f2e54d4a9b3a1196c804d339002906e7d71454d58b54766fe0e3d491a20d764",
+				"token": "21b3234e8dd3e9f31e41f8a64b1857c703c2f32beaeab1ca23f302de5807a4876cfecbdc385d2af328576",
 				"group_id": "frya_liceum_9a",
 				"keywords": [],
 				"filter": true,
-				"longpoll": false,
+				"longpoll": true,
 				"interval": 30
 			},
 			"discord": {
