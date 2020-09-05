@@ -2,8 +2,8 @@
 	"clusters": [
 		{
 			"vk": {
-				"token": "21b3234e8dd3e9f31e41f8a64b1857c703c2f32beaeab1ca23f302de5807a4876cfecbdc385d2af328576",
-				"group_id": "frya_liceum_9a",
+				"token": "64776a8db1c0f4e5a192e0688a1f326efbf8bacf6dcf2b2e0116a173f2ca471331915afcc629f28bf6de8",
+				"group_id": "rave.club",
 				"keywords": [],
 				"filter": true,
 				"longpoll": true,
@@ -11,9 +11,9 @@
 			},
 			"discord": {
 				"webhook_urls": [
-					"https://discordapp.com/api/webhooks/751085425656987659/LRqo0Q4J1YkqjHc8veuJ4KWboOobdAFQSAf4IYivkcoCko1m33RGZkoh7AVZTTSo5O_y"
+					"https://discordapp.com/api/webhooks/751881089064370317/q87_61-vAvDfXDKlMRE7SK8qPYQUIC7DHY-uaRZI5G-doHYt5a5fnDXtTz5ojC8WgrzA"
 				],
-				"bot_name": "9 \"А\". Свободная группа.",
+				"bot_name": "VK",
 				"color": "#4b74a6"
 			}
 		}
