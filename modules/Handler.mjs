@@ -155,9 +155,9 @@ export class Handler {
 
     async setCopyright({ copyright }, builder) {
         if (copyright) {
-            const { photo_50 } = await this.getById(copyright.id);
+            const group = copyright.id ? await this.getById(copyright.id) : null;
 
-            builder.setFooter(`Источник: ${copyright.name}`, copyright.id ? photo_50 : null);
+            builder.setFooter(`Источник: ${copyright.name}`, group && group.photo_50); // Вскоре заменить на nullable оператор, при этом теряя поддержку node < 14
         }
     }
 
