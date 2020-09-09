@@ -14,7 +14,9 @@
           "https://discordapp.com/api/webhooks/730807540459241472"
         ],
         "bot_name": "VK2DISCORD",
-        "color": "#aabbcc"
+        "color": "#aabbcc",
+        "author": true,
+        "copyright": false
       }
     },
     {
@@ -32,7 +34,9 @@
           "https://discordapp.com/api/webhooks/234556456456567632"
         ],
         "bot_name": "VK2DISCORD",
-        "color": "#ffbbff"
+        "color": "#ffbbff",
+        "author": true,
+        "copyright": true
       }
     }
   ],

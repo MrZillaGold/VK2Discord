@@ -7,19 +7,19 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 fs.readdir(path.join(__dirname), async (error, files) => {
 
     if (error) {
-        return console.log("[!] Ошибка при получении файлов из папки со скриптом. Проверить наличие конфига не удастся.");
+        return console.warn("[!] Ошибка при получении файлов из папки со скриптом. Проверить наличие конфига не удастся.");
     }
 
     if (files.includes("config.json")) {
         try {
             const config = await import("./config");
 
-            if (config.default.version_dont_modify_me !== 1) {
+            if (config.default.version_dont_modify_me !== 2) {
                 rename();
 
                 createConfig();
 
-                console.log("[!] Версия конфига не соответствует текущей, файл был переименован в config_old.json. Новый файл с конфигом был создан, настройте его следуя инструкции.");
+                console.error("\n\n[!] Версия конфига не соответствует текущей, файл был переименован в config_old.json. Новый файл с конфигом был создан, настройте его следуя инструкции, либо примените обновления для конфига при помощи скрипта npm run update.\n\n");
 
                 process.exit(-1);
             }
@@ -28,14 +28,14 @@ fs.readdir(path.join(__dirname), async (error, files) => {
 
             createConfig();
 
-            console.log("[!] Конфиг поврежден либо настроен неправильно, файл был переименован в config_old.json. Новый файл с конфигом был создан, настройте его следуя инструкции.");
+            console.error("[!] Конфиг поврежден либо настроен неправильно, файл был переименован в config_old.json. Новый файл с конфигом был создан, настройте его следуя инструкции.");
 
             process.exit(-1);
         }
     } else {
         createConfig();
 
-        console.log("[!] Конфиг в папке со скриптом не обнаружен, создан новый файл с конфигом. Настройте его следуя инструкции.");
+        console.warn("[!] Конфиг в папке со скриптом не обнаружен, создан новый файл с конфигом. Настройте его следуя инструкции.");
 
         process.exit(-1);
     }
@@ -68,11 +68,13 @@ function createConfig() {
                         "https://discordapp.com/api/webhooks/"
                     ],
                     bot_name: "VK2DISCORD",
-                    color: "#aabbcc"
+                    color: "#aabbcc",
+                    author: true,
+                    copyright: true
                 }
             }
         ],
-        version_dont_modify_me: 1
+        version_dont_modify_me: 2
     };
 
     fs.writeFileSync("./config.json", JSON.stringify(config, null, "\t"));

@@ -29,13 +29,14 @@ export class Handler {
     startInterval() {
         const { api } = this.VK;
 
-        const { vk, index } = this.cluster;
+        const { vk, discord, index } = this.cluster;
         const { interval, group_id, filter } = vk;
+        const { author, copyright } = discord;
 
         console.log(`[VK2Discord] Кластер #${index} будет проверять новые записи с интервалом в ${interval} секунд.`);
 
         if (interval < 30) {
-            console.log("[!] Не рекомендуем ставить интервал получения постов меньше 30 секунд, во избежания лимитов ВКонтакте!");
+            console.warn("[!] Не рекомендуем ставить интервал получения постов меньше 30 секунд, во избежания лимитов ВКонтакте!");
         }
 
         setInterval(() => {
@@ -72,33 +73,37 @@ export class Handler {
                         const link = this.getPostLink(post);
 
                         // Устанавливаем автора от типа отправителя записи
-                        if (post.owner_id === post.from_id) {
-                            const [{ name, photo_50 }] = (post.from_id > 0 ?
-                                profiles.filter(({ id }) => id === post.owner_id)
-                                :
-                                groups.filter(({ id }) => id === Math.abs(post.owner_id)))
-                                .map((profile) => {
+                        if (author) {
+                            if (post.owner_id === post.from_id) {
+                                const [{ name, photo_50 }] = (post.from_id > 0 ?
+                                    profiles.filter(({ id }) => id === post.owner_id)
+                                    :
+                                    groups.filter(({ id }) => id === Math.abs(post.owner_id)))
+                                    .map((profile) => {
 
-                                    const { name, photo_50, first_name, last_name } = profile;
+                                        const { name, photo_50, first_name, last_name } = profile;
 
-                                    if (name) {
-                                        return profile;
-                                    } else {
-                                        return {
-                                            name: `${first_name} ${last_name}`,
-                                            photo_50
+                                        if (name) {
+                                            return profile;
+                                        } else {
+                                            return {
+                                                name: `${first_name} ${last_name}`,
+                                                photo_50
+                                            }
                                         }
-                                    }
-                                });
+                                    });
 
-                            sender.builder.setAuthor(name, photo_50, link);
-                        } else {
-                            const [{ first_name, last_name, photo_50 }] = profiles.filter(({ id }) => id === post.from_id);
+                                sender.builder.setAuthor(name, photo_50, link);
+                            } else {
+                                const [{ first_name, last_name, photo_50 }] = profiles.filter(({ id }) => id === post.from_id);
 
-                            sender.builder.setAuthor(`${first_name} ${last_name}`, photo_50, link);
+                                sender.builder.setAuthor(`${first_name} ${last_name}`, photo_50, link);
+                            }
                         }
 
-                        await this.setCopyright(post, sender.builder);
+                        if (copyright) {
+                            await this.setCopyright(post, sender.builder);
+                        }
 
                         return sender.post(post);
                     } else {
@@ -111,9 +116,10 @@ export class Handler {
     }
 
     async startPolling() {
-        const { index } = this.cluster;
-
+        const { index, discord } = this.cluster;
         const { updates } = this.VK;
+
+        const { author, copyright } = discord;
 
         updates.on("wall_post_new", async (context) => {
 
@@ -122,11 +128,15 @@ export class Handler {
             if (payload.post_type === "post") {
                 const sender = this.createSender();
 
-                const { photo_50, name } = await this.getById(payload.from_id);
+                if (author) {
+                    const { photo_50, name } = await this.getById(payload.from_id);
 
-                sender.builder.setAuthor(name, photo_50, this.getPostLink(payload));
+                    sender.builder.setAuthor(name, photo_50, this.getPostLink(payload));
+                }
 
-                await this.setCopyright(payload, sender.builder);
+                if (copyright) {
+                    await this.setCopyright(payload, sender.builder);
+                }
 
                 return sender.post(payload);
             }
