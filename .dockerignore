@@ -1,0 +1,6 @@
+node_modules
+.circleci
+npm-debug.log
+config_example.json
+CONFIG_FIELDS.md
+README.md
