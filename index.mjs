@@ -4,6 +4,8 @@ import config from "./config";
 
 const { clusters } = config;
 
+console.log("[VK2Discord] Запущен.");
+
 clusters.forEach((cluster, index) =>
     new Handler({
         ...cluster,
@@ -11,5 +13,3 @@ clusters.forEach((cluster, index) =>
     })
         .init()
 );
-
-console.log("[VK2Discord] Запущен.");
