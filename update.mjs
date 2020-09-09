@@ -25,7 +25,7 @@ const changes = new Map([
 if (!clusters || !version_dont_modify_me) {
     console.warn("[!] Структура вашего конфига больше не поддерживается скриптом, вам необходимо обновить конфиг вручную следуя инструкции.");
 } else {
-    if (version_dont_modify_me === LATEST_CONFIG_VERSION) {
+    if (version_dont_modify_me >= LATEST_CONFIG_VERSION) {
         console.log("[!] Текущая версия конфига последняя, обновление не требуется.");
     } else {
         config.clusters = clusters.map(({ vk, discord }) => {
