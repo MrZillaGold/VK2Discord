@@ -22,7 +22,9 @@ const cluster = {
             process.env.WEBHOOK
         ],
         bot_name: "Travis",
-        color: "#ffbbff"
+        color: "#ffbbff",
+        author: true,
+        copyright: true
     }
 }
 
