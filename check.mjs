@@ -3,6 +3,7 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const LATEST_CONFIG_VERSION = 2;
 
 fs.readdir(path.join(__dirname), async (error, files) => {
 
@@ -14,7 +15,7 @@ fs.readdir(path.join(__dirname), async (error, files) => {
         try {
             const config = await import("./config");
 
-            if (config.default.version_dont_modify_me !== 2) {
+            if (config.default.version_dont_modify_me !== LATEST_CONFIG_VERSION) {
                 rename();
 
                 createConfig();
@@ -74,7 +75,7 @@ function createConfig() {
                 }
             }
         ],
-        version_dont_modify_me: 2
+        version_dont_modify_me: LATEST_CONFIG_VERSION
     };
 
     fs.writeFileSync("./config.json", JSON.stringify(config, null, "\t"));
