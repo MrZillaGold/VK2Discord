@@ -7,6 +7,7 @@
     "start": "npm run check && npm run init",
     "check": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node check.mjs",
     "init": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node index.mjs",
+    "update": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node update.mjs",
     "test": "node --experimental-modules --experimental-json-modules node_modules/mocha/bin/_mocha --reporter spec"
   },
   "homepage": "https://github.com/MrZillaGold/VK2Discord#readme",
