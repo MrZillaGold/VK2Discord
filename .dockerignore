@@ -1,5 +1,7 @@
 node_modules
 .circleci
+.idea
+.github
 npm-debug.log
 config_example.json
 CONFIG_FIELDS.md
