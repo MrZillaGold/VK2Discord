@@ -19,24 +19,24 @@ export class Attachments {
                     }
                     break;
                 case "video":
-                    return `\n[:video_camera: Видео: ${video.title}](https://vk.com/video${video.owner_id}_${video.id})`;
+                    return `\n[📹 Видео: ${video.title}](https://vk.com/video${video.owner_id}_${video.id})`;
                 case "link":
-                    return `\n[:link: ${link.button_text || "Ссылка"}: ${link.title}](${link.url})`;
+                    return `\n[🔗 ${link.button_text || "Ссылка"}: ${link.title}](${link.url})`;
                 case "doc":
                     if (doc.ext === "gif" && !builder.data.attachments[0].image_url) {
                         const gif = this.popAttachment(doc.preview.photo.sizes).src;
 
                         builder.setImage(gif);
                     } else {
-                        return `\n[:page_facing_up: Документ: ${doc.title}](${doc.url})`;
+                        return `\n[📄 Документ: ${doc.title}](${doc.url})`;
                     }
                     break;
                 case "audio":
                     const { artist, title } = audio;
 
-                    return `\n[:musical_note:  Музыка: ${artist} - ${title}](https://vk.com/search?c[section]=audio&c[q]=${encodeURI(artist.replace(/&/g, "и"))}%20-%20${encodeURI(title)}&c[performer]=1)`;
+                    return `\n[🎵  Музыка: ${artist} - ${title}](https://vk.com/search?c[section]=audio&c[q]=${encodeURI(artist.replace(/&/g, "и"))}%20-%20${encodeURI(title)}&c[performer]=1)`;
                 case "poll":
-                    return `\n[:bar_chart: Опрос: ${poll.question}](https://vk.com/feed?w=poll${poll.owner_id}_${poll.id})`;
+                    return `\n[📊 Опрос: ${poll.question}](https://vk.com/feed?w=poll${poll.owner_id}_${poll.id})`;
             }
         })
             .join("");
