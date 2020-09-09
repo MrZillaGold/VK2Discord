@@ -14,9 +14,11 @@
 					"https://discordapp.com/api/webhooks/"
 				],
 				"bot_name": "VK2DISCORD",
-				"color": "#aabbcc"
+				"color": "#aabbcc",
+				"author": true,
+				"copyright": true
 			}
 		}
 	],
-	"version_dont_modify_me": 1
+	"version_dont_modify_me": 2
 }
