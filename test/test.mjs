@@ -21,7 +21,6 @@ const cluster = {
         webhook_urls: [
             process.env.WEBHOOK
         ],
-        bot_name: "Travis",
         color: "#ffbbff",
         author: true,
         copyright: true

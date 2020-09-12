@@ -13,7 +13,6 @@
 				"webhook_urls": [
 					"https://discordapp.com/api/webhooks/"
 				],
-				"bot_name": "VK2DISCORD",
 				"color": "#aabbcc",
 				"author": true,
 				"copyright": true
