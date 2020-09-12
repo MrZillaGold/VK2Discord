@@ -32,15 +32,8 @@
       </a>
     </td>
     <td align="center">
-      <a href="https://vk.com/wotclue">
-        <img src="https://i.imgur.com/04eVG0k.jpg" width="100px;" alt="Dead by Daylight"/>
-        <br/>
-      <sub><b>WOT Express</b></sub>
-      </a>
-    </td>
-    <td align="center">
       <a href="https://discord.gg/tAca6dX">
-        <img src="https://i.imgur.com/ExjWQCI.png" width="100px;" alt="Dead by Daylight"/>
+        <img src="https://i.imgur.com/ExjWQCI.png" width="100px;" alt="MINECRAFT RU"/>
         <br/>
       <sub><b>MINECRAFT RU</b></sub>
       </a>
@@ -54,7 +47,7 @@
     </td>
     <td align="center">
       <a href="https://discord.gg/MfKUp4F">
-        <img src="https://i.imgur.com/FuI3ONC.jpg" width="100px;" alt="Dead by Daylight"/>
+        <img src="https://i.imgur.com/FuI3ONC.jpg" width="100px;" alt="VTC QuickFire Corp."/>
         <br/>
       <sub><b>VTC QuickFire Corp.</b></sub>
       </a>

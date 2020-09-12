@@ -1,5 +1,5 @@
 import fs from "fs";
-import webhook from "webhook-discord";
+import Discord from "discord.js";
 
 import { Markdown } from "./Markdown.mjs";
 import { Attachments } from "./Attachments.mjs";
@@ -10,6 +10,9 @@ import news from "../news.json";
 export class Sender {
 
     constructor(config) {
+        const { discord } = config;
+        const { color } = discord;
+
         this.config = config;
 
         this.message = {
@@ -23,13 +26,15 @@ export class Sender {
             }
         };
 
-        this.builder = new webhook.MessageBuilder();
+        this.builders = [
+            new Discord.MessageEmbed()
+                .setColor(color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/m) ? color : "#aabbcc")
+                .setURL("https://twitter.com")
+        ];
     }
 
     async post(payload) {
-        const { post, repost } = this.message;
-        const { vk, index, VK } = this.config;
-        const builder = this.builder;
+        const { vk, index } = this.config;
 
         const { longpoll, filter, group_id, keywords } = vk;
 
@@ -45,36 +50,7 @@ export class Sender {
                 return;
             } // Фильтр на записи "Только от имени группы" для LongPoll API
 
-            if (payload.text) {
-                post.text += `${
-                    await new Markdown(payload.text, VK)
-                        .fix()
-                }\n\n`;
-            }
-
-            if (payload.attachments) {
-                post.attachments += new Attachments(payload.attachments)
-                    .parse(builder);
-            }
-
-            const Repost = payload.copy_history ? payload.copy_history[0] : null;
-
-            if (Repost) {
-                repost.text +=
-                    `\n\n>>> [**Репост записи**](https://vk.com/wall${Repost.from_id}_${Repost.id})\n\n`;
-
-                if (Repost.text) {
-                    repost.text += `${
-                        await new Markdown(Repost.text, VK)
-                            .fix()
-                    }\n\n`;
-                }
-
-                if (Repost.attachments) {
-                    repost.attachments += new Attachments(Repost.attachments)
-                        .parse(builder);
-                }
-            }
+            await this.parseText(payload);
 
             return this.send(date);
         } else {
@@ -85,22 +61,72 @@ export class Sender {
     send(date) {
         const { post, repost } = this.message;
         const { discord } = this.config;
-        const builder = this.builder;
+        const builders = this.builders;
 
-        const { bot_name, color, webhook_urls } = discord;
+        const [builder] = builders;
+        const { webhook_urls } = discord;
 
         this.sliceMessage(); // Обрезаем сообщение перед отправкой в Discord
 
-        builder.setDescription(post.text + post.attachments + repost.text + repost.attachments)
-            .setName(bot_name.slice(0, 32))
-            .setColor(color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/m) ? color : "#aabbcc");
+        builder.setDescription(post.text + post.attachments + repost.text + repost.attachments);
 
-        for (const url of webhook_urls) { // Почему for? В тестах нужно убедится, что отправка произошла без ошибок, forEach с async не очень
-            new webhook.Webhook(url)
-                .send(builder);
-        }
+        Promise.allSettled(
+            webhook_urls.map((url) => {
+
+                const parsedUrl = /https:\/\/discord(?:app)?\.com\/api\/webhooks\/([^]+)\/([^/]+)/g.exec(url);
+
+                if (parsedUrl) {
+                    const [, id, token] = parsedUrl;
+
+                    return new Discord.WebhookClient(
+                        id,
+                        token
+                    )
+                        .send(this.builders);
+                } else {
+                    console.error(`[!] ${url} не является ссылкой на Discord Webhook.`)
+                }
+            })
+        );
 
         this.pushDate(date); // Сохраняем дату поста, чтобы не публиковать его заново
+    }
+
+    async parseText(payload) {
+        const { post, repost } = this.message;
+        const { VK } = this.config;
+        const builders = this.builders;
+
+        if (payload.text) {
+            post.text += `${
+                await new Markdown(payload.text, VK)
+                    .fix()
+            }\n\n`;
+        }
+
+        if (payload.attachments) {
+            post.attachments += new Attachments(payload.attachments)
+                .parse(builders);
+        }
+
+        const Repost = payload.copy_history ? payload.copy_history[0] : null;
+
+        if (Repost) {
+            repost.text +=
+                `\n\n>>> [**Репост записи**](https://vk.com/wall${Repost.from_id}_${Repost.id})\n\n`;
+
+            if (Repost.text) {
+                repost.text += `${
+                    await new Markdown(Repost.text, VK)
+                        .fix()
+                }\n\n`;
+            }
+
+            if (Repost.attachments) {
+                repost.attachments += new Attachments(Repost.attachments)
+                    .parse(builders);
+            }
+        }
     }
 
     sliceMessage() {
@@ -112,7 +138,6 @@ export class Sender {
             }
 
             if (repost.text) {
-                console.log(repost.text)
                 repost.text = `${repost.text.slice(0, post.text ? 1021 - repost.attachments.length : 2045 - repost.attachments.length)}…\n\n`
             }
         }
@@ -127,7 +152,7 @@ export class Sender {
             news[group_id].last = date;
 
             news[group_id].published.unshift(date);
-            news[group_id].published = news[group_id].published.splice(0, 14);
+            news[group_id].published = news[group_id].published.splice(0, 49);
         } else {
             news[group_id] = {
                 last: date,

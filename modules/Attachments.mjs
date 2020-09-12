@@ -1,21 +1,28 @@
+import Discord from "discord.js";
+
 export class Attachments {
 
     constructor(attachments) {
         this.attachments = attachments;
     }
 
-    parse(builder) {
+    parse(builders) {
         const { attachments } = this;
+        const [builder] = builders;
 
         return attachments.map(({ type, photo, video, link, doc, audio, poll }) => {
             switch (type) {
                 case "photo":
-                    if (!builder.data.attachments[0].image_url) {
-                        if (photo.sizes) {
+                    if (photo.sizes) {
+                        if (!builder.image) {
                             builder.setImage(this.popAttachment(photo.sizes).url);
                         } else {
-                            console.log("[!] В записи есть фотографии, но вы не установили версию LongPoll API 5.103 или выше.\nФотографии не будут обработаны.");
+                            builders.push(
+                                this.createImageEmbed(this.popAttachment(photo.sizes).url)
+                            );
                         }
+                    } else {
+                        console.log("[!] В записи есть фотографии, но вы не установили версию LongPoll API 5.103 или выше.\nФотографии не будут обработаны.");
                     }
                     break;
                 case "video":
@@ -23,14 +30,21 @@ export class Attachments {
                 case "link":
                     return `\n[🔗 ${link.button_text || "Ссылка"}: ${link.title}](${link.url})`;
                 case "doc":
-                    if (doc.ext === "gif" && !builder.data.attachments[0].image_url) {
+                    if (doc.ext === "gif") {
                         const gif = this.popAttachment(doc.preview.photo.sizes).src;
 
-                        builder.setImage(gif);
-                    } else {
-                        return `\n[📄 Документ: ${doc.title}](${doc.url})`;
+                        if (!builder.image) {
+                            builder.setImage(gif);
+                        } else {
+                            if (builders.length < 10) {
+                                builders.push(
+                                    this.createImageEmbed(gif)
+                                );
+                            }
+                        }
                     }
-                    break;
+
+                    return `\n[📄 Документ: ${doc.title}](${doc.url})`;
                 case "audio":
                     const { artist, title } = audio;
 
@@ -46,5 +60,11 @@ export class Attachments {
         return attachment
             .sort((a, b) => a.width * a.height - b.width * b.height)
             .pop();
+    }
+
+    createImageEmbed(image_url) {
+        return new Discord.MessageEmbed()
+            .setURL("https://twitter.com")
+            .setImage(image_url);
     }
 }

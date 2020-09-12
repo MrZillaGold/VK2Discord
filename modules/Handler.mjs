@@ -58,6 +58,8 @@ export class Handler {
                         domain: group_id
                     };
 
+            const [builder] = sender.builders;
+
             api.wall.get({
                 ...id,
                 count: 2,
@@ -93,16 +95,16 @@ export class Handler {
                                         }
                                     });
 
-                                sender.builder.setAuthor(name, photo_50, link);
+                                builder.setAuthor(name, photo_50, link);
                             } else {
                                 const [{ first_name, last_name, photo_50 }] = profiles.filter(({ id }) => id === post.from_id);
 
-                                sender.builder.setAuthor(`${first_name} ${last_name}`, photo_50, link);
+                                builder.setAuthor(`${first_name} ${last_name}`, photo_50, link);
                             }
                         }
 
                         if (copyright) {
-                            await this.setCopyright(post, sender.builder);
+                            await this.setCopyright(post, builder);
                         }
 
                         return sender.post(post);
@@ -128,14 +130,16 @@ export class Handler {
             if (payload.post_type === "post") {
                 const sender = this.createSender();
 
+                const [builder] = sender.builders;
+
                 if (author) {
                     const { photo_50, name } = await this.getById(payload.from_id);
 
-                    sender.builder.setAuthor(name, photo_50, this.getPostLink(payload));
+                    builder.setAuthor(name, photo_50, this.getPostLink(payload));
                 }
 
                 if (copyright) {
-                    await this.setCopyright(payload, sender.builder);
+                    await this.setCopyright(payload, builder);
                 }
 
                 return sender.post(payload);
