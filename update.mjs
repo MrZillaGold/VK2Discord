@@ -29,7 +29,6 @@ if (!clusters || !version_dont_modify_me) {
         console.log("[!] Текущая версия конфига последняя, обновление не требуется.");
     } else {
         config.clusters = clusters.map(({ vk, discord }) => {
-            console.log(1)
             for (let version = version_dont_modify_me; version !== LATEST_CONFIG_VERSION; version++) {
                 const [vkChanges, discordChanges] = changes.get(version + 1);
 
@@ -42,11 +41,6 @@ if (!clusters || !version_dont_modify_me) {
                     ...discord,
                     ...discordChanges
                 };
-
-                console.log({
-                    ...discord,
-                    ...discordChanges
-                })
             }
 
             return {
