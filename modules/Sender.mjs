@@ -73,7 +73,7 @@ export class Sender {
         Promise.allSettled(
             webhook_urls.map((url) => {
 
-                const parsedUrl = /https:\/\/discord(?:app)?\.com\/api\/webhooks\/([^]+)\/([^/]+)/g.exec(url);
+                const parsedUrl = /https:\/\/(?:\w+\.)?discord(?:app)?\.com\/api\/webhooks\/([^]+)\/([^/]+)/g.exec(url);
 
                 if (parsedUrl) {
                     const [, id, token] = parsedUrl;
