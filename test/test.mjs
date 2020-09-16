@@ -154,20 +154,22 @@ describe("Markdown", function() {
 if (process.env.TOKEN) {
     describe("Sender", function() {
         describe("post();", function() {
-            it("Проверка на отсутствие ошибок при отправке записи в Discord", async function() {
+            it("Проверка на отсутствие ошибок при отправке записи в Discord", function(done) {
                 this.timeout(30000);
 
-                await new Sender({
+                new Sender({
                     ...cluster,
                     index: 1,
                     VK: vk
                 })
-                    .post(payload);
+                    .post(payload)
+                    .then(done)
+                    .catch(done);
             });
         });
 
         describe("pushDate();", function () {
-            it("Проверка на соответствие даты опубликованной записи", async function() {
+            it("Проверка на соответствие даты опубликованной записи", function() {
                 const group = news[cluster.vk.group_id];
 
                 assert.ok(
