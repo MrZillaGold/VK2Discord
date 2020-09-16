@@ -1,4 +1,4 @@
-import fs from "fs";
+import { promises as fs } from "fs";
 import Discord from "discord.js";
 
 import { Markdown } from "./Markdown.mjs";
@@ -58,7 +58,7 @@ export class Sender {
         }
     }
 
-    send(date) {
+    async send(date) {
         const { post, repost } = this.message;
         const { discord } = this.config;
         const builders = this.builders;
@@ -66,9 +66,12 @@ export class Sender {
         const [builder] = builders;
         const { webhook_urls } = discord;
 
-        this.sliceMessage(); // Обрезаем сообщение перед отправкой в Discord
+        const message = new Markdown(post.text + post.attachments + repost.text + repost.attachments)
+            .sliceFix();
 
-        builder.setDescription(post.text + post.attachments + repost.text + repost.attachments);
+        builder.setDescription(message);
+
+        await this.pushDate(date); // Сохраняем дату поста, чтобы не публиковать его заново
 
         Promise.allSettled(
             webhook_urls.map((url) => {
@@ -84,12 +87,10 @@ export class Sender {
                     )
                         .send(this.builders);
                 } else {
-                    console.error(`[!] ${url} не является ссылкой на Discord Webhook.`)
+                    console.error(`[!] ${url} не является ссылкой на Discord Webhook.`);
                 }
             })
         );
-
-        this.pushDate(date); // Сохраняем дату поста, чтобы не публиковать его заново
     }
 
     async parseText(payload) {
@@ -127,23 +128,25 @@ export class Sender {
                     .parse(builders);
             }
         }
+
+        this.sliceMessage();
     }
 
     sliceMessage() {
         const { post, repost } = this.message;
 
-        if (post.text.length + post.attachments.length + repost.text.length + repost.attachments.length > 2048) {
+        if ((post.text + post.attachments + repost.text + repost.attachments).length > 2048) {
             if (post.text) {
-                post.text = `${post.text.slice(0, repost.text ? 1021 - post.attachments.length : 2045 - post.attachments.length)}…\n\n`
+                post.text = `${post.text.slice(0, repost.text ? 1021 - post.attachments.length : 2045 - post.attachments.length)}…\n\n`;
             }
 
             if (repost.text) {
-                repost.text = `${repost.text.slice(0, post.text ? 1021 - repost.attachments.length : 2045 - repost.attachments.length)}…\n\n`
+                repost.text = `${repost.text.slice(0, post.text ? 1021 - repost.attachments.length : 2045 - repost.attachments.length)}…\n\n`;
             }
         }
     }
 
-    pushDate(date) {
+    async pushDate(date) {
         const { vk } = this.config;
 
         const { group_id } = vk;
@@ -162,6 +165,6 @@ export class Sender {
             };
         }
 
-        fs.writeFileSync("./news.json", JSON.stringify(news, null, "\t"));
+        await fs.writeFile("./news.json", JSON.stringify(news, null, "\t"));
     }
 }

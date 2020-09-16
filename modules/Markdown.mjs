@@ -52,4 +52,10 @@ export class Markdown {
             return fixed;
         }
     }
+
+    sliceFix() {
+        const text = this.text;
+
+        return text.replace(/\[([^\]\)]+)?\]?\(?([^\(\)\]\[]+)?…/g, "$1…");
+    }
 }
