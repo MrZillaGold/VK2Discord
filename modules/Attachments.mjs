@@ -42,9 +42,10 @@ export class Attachments {
                                 );
                             }
                         }
+                    } else {
+                        return `\n[📄 Документ: ${doc.title}](${doc.url})`;
                     }
-
-                    return `\n[📄 Документ: ${doc.title}](${doc.url})`;
+                    break;
                 case "audio":
                     const { artist, title } = audio;
 
