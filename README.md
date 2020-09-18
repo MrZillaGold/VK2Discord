@@ -19,6 +19,12 @@
 </p>
 
 <p align="center">
+    <a href="https://hub.docker.com/r/mrzillagold/vk2discord">
+        <img align="center" alt="Docker Pulls" src="https://img.shields.io/docker/pulls/mrzillagold/vk2discord">
+    </a>
+</p>
+
+<p align="center">
   <b>VK2Discord</b> используют крупные Discord сервера и сообщества
 </p>
 
