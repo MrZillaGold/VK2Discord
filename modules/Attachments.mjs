@@ -43,13 +43,13 @@ export class Attachments {
                             }
                         }
                     } else {
-                        return `\n[📄 Документ: ${doc.title}](${doc.url})`;
+                        return `\n[📄 Файл: ${doc.title}](${doc.url})`;
                     }
                     break;
                 case "audio":
                     const { artist, title } = audio;
 
-                    return `\n[🎵  Музыка: ${artist} - ${title}](https://vk.com/search?c[section]=audio&c[q]=${encodeURI(artist.replace(/&/g, "и"))}%20-%20${encodeURI(title)}&c[performer]=1)`;
+                    return `\n[🎵 Музыка: ${artist} - ${title}](https://vk.com/search?c[section]=audio&c[q]=${encodeURIComponent(artist)}%20-%20${encodeURIComponent(title)}&c[performer]=1)`;
                 case "poll":
                     return `\n[📊 Опрос: ${poll.question}](https://vk.com/feed?w=poll${poll.owner_id}_${poll.id})`;
             }
