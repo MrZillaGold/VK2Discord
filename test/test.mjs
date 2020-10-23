@@ -21,6 +21,9 @@ const cluster = {
         webhook_urls: [
             process.env.WEBHOOK
         ],
+        "username": "VK2Discord CI",
+        "avatar_url": "",
+        "content": "",
         color: "#ffbbff",
         author: true,
         copyright: true
