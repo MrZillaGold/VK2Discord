@@ -3,7 +3,7 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const LATEST_CONFIG_VERSION = 2;
+const LATEST_CONFIG_VERSION = 3;
 
 fs.readdir(path.join(__dirname), async (error, files) => {
 
@@ -29,14 +29,14 @@ fs.readdir(path.join(__dirname), async (error, files) => {
 
             createConfig();
 
-            console.error("[!] Конфиг поврежден либо настроен неправильно, файл был переименован в config_old.json. Новый файл с конфигом был создан, настройте его следуя инструкции.");
+            console.error("\n\n[!] Конфиг поврежден либо настроен неправильно, файл был переименован в config_old.json. Новый файл с конфигом был создан, настройте его следуя инструкции.\n\n");
 
             process.exit(-1);
         }
     } else {
         createConfig();
 
-        console.warn("[!] Конфиг в папке со скриптом не обнаружен, создан новый файл с конфигом. Настройте его следуя инструкции.");
+        console.warn("\n\n[!] Конфиг в папке со скриптом не обнаружен, создан новый файл с конфигом. Настройте его следуя инструкции.\n\n");
 
         process.exit(-1);
     }
@@ -68,7 +68,9 @@ function createConfig() {
                     webhook_urls: [
                         "https://discordapp.com/api/webhooks/"
                     ],
-                    bot_name: "VK2DISCORD",
+                    username: "",
+                    avatar_url: "",
+                    content: "",
                     color: "#aabbcc",
                     author: true,
                     copyright: true

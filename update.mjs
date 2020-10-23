@@ -1,7 +1,7 @@
 import config from "./config.json";
 import fs from "fs";
 
-const LATEST_CONFIG_VERSION = 2;
+const LATEST_CONFIG_VERSION = 3;
 
 const { clusters, version_dont_modify_me } = config;
 
@@ -17,6 +17,17 @@ const changes = new Map([
             {
                 author: true,
                 copyright: true
+            }
+        ]
+    ],
+    [
+        3,
+        [
+            {},
+            {
+                content: "",
+                username: "",
+                avatar_url: ""
             }
         ]
     ]

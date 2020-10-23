@@ -2,29 +2,24 @@ import { promises as fs } from "fs";
 import Discord from "discord.js";
 
 import { Markdown } from "./Markdown.mjs";
-import { Attachments } from "./Attachments.mjs";
+import { Message } from "./Message.mjs";
 import { Keywords } from "./Keywords.mjs";
 
 import news from "../news.json";
 
-export class Sender {
+export class Sender extends Message {
 
     constructor(config) {
-        const { discord } = config;
-        const { color } = discord;
+        super();
 
         this.config = config;
 
         this.message = {
-            post: {
-                text: "",
-                attachments: ""
-            },
-            repost: {
-                text: "",
-                attachments: ""
-            }
+            post: "",
+            repost: ""
         };
+
+        const color = config.discord.color;
 
         this.builders = [
             new Discord.MessageEmbed()
@@ -33,10 +28,8 @@ export class Sender {
         ];
     }
 
-    async post(payload) {
-        const { vk, index } = this.config;
-
-        const { longpoll, filter, group_id, keywords } = vk;
+    async handle(payload) {
+        const { longpoll, filter, group_id, keywords } = this.config.vk;
 
         const date = payload.date;
 
@@ -54,19 +47,18 @@ export class Sender {
 
             return this.send(date);
         } else {
-            console.log(`[!] Новых записей в кластере #${index} нет или они не соответствуют ключевым словам!`);
+            console.log(`[!] Новых записей в кластере #${this.config.index} нет или они не соответствуют ключевым словам!`);
         }
     }
 
     async send(date) {
         const { post, repost } = this.message;
-        const { discord } = this.config;
+        const { webhook_urls, content, username, avatar_url: avatarURL } = this.config.discord;
         const builders = this.builders;
 
         const [builder] = builders;
-        const { webhook_urls } = discord;
 
-        const message = new Markdown(post.text + post.attachments + repost.text + repost.attachments)
+        const message = new Markdown(post + repost)
             .sliceFix();
 
         builder.setDescription(message);
@@ -85,65 +77,24 @@ export class Sender {
                         id,
                         token
                     )
-                        .send(this.builders);
+                        .send({
+                            content,
+                            embeds: this.builders,
+                            username: username.slice(0, 80),
+                            avatarURL
+                        });
                 } else {
                     console.error(`[!] ${url} не является ссылкой на Discord Webhook.`);
                 }
             })
-        );
-    }
-
-    async parseText(payload) {
-        const { post, repost } = this.message;
-        const { VK } = this.config;
-        const builders = this.builders;
-
-        if (payload.text) {
-            post.text += `${
-                await new Markdown(payload.text, VK)
-                    .fix()
-            }\n\n`;
-        }
-
-        if (payload.attachments) {
-            post.attachments += new Attachments(payload.attachments)
-                .parse(builders);
-        }
-
-        const Repost = payload.copy_history ? payload.copy_history[0] : null;
-
-        if (Repost) {
-            repost.text +=
-                `\n\n>>> [**Репост записи**](https://vk.com/wall${Repost.from_id}_${Repost.id})\n\n`;
-
-            if (Repost.text) {
-                repost.text += `${
-                    await new Markdown(Repost.text, VK)
-                        .fix()
-                }\n\n`;
-            }
-
-            if (Repost.attachments) {
-                repost.attachments += new Attachments(Repost.attachments)
-                    .parse(builders);
-            }
-        }
-
-        this.sliceMessage();
-    }
-
-    sliceMessage() {
-        const { post, repost } = this.message;
-
-        if ((post.text + post.attachments + repost.text + repost.attachments).length > 2048) {
-            if (post.text) {
-                post.text = `${post.text.slice(0, repost.text ? 1021 - post.attachments.length : 2045 - post.attachments.length)}…\n\n`;
-            }
-
-            if (repost.text) {
-                repost.text = `${repost.text.slice(0, post.text ? 1021 - repost.attachments.length : 2045 - repost.attachments.length)}…\n\n`;
-            }
-        }
+        )
+            .then((outputs) => {
+                outputs.forEach(({ status, reason }) => {
+                    if (status === "rejected") {
+                        console.error(`[!] Произошла ошибка при отправке сообщения: ${reason}`);
+                    }
+                });
+            });
     }
 
     async pushDate(date) {

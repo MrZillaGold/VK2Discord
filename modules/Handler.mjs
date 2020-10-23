@@ -27,8 +27,6 @@ export class Handler {
     }
 
     startInterval() {
-        const { api } = this.VK;
-
         const { vk, discord, index } = this.cluster;
         const { interval, group_id, filter } = vk;
         const { author, copyright } = discord;
@@ -60,7 +58,7 @@ export class Handler {
 
             const [builder] = sender.builders;
 
-            api.wall.get({
+            this.VK.api.wall.get({
                 ...id,
                 count: 2,
                 extended: 1,
@@ -107,7 +105,7 @@ export class Handler {
                             await this.setCopyright(post, builder);
                         }
 
-                        return sender.post(post);
+                        return sender.handle(post);
                     } else {
                         console.log("[!] Не получено ни одной записи. Проверьте наличие записей в группе или измените значение фильтра в конфигурации.");
                     }
@@ -118,12 +116,9 @@ export class Handler {
     }
 
     async startPolling() {
-        const { index, discord } = this.cluster;
-        const { updates } = this.VK;
+        const { index, discord: { author, copyright } } = this.cluster;
 
-        const { author, copyright } = discord;
-
-        updates.on("wall_post_new", async (context) => {
+        this.VK.updates.on("wall_post_new", async (context) => {
 
             const { payload } = context;
 
@@ -142,11 +137,11 @@ export class Handler {
                     await this.setCopyright(payload, builder);
                 }
 
-                return sender.post(payload);
+                return sender.handle(payload);
             }
         });
 
-        updates.start()
+        this.VK.updates.start()
             .then(() =>
                 console.log(`[VK2Discord] Кластер #${index} подключен к ВКонтакте с использованием LongPoll!`)
             )
@@ -176,10 +171,8 @@ export class Handler {
     }
 
     async getById(id) {
-        const { api } = this.VK;
-
         return id > 0 ?
-            await api.users.get({
+            await this.VK.api.users.get({
                 user_ids: id,
                 fields: "photo_50"
             })
@@ -188,7 +181,7 @@ export class Handler {
                     ...user
                 }))
             :
-            await api.groups.getById({
+            await this.VK.api.groups.getById({
                 group_id: Math.abs(id)
             })
                 .then(([group]) => group);

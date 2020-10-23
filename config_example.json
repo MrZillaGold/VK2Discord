@@ -2,7 +2,7 @@
   "clusters": [
     {
       "vk": {
-        "token": "99be70a",
+        "token": "99be70a...",
         "group_id": "durov",
         "keywords": ["собака", "яблоко"],
         "filter": true,
@@ -11,8 +11,11 @@
       },
       "discord": {
         "webhook_urls": [
-          "https://discordapp.com/api/webhooks/730807540459241472"
+          "https://discordapp.com/api/webhooks/730807540459241472/..."
         ],
+        "username": "VK2Discord",
+        "avatar_url": "https://sun9-29.userapi.com/rmoNl3t2KfRZlNpFbAwSEzeDwML-xczsHU6y1A/HApWIpxjkT4.jpg",
+        "content": "@everyone",
         "color": "#aabbcc",
         "author": true,
         "copyright": false
@@ -20,7 +23,7 @@
     },
     {
       "vk": {
-        "token": "43bf71a",
+        "token": "43bf71a...",
         "group_id": "club1",
         "keywords": [],
         "filter": true,
@@ -29,9 +32,12 @@
       },
       "discord": {
         "webhook_urls": [
-          "https://discordapp.com/api/webhooks/730807540459241472",
-          "https://discordapp.com/api/webhooks/234556456456567632"
+          "https://discordapp.com/api/webhooks/730807540459241472/...",
+          "https://discordapp.com/api/webhooks/234556456456567632/..."
         ],
+        "username": "",
+        "avatar_url": "",
+        "content": "",
         "color": "#ffbbff",
         "author": true,
         "copyright": true
