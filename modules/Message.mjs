@@ -1,5 +1,5 @@
-import { Markdown } from "./Markdown";
-import { Attachments } from "./Attachments";
+import { Markdown } from "./Markdown.mjs";
+import { Attachments } from "./Attachments.mjs";
 
 export class Message {
 
