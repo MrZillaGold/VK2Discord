@@ -165,7 +165,7 @@ if (process.env.TOKEN) {
                     index: 1,
                     VK: vk
                 })
-                    .post(payload)
+                    .handle(payload)
                     .then(done)
                     .catch(done);
             });
