@@ -1,6 +1,6 @@
 {
   "name": "vk2discord",
-  "version": "1.9.3",
+  "version": "1.9.4",
   "description": "Автоматическая публикация постов из VK.COM в канал Discord",
   "main": "index.mjs",
   "scripts": {
