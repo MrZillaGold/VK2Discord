@@ -26,7 +26,7 @@
     "vk-io": "^4.0.3"
   },
   "devDependencies": {
-    "mocha": "^8.2.0"
+    "mocha": "^8.2.1"
   },
   "engines": {
     "node": ">=12.9.0"
