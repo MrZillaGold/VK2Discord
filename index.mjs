@@ -1,6 +1,6 @@
-import { Handler } from "./modules/Handler";
+import { Handler } from "./modules/Handler.mjs";
 
-import config from "./config";
+import config from "./config.json";
 
 const { clusters } = config;
 
