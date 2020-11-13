@@ -31,14 +31,18 @@ export class Attachments {
                     return `\n[🔗 ${link.button_text || "Ссылка"}: ${link.title}](${link.url})`;
                 case "doc":
                     if (doc.ext === "gif") {
-                        const gif = this.popAttachment(doc.preview.photo.sizes).src;
-
                         if (!builder.image) {
-                            builder.setImage(gif);
+                            builder.attachFiles([
+                                new Discord.MessageAttachment(doc.url, doc.title)
+                            ])
+                                .setImage(`attachment://${doc.title}`);
                         } else {
                             if (builders.length < 10) {
                                 builders.push(
-                                    this.createImageEmbed(gif)
+                                    this.createImageEmbed(`attachment://${doc.title}`)
+                                        .attachFiles([
+                                            new Discord.MessageAttachment(doc.url, doc.title)
+                                        ])
                                 );
                             }
                         }

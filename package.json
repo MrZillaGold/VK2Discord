@@ -1,13 +1,14 @@
 {
   "name": "vk2discord",
-  "version": "1.9.4",
+  "version": "2.0.0",
+  "LATEST_CONFIG_VERSION": 4,
   "description": "Автоматическая публикация постов из VK.COM в канал Discord",
   "main": "index.mjs",
   "scripts": {
     "start": "npm run check && npm run init",
-    "check": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node check.mjs",
+    "check": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/check.mjs",
     "init": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node index.mjs",
-    "update": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node update.mjs",
+    "update": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/update.mjs",
     "test": "node --experimental-modules --experimental-json-modules node_modules/mocha/bin/_mocha --reporter spec --exit"
   },
   "homepage": "https://github.com/MrZillaGold/VK2Discord#readme",

@@ -2,6 +2,8 @@ import VKIO from "vk-io";
 
 import { Sender } from "./Sender.mjs";
 
+import { getById, getPostAuthor, getPostLink, getResourceId } from "./functions";
+
 const { VK } = VKIO;
 
 export class Handler {
@@ -37,24 +39,14 @@ export class Handler {
             console.warn("[!] Не рекомендуем ставить интервал получения постов меньше 30 секунд, во избежания лимитов ВКонтакте!");
         }
 
-        setInterval(() => {
+        setInterval(async () => {
             const sender = this.createSender();
 
-            const groupIdMatch = group_id.match(/^(?:public|club)([\d]+)$/);
-            const userIdMatch = group_id.match(/^id([\d]+)$/);
-            const id = groupIdMatch ?
-                {
-                    owner_id: -groupIdMatch[1]
-                }
-                :
-                userIdMatch ?
-                    {
-                        owner_id: userIdMatch[1]
-                    }
-                    :
-                    {
-                        domain: group_id
-                    };
+            const id = await getResourceId(this.VK.api, group_id);
+
+            if (!id) {
+                return console.error(`[!] ${group_id} не является ID-пользователя или группы ВКонтакте!`)
+            }
 
             const [builder] = sender.builders;
 
@@ -63,42 +55,16 @@ export class Handler {
                 count: 2,
                 extended: 1,
                 filter: filter ? "owner" : "all",
-                v: "5.122"
+                v: "5.126"
             })
                 .then(async ({ groups, profiles, items }) => {
                     if (items.length) {
-                        // Проверяем наличие закрепа, если он есть берем свежую запись
-                        const post = items.length === 2 ? items[0].date > items[1].date ? items[0] : items[1] : items[0];
+                        const post = items.length === 2 ? items[0].date > items[1].date ? items[0] : items[1] : items[0]; // Проверяем наличие закрепа, если он есть берем свежую запись
 
-                        const link = this.getPostLink(post);
-
-                        // Устанавливаем автора от типа отправителя записи
                         if (author) {
-                            if (post.owner_id === post.from_id) {
-                                const [{ name, photo_50 }] = (post.from_id > 0 ?
-                                    profiles.filter(({ id }) => id === post.owner_id)
-                                    :
-                                    groups.filter(({ id }) => id === Math.abs(post.owner_id)))
-                                    .map((profile) => {
+                            const { name, photo_50 } = getPostAuthor(post, profiles, groups);
 
-                                        const { name, photo_50, first_name, last_name } = profile;
-
-                                        if (name) {
-                                            return profile;
-                                        } else {
-                                            return {
-                                                name: `${first_name} ${last_name}`,
-                                                photo_50
-                                            }
-                                        }
-                                    });
-
-                                builder.setAuthor(name, photo_50, link);
-                            } else {
-                                const [{ first_name, last_name, photo_50 }] = profiles.filter(({ id }) => id === post.from_id);
-
-                                builder.setAuthor(`${first_name} ${last_name}`, photo_50, link);
-                            }
+                            builder.setAuthor(name, photo_50, getPostLink(post));
                         }
 
                         if (copyright) {
@@ -118,19 +84,16 @@ export class Handler {
     async startPolling() {
         const { index, discord: { author, copyright } } = this.cluster;
 
-        this.VK.updates.on("wall_post_new", async (context) => {
-
-            const { payload } = context;
-
+        this.VK.updates.on("wall_post_new", async ({ payload }) => {
             if (payload.post_type === "post") {
                 const sender = this.createSender();
 
                 const [builder] = sender.builders;
 
                 if (author) {
-                    const { photo_50, name } = await this.getById(payload.from_id);
+                    const { photo_50, name } = await getById(this.VK.api, payload.from_id);
 
-                    builder.setAuthor(name, photo_50, this.getPostLink(payload));
+                    builder.setAuthor(name, photo_50, getPostLink(payload));
                 }
 
                 if (copyright) {
@@ -145,7 +108,7 @@ export class Handler {
             .then(() =>
                 console.log(`[VK2Discord] Кластер #${index} подключен к ВКонтакте с использованием LongPoll!`)
             )
-            .catch(console.log);
+            .catch(console.error);
     }
 
     createSender() {
@@ -158,32 +121,11 @@ export class Handler {
         });
     }
 
-    getPostLink({ owner_id, id }) {
-        return `https://vk.com/wall${owner_id}_${id}`;
-    }
-
     async setCopyright({ copyright }, builder) {
         if (copyright) {
-            const group = copyright.id ? await this.getById(copyright.id) : null;
+            const group = await getById(this.VK.api, copyright.id);
 
             builder.setFooter(`Источник: ${copyright.name}`, group && group.photo_50); // Вскоре заменить на nullable оператор, при этом теряя поддержку node < 14
         }
-    }
-
-    async getById(id) {
-        return id > 0 ?
-            await this.VK.api.users.get({
-                user_ids: id,
-                fields: "photo_50"
-            })
-                .then(([{ first_name, last_name, ...user }]) => ({
-                    name: `${first_name} ${last_name}`,
-                    ...user
-                }))
-            :
-            await this.VK.api.groups.getById({
-                group_id: Math.abs(id)
-            })
-                .then(([group]) => group);
     }
 }

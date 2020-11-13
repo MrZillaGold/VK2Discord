@@ -1,20 +1,19 @@
-import config from "./config.json";
 import fs from "fs";
 
-const LATEST_CONFIG_VERSION = 3;
+import config from "../config.json";
+import scriptPackage from "../package.json";
 
+const { LATEST_CONFIG_VERSION } = scriptPackage;
 const { clusters, version_dont_modify_me } = config;
 
 // Изменения версий фиксируются в массивах
-// 0 Индекс = объекту с новыми полями в объекте "vk"
-// 1 Индекс = объекту с новыми полями в объекте "discord"
 
 const changes = new Map([
     [
-        2, // Версия
-        [  // Добавления
-            {},
-            {
+        2,                          // Версия
+        [                           // Добавления
+            {},                     // VK
+            {                       // Discord
                 author: true,
                 copyright: true
             }
@@ -29,6 +28,17 @@ const changes = new Map([
                 username: "",
                 avatar_url: ""
             }
+        ]
+    ],
+    [
+        4,
+        [
+            {
+                donut: false,
+                ads: false,
+                words_blacklist: []
+            },
+            {}
         ]
     ]
 ]);

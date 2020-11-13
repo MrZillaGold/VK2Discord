@@ -27,7 +27,7 @@ export class Message {
 
         if (Repost) {
             this.message.repost +=
-                `\n\n>>> [**Репост записи**](https://vk.com/wall${Repost.from_id}_${Repost.id})\n\n`;
+                `\n>>> [**Репост записи**](https://vk.com/wall${Repost.from_id}_${Repost.id})`;
 
             if (Repost.text) {
                 this.message.repost += `${

@@ -5,7 +5,10 @@
         "token": "99be70a...",
         "group_id": "durov",
         "keywords": ["собака", "яблоко"],
+        "words_blacklist": ["груша"],
         "filter": true,
+        "donut": false,
+        "ads": false,
         "longpoll": false,
         "interval": 30
       },
@@ -26,7 +29,10 @@
         "token": "43bf71a...",
         "group_id": "club1",
         "keywords": [],
+        "words_blacklist": ["банан"],
         "filter": true,
+        "donut": true,
+        "ads": false,
         "longpoll": true,
         "interval": 30
       },
@@ -44,5 +50,5 @@
       }
     }
   ],
-  "version_dont_modify_me": 3
+  "version_dont_modify_me": 4
 }

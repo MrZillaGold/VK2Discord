@@ -13,7 +13,10 @@ const { VK } = VKIO;
 const cluster = {
     vk: {
         keywords: [],
+        words_blacklist: [],
         filter: false,
+        donut: false,
+        ads: false,
         group_id: "Test",
         longpoll: false
     },
@@ -21,9 +24,9 @@ const cluster = {
         webhook_urls: [
             process.env.WEBHOOK
         ],
-        "username": "VK2Discord CI",
-        "avatar_url": "",
-        "content": "",
+        username: "VK2Discord CI",
+        avatar_url: "",
+        content: "",
         color: "#ffbbff",
         author: true,
         copyright: true
