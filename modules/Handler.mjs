@@ -51,7 +51,7 @@ export class Handler {
             const [builder] = sender.builders;
 
             this.VK.api.wall.get({
-                ...id,
+                owner_id: id,
                 count: 2,
                 extended: 1,
                 filter: filter ? "owner" : "all",
