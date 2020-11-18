@@ -62,7 +62,7 @@
 </table>
 
 <p align="center">
-  <img src="https://repository-images.githubusercontent.com/192033596/2c44de80-d8b2-11e9-9fc5-03e288f8da72">
+  <img src="https://repository-images.githubusercontent.com/192033596/86f73000-29b8-11eb-836d-40feada70107">
 </p>
 
 ***
