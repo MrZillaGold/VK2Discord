@@ -16,7 +16,11 @@ export function getResourceId(api, resource) {
                     :
                     null
         )
-        .catch(() => null);
+        .catch((error) => {
+            console.log("[!] Произошла ошибка при получении ID-ресурса.");
+
+            throw error;
+        });
 }
 
 export function getPostLink({ owner_id, id }) {
