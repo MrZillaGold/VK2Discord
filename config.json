@@ -2,22 +2,22 @@
 	"clusters": [
 		{
 			"vk": {
-				"token": "Токен от станицы или группы ВКонтакте",
-				"group_id": "club1",
+				"token": "e038059a13b2f3df7d012fff3b9d3b1aa03446708e86cd8e0ec38aea59b23eed851d309a8723c25756fb3",
+				"group_id": "vc_mhrp",
 				"keywords": [],
 				"words_blacklist": [],
 				"filter": true,
 				"donut": false,
 				"ads": false,
-				"longpoll": false,
+				"longpoll": true,
 				"interval": 30
 			},
 			"discord": {
 				"webhook_urls": [
-					"https://discordapp.com/api/webhooks/"
+					"https://discord.com/api/webhooks/786690978358624267/vCOqN2q4qt7SJj02fEdr79FxIYqtbJfooHreAs23CayIU0TSyz6RkU8ES-N_Vsh8rPwO"
 				],
-				"username": "",
-				"avatar_url": "",
+				"username": "White Faction",
+				"avatar_url": "https://media.discordapp.net/attachments/768474692075520011/786464288838909992/MyHome_RP_-_-1.png",
 				"content": "",
 				"color": "#aabbcc",
 				"author": true,
