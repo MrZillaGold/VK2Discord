@@ -10,7 +10,7 @@ export class Attachments {
         const { attachments } = this;
         const [builder] = builders;
 
-        return attachments.map(({ type, photo, video, link, doc, audio, poll }) => {
+        return attachments.map(({ type, photo, video, link, doc, audio, poll, album }) => {
             switch (type) {
                 case "photo":
                     if (photo.sizes) {
@@ -56,6 +56,8 @@ export class Attachments {
                     return `\n[🎵 Музыка: ${artist} - ${title}](https://vk.com/search?c[section]=audio&c[q]=${encodeURIComponent(artist)}%20-%20${encodeURIComponent(title)}&c[performer]=1)`;
                 case "poll":
                     return `\n[📊 Опрос: ${poll.question}](https://vk.com/feed?w=poll${poll.owner_id}_${poll.id})`;
+                case "album":
+                    return `\n[🖼️ Альбом: ${album.title}](https://vk.com/album${album.owner_id}_${album.id})`;
             }
         })
             .join("");
