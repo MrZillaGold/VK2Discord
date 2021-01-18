@@ -1,12 +1,12 @@
 import { promises as fs } from "fs";
 
-import { __dirname, LATEST_CONFIG_VERSION, NODE_MAJOR_VERSION } from "./constants.mjs";
+import { LATEST_CONFIG_VERSION, NODE_MAJOR_VERSION } from "./constants.mjs";
 
 if (Number(NODE_MAJOR_VERSION) < 14) {
     throw "\n\n[!] Для запуска скрипта необходима NodeJS 14 или выше!\n\n";
 }
 
-fs.readdir(__dirname)
+fs.readdir("./")
     .then(async (files) => {
         if (files.includes("config.json")) {
             try {
@@ -82,13 +82,13 @@ function createConfig() {
         version_dont_modify_me: LATEST_CONFIG_VERSION
     };
 
-    return fs.writeFile(`${__dirname}/config.json`, JSON.stringify(config, null, "\t"));
+    return fs.writeFile("./config.json", JSON.stringify(config, null, "\t"));
 }
 
 function rename() {
-    return fs.rename(`${__dirname}/config.json`, `${__dirname}/config_old.json`);
+    return fs.rename("./config.json", "./config_old.json");
 }
 
 function createNews() {
-    return fs.writeFile(`${__dirname}/news.json`, JSON.stringify({}, null, "\t"));
+    return fs.writeFile("./news.json", JSON.stringify({}, null, "\t"));
 }

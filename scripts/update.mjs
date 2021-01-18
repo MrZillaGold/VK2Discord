@@ -1,6 +1,6 @@
 import fs from "fs";
 
-import { __dirname, LATEST_CONFIG_VERSION } from "./constants.mjs";
+import { LATEST_CONFIG_VERSION } from "./constants.mjs";
 
 import config from "../config.json";
 
@@ -72,7 +72,7 @@ if (!clusters || !version_dont_modify_me) {
 
         config.version_dont_modify_me = LATEST_CONFIG_VERSION;
 
-        fs.writeFileSync(`${__dirname}/config.json`, JSON.stringify(config, null, "\t"));
+        fs.writeFileSync("./config.json", JSON.stringify(config, null, "\t"));
 
         console.log("[VK2Discord] Конфиг обновлен до последней версии.");
     }

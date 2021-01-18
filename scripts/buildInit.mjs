@@ -1,7 +1,5 @@
 import { promises as fs } from "fs";
 
-import { __dirname } from "./constants.mjs";
-
-await fs.rm(`${__dirname}/dist`, {
+await fs.rm("./dist", {
     recursive: true, force: true
 });
