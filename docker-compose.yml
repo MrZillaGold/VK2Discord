@@ -1,8 +1,8 @@
-version: '3.8'
+version: "3.8"
 services:
   vk2discord-docker:
     container_name: vk2discord-docker
-    image: mrzillagold/vk2discord:1.9.3
+    image: mrzillagold/vk2discord:latest
     volumes:
       - /opt/vk2discord/config.json:/usr/src/vk2discord/config.json
     restart: always

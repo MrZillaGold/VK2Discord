@@ -6,7 +6,6 @@ test
 src
 Procfile
 .gitignore
-tsconfig.json
 npm-debug.log
 config_example.json
 config_old.json
