@@ -1,37 +1,38 @@
-import VKIO from "vk-io";
+import { MessageEmbed } from "discord.js";
+import { WallWallpostFull } from "vk-io/lib/api/schemas/objects";
 
-import { Sender } from "./Sender.mjs";
+import { VK } from "./VK.js";
+import { Sender } from "./Sender.js";
 
-import { getById, getPostAuthor, getPostLink, getResourceId } from "./functions";
+import { getById, getPostAuthor, getPostLink, getResourceId } from "./functions.js";
 
-const { VK } = VKIO;
+import { Cluster, GetPostLinkOptions } from "../interfaces";
 
 export class Handler {
 
-    constructor(cluster) {
-        this.cluster = cluster;
-    }
+    cluster: Pick<Cluster, "vk" | "discord" | "index">;
 
-    init() {
-        const { vk } = this.cluster;
-        const { longpoll, token } = vk;
+    VK: VK;
+
+    constructor(cluster: Pick<Cluster, "vk" | "discord" | "index">) {
+        this.cluster = cluster;
 
         this.VK = new VK({
-            token,
+            token: cluster.vk.token,
             apiMode: "parallel"
         });
+    }
 
-        if (!longpoll) {
+    init(): void {
+        if (!this.cluster.vk.longpoll) {
             this.startInterval();
         } else {
             this.startPolling();
         }
     }
 
-    startInterval() {
-        const { vk, discord, index } = this.cluster;
-        const { interval, group_id, filter } = vk;
-        const { author, copyright } = discord;
+    startInterval(): void {
+        const { index, vk: { interval, group_id, filter }, discord: { author, copyright } } = this.cluster;
 
         console.log(`[VK2Discord] Кластер #${index} будет проверять новые записи с интервалом в ${interval} секунд.`);
 
@@ -42,7 +43,7 @@ export class Handler {
         setInterval(async () => {
             const sender = this.createSender();
 
-            const id = await getResourceId(this.VK.api, group_id);
+            const id = await getResourceId(this.VK, group_id);
 
             if (!id) {
                 return console.error(`[!] ${group_id} не является ID-пользователя или группы ВКонтакте!`)
@@ -59,12 +60,17 @@ export class Handler {
             })
                 .then(async ({ groups, profiles, items }) => {
                     if (items.length) {
-                        const post = items.length === 2 ? items[0].date > items[1].date ? items[0] : items[1] : items[0]; // Проверяем наличие закрепа, если он есть берем свежую запись
+                        // @ts-ignore
+                        const post = items.length === 2 && items[0].date < items[1].date ? items[1] : items[0]; // Проверяем наличие закрепа, если он есть берем свежую запись
 
                         if (author) {
-                            const { name, photo_50 } = getPostAuthor(post, profiles, groups);
+                            const postAuthor = getPostAuthor(post, profiles, groups);
 
-                            builder.setAuthor(name, photo_50, getPostLink(post));
+                            if (postAuthor) {
+                                const { name, photo_50 } = postAuthor;
+
+                                builder.setAuthor(name, photo_50, getPostLink(post as GetPostLinkOptions));
+                            }
                         }
 
                         if (copyright) {
@@ -75,15 +81,15 @@ export class Handler {
                     } else {
                         console.log("[!] Не получено ни одной записи. Проверьте наличие записей в группе или измените значение фильтра в конфигурации.");
                     }
-
                 })
-                .catch(console.log);
+                .catch(console.error);
         }, interval * 1000);
     }
 
-    async startPolling() {
+    async startPolling(): Promise<void> {
         const { index, discord: { author, copyright } } = this.cluster;
 
+        // @ts-ignore
         this.VK.updates.on("wall_post_new", async ({ payload }) => {
             if (payload.post_type === "post") {
                 const sender = this.createSender();
@@ -91,13 +97,17 @@ export class Handler {
                 const [builder] = sender.builders;
 
                 if (author) {
-                    const { photo_50, name } = await getById(this.VK.api, payload.from_id);
+                    const postAuthor = await getById(this.VK.api, payload.from_id as number);
 
-                    builder.setAuthor(name, photo_50, getPostLink(payload));
+                    if (postAuthor) {
+                        const { photo_50, name } = postAuthor;
+
+                        builder.setAuthor(name, photo_50, getPostLink(payload));
+                    }
                 }
 
                 if (copyright) {
-                    await this.setCopyright(payload, builder);
+                    await this.setCopyright(payload as WallWallpostFull, builder);
                 }
 
                 return sender.handle(payload);
@@ -111,7 +121,7 @@ export class Handler {
             .catch(console.error);
     }
 
-    createSender() {
+    createSender(): Sender {
         const cluster = this.cluster;
         const VK = this.VK;
 
@@ -121,11 +131,11 @@ export class Handler {
         });
     }
 
-    async setCopyright({ copyright }, builder) {
+    async setCopyright({ copyright }: WallWallpostFull, builder: MessageEmbed): Promise<void> {
         if (copyright) {
             const group = await getById(this.VK.api, copyright.id);
 
-            builder.setFooter(`Источник: ${copyright.name}`, group && group.photo_50); // Вскоре заменить на nullable оператор, при этом теряя поддержку node < 14
+            builder.setFooter(`Источник: ${copyright.name}`, group?.photo_50);
         }
     }
 }

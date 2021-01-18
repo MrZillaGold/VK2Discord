@@ -1,10 +1,12 @@
 export class Keywords {
 
-    constructor(keywords) {
+    keywords: string[];
+
+    constructor(keywords: string[]) {
         this.keywords = keywords;
     }
 
-    check(text) {
+    check(text: string): boolean {
         const { keywords } = this;
 
         if (keywords.length && text) {

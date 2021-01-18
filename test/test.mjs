@@ -1,14 +1,11 @@
 import assert from "assert";
-import VKIO from "vk-io";
 
-import { Keywords } from "../modules/Keywords.mjs"
-import { Markdown } from "../modules/Markdown.mjs";
-import { Sender } from "../modules/Sender.mjs";
+import { Keywords } from "../dist/modules/Keywords.js"
+import { Markdown } from "../dist/modules/Markdown.js";
+import { Sender } from "../dist/modules/Sender.js";
+import { VK } from "../dist/modules/VK.js";
 
 import payload from "./payload.json";
-import news from "../news.json";
-
-const { VK } = VKIO;
 
 const cluster = {
     vk: {
@@ -89,24 +86,24 @@ describe("Markdown", function() {
     describe("fix();", function() {
         it("Проверка текста лишь с одним #хештегом", async function() {
             assert.deepStrictEqual(
-                await new Markdown("#hashtag", vk)
-                    .fix(),
+                await new Markdown(vk)
+                    .fix("#hashtag"),
                 "[#hashtag](https://vk.com/feed?section=search&q=%23hashtag)"
             );
         });
 
         it("Проверка текста с одним #хештегом", async function() {
             assert.deepStrictEqual(
-                await new Markdown("Очень длинный текст #hashtag", vk)
-                    .fix(),
+                await new Markdown(vk)
+                    .fix("Очень длинный текст #hashtag"),
                 "Очень длинный текст [#hashtag](https://vk.com/feed?section=search&q=%23hashtag)"
             );
         });
 
         it("Проверка текста с одним #хештегом и его переносом", async function() {
             assert.deepStrictEqual(
-                await new Markdown(`Очень длинный текст\n#hashtag`, vk)
-                    .fix(),
+                await new Markdown(vk)
+                    .fix(`Очень длинный текст\n#hashtag`),
                 `Очень длинный текст\n[#hashtag](https://vk.com/feed?section=search&q=%23hashtag)`
             );
         });
@@ -114,32 +111,32 @@ describe("Markdown", function() {
         if (process.env.TOKEN) {
             it("Проверка текста лишь с одним навигационным #хештегом", async function() {
                 assert.deepStrictEqual(
-                    await new Markdown("#test@stevebot", vk)
-                        .fix(),
+                    await new Markdown(vk)
+                        .fix("#test@stevebot"),
                     "[#test@stevebot](https://vk.com/stevebot/test)"
                 );
             });
 
             it("Проверка текста лишь с одним навигационным #хештегом содержащим кириллицу", async function() {
                 assert.deepStrictEqual(
-                    await new Markdown("#тест@stevebot", vk)
-                        .fix(),
+                    await new Markdown(vk)
+                        .fix("#тест@stevebot"),
                     "[#тест@stevebot](https://vk.com/wall-175914098?q=%23тест)"
                 );
             });
 
             it("Проверка текста с обычными и навигационными #хештегоми", async function() {
                 assert.deepStrictEqual(
-                    await new Markdown(`#Очень длинный текст #hashtag\n#hello #test@stevebot\nПродолжение #тест@apiclub`, vk)
-                        .fix(),
+                    await new Markdown(vk)
+                        .fix(`#Очень длинный текст #hashtag\n#hello #test@stevebot\nПродолжение #тест@apiclub`),
                     `[#Очень](https://vk.com/feed?section=search&q=%23Очень) длинный текст [#hashtag](https://vk.com/feed?section=search&q=%23hashtag)\n[#hello](https://vk.com/feed?section=search&q=%23hello) [#test@stevebot](https://vk.com/stevebot/test)\nПродолжение [#тест@apiclub](https://vk.com/wall-1?q=%23тест)`
                 );
             });
 
             it("Проверка текста c Wiki-ссылками и #хештегами разного формата", async function() {
                 assert.deepStrictEqual(
-                    await new Markdown(`#hello #test@stevebot\n#тест@apiclub Очень длинный текст [club1|VK API]\n[https://vk.com/stevebot|Steve - Minecraft Бот] [id1|test]`, vk)
-                        .fix(),
+                    await new Markdown(vk)
+                        .fix(`#hello #test@stevebot\n#тест@apiclub Очень длинный текст [club1|VK API]\n[https://vk.com/stevebot|Steve - Minecraft Бот] [id1|test]`),
                     `[#hello](https://vk.com/feed?section=search&q=%23hello) [#test@stevebot](https://vk.com/stevebot/test)\n[#тест@apiclub](https://vk.com/wall-1?q=%23тест) Очень длинный текст [VK API](https://vk.com/club1)\n[Steve - Minecraft Бот](https://vk.com/stevebot) [test](https://vk.com/id1)`
                 );
             });
@@ -149,8 +146,8 @@ describe("Markdown", function() {
 
         it("Проверка текста c wiki-ссылкой", async function() {
             assert.deepStrictEqual(
-                await new Markdown("[id1|test]", vk)
-                    .fix(),
+                await new Markdown(vk)
+                    .fix("[id1|test]"),
                 "[test](https://vk.com/id1)"
             );
         });
@@ -158,24 +155,23 @@ describe("Markdown", function() {
 });
 
 if (process.env.TOKEN) {
+    const sender = new Sender({
+        ...cluster,
+        index: 1,
+        VK: vk
+    });
+
     describe("Sender", function() {
         describe("post();", function() {
-            it("Проверка на отсутствие ошибок при отправке записи в Discord", function(done) {
-                this.timeout(30000);
-
-                new Sender({
-                    ...cluster,
-                    index: 1,
-                    VK: vk
-                })
-                    .handle(payload)
-                    .then(done)
-                    .catch(done);
+            it("Проверка на отсутствие ошибок при отправке записи в Discord", async function() {
+                await sender.handle(payload);
             });
         });
 
         describe("pushDate();", function () {
-            it("Проверка на соответствие даты опубликованной записи", function() {
+            it("Проверка на соответствие даты опубликованной записи", async function() {
+                const { default: news } = await import("../news.json");
+
                 const group = news[cluster.vk.group_id];
 
                 assert.ok(

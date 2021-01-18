@@ -1,6 +1,7 @@
-import { Handler } from "./modules/Handler.mjs";
+import { Handler } from "./modules/Handler";
 
-import config from "./config.json";
+// @ts-ignore
+import config from "../config.json";
 
 const { clusters } = config;
 

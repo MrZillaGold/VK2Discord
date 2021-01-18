@@ -1,8 +1,14 @@
-node_modules
 .circleci
 .idea
 .github
+node_modules
+test
+src
+Procfile
+.gitignore
+tsconfig.json
 npm-debug.log
 config_example.json
+config_old.json
 CONFIG_FIELDS.md
 README.md

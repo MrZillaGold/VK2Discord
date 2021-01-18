@@ -1,13 +1,10 @@
-import Discord from "discord.js";
+import { MessageEmbed, MessageAttachment } from "discord.js";
+
+import { Attachment, PoppedPhotoAttachment } from "../interfaces";
 
 export class Attachments {
 
-    constructor(attachments) {
-        this.attachments = attachments;
-    }
-
-    parse(builders) {
-        const { attachments } = this;
+    parse(attachments: Attachment[], builders: MessageEmbed[]): string {
         const [builder] = builders;
 
         return attachments.map(({ type, photo, video, link, doc, audio, poll, album }) => {
@@ -33,7 +30,7 @@ export class Attachments {
                     if (doc.ext === "gif") {
                         if (!builder.image) {
                             builder.attachFiles([
-                                new Discord.MessageAttachment(doc.url, doc.title)
+                                new MessageAttachment(doc.url, doc.title)
                             ])
                                 .setImage(`attachment://${doc.title}`);
                         } else {
@@ -41,7 +38,7 @@ export class Attachments {
                                 builders.push(
                                     this.createImageEmbed(`attachment://${doc.title}`)
                                         .attachFiles([
-                                            new Discord.MessageAttachment(doc.url, doc.title)
+                                            new MessageAttachment(doc.url, doc.title)
                                         ])
                                 );
                             }
@@ -51,9 +48,7 @@ export class Attachments {
                     }
                     break;
                 case "audio":
-                    const { artist, title } = audio;
-
-                    return `\n[🎵 Музыка: ${artist} - ${title}](https://vk.com/search?c[section]=audio&c[q]=${encodeURIComponent(artist)}%20-%20${encodeURIComponent(title)}&c[performer]=1)`;
+                    return `\n[🎵 Музыка: ${audio.artist} - ${audio.title}](https://vk.com/search?c[section]=audio&c[q]=${encodeURIComponent(audio.artist)}%20-%20${encodeURIComponent(audio.title)}&c[performer]=1)`;
                 case "poll":
                     return `\n[📊 Опрос: ${poll.question}](https://vk.com/feed?w=poll${poll.owner_id}_${poll.id})`;
                 case "album":
@@ -63,14 +58,14 @@ export class Attachments {
             .join("");
     }
 
-    popAttachment(attachment) {
+    popAttachment(attachment: any[]): PoppedPhotoAttachment {
         return attachment
             .sort((a, b) => a.width * a.height - b.width * b.height)
             .pop();
     }
 
-    createImageEmbed(image_url) {
-        return new Discord.MessageEmbed()
+    createImageEmbed(image_url: string): MessageEmbed {
+        return new MessageEmbed()
             .setURL("https://twitter.com")
             .setImage(image_url);
     }

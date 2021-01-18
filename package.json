@@ -1,35 +1,42 @@
 {
   "name": "vk2discord",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "LATEST_CONFIG_VERSION": 4,
-  "description": "Автоматическая публикация постов из VK.COM в канал Discord",
-  "main": "index.mjs",
+  "description": "Автоматическая публикация записей из группы или профиля VK.COM в канал Discord.",
+  "main": "build/index.js",
   "scripts": {
-    "start": "npm run check && npm run init",
-    "check": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/check.mjs",
-    "init": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node index.mjs",
+    "start": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./dist/index.js",
+    "prestart": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/check.mjs",
+    "build": "tsc && node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/cleanupBuild.mjs",
+    "prebuild": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/buildInit.mjs",
     "update": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/update.mjs",
-    "test": "node --experimental-modules --experimental-json-modules node_modules/mocha/bin/_mocha --reporter spec --exit"
+    "test": "node --experimental-modules --experimental-json-modules node_modules/mocha/bin/_mocha --reporter spec --exit --timeout=30000"
   },
+  "type": "module",
   "homepage": "https://github.com/MrZillaGold/VK2Discord#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MrZillaGold/VK2Discord.git"
   },
-  "author": "MrZillaGold <Pronin Egor>",
+  "author": "MrZillaGold <Pronin Egor | mrzillagold@gmail.com>",
   "license": "SEE LICENSE IN LICENSE.txt",
   "bugs": {
     "url": "https://github.com/MrZillaGold/VK2Discord/issues"
   },
   "dependencies": {
     "discord.js": "^12.5.1",
+    "lowdb": "^1.0.0",
     "string-replace-async": "^2.0.0",
     "vk-io": "^4.1.2"
   },
   "devDependencies": {
-    "mocha": "^8.2.1"
+    "@types/lowdb": "^1.0.9",
+    "@types/node": "^14.14.21",
+    "@types/ws": "^7.4.0",
+    "mocha": "^8.2.1",
+    "typescript": "^4.1.3"
   },
   "engines": {
-    "node": ">=12.9.0"
+    "node": ">=14.0.0"
   }
 }

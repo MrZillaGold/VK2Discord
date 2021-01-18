@@ -4,6 +4,12 @@ import scriptPackage from "../package.json";
 
 const { LATEST_CONFIG_VERSION } = scriptPackage;
 
+const [NODE_MAJOR_VERSION] = process.versions.node.split(".");
+
+if (Number(NODE_MAJOR_VERSION) < 14) {
+    throw "\n\n[!] Для запуска скрипта необходима NodeJS 14 или выше!\n\n";
+}
+
 fs.readdir("./")
     .then(async (files) => {
         if (files.includes("config.json")) {
