@@ -2,8 +2,6 @@
 .idea
 .github
 node_modules
-test
-src
 Procfile
 .gitignore
 npm-debug.log
