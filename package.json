@@ -10,7 +10,7 @@
     "build": "tsc && node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/cleanupBuild.mjs",
     "prebuild": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/buildInit.mjs",
     "update": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/update.mjs",
-    "test": "node --experimental-modules --experimental-json-modules node_modules/mocha/bin/_mocha --reporter spec --exit --timeout=30000"
+    "test": "npm run build && node --experimental-modules --experimental-json-modules node_modules/mocha/bin/_mocha --reporter spec --exit --timeout=30000"
   },
   "type": "module",
   "homepage": "https://github.com/MrZillaGold/VK2Discord#readme",
