@@ -23,4 +23,4 @@ RUN npm ci --quiet --only=production
 COPY --from=builder /usr/src/vk2discord/dist ./dist
 COPY ./scripts ./scripts
 
-RUN npm start
+CMD npm start
