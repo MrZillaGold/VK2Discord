@@ -17,8 +17,9 @@ export function getResourceId(VK: VK, resource: string): Promise<number | null> 
         )
         .catch((error) => {
             console.error("[!] Произошла ошибка при получении ID-ресурса.");
+            console.error(error);
 
-            throw error;
+            return null;
         });
 }
 

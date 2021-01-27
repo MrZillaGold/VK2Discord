@@ -5,7 +5,7 @@
   "description": "Автоматическая публикация записей из группы или профиля VK.COM в канал Discord.",
   "main": "build/index.js",
   "scripts": {
-    "start": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./dist/index.js",
+    "start": "node --experimental-modules --experimental-json-modules --unhandled-rejections=warn --es-module-specifier-resolution=node ./dist/index.js",
     "prestart": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/check.mjs",
     "build": "tsc && node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/cleanupBuild.mjs",
     "prebuild": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/buildInit.mjs",
