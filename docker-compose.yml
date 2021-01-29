@@ -1,4 +1,4 @@
-version: "2"
+version: "2.0"
 services:
   vk2discord-docker:
     container_name: vk2discord-docker
