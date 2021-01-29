@@ -42,7 +42,6 @@ export class Handler {
 
         setInterval(async () => {
             const sender = this.createSender();
-
             const id = await getResourceId(this.VK, group_id);
 
             if (!id) {
@@ -62,6 +61,8 @@ export class Handler {
                     if (items.length) {
                         // @ts-ignore
                         const post = items.length === 2 && items[0].date < items[1].date ? items[1] : items[0]; // Проверяем наличие закрепа, если он есть берем свежую запись
+
+                        builder.setTimestamp(post.date as number * 1000);
 
                         if (author) {
                             const postAuthor = getPostAuthor(post, profiles, groups);
@@ -89,12 +90,15 @@ export class Handler {
     async startPolling(): Promise<void> {
         const { index, discord: { author, copyright } } = this.cluster;
 
-        // @ts-ignore
-        this.VK.updates.on("wall_post_new", async ({ payload }) => {
+        this.VK.updates.on("wall_post_new", async (context) => {
+            const payload = context["payload"];
+
             if (payload.post_type === "post") {
                 const sender = this.createSender();
 
                 const [builder] = sender.builders;
+
+                builder.setTimestamp(payload.date as number * 1000);
 
                 if (author) {
                     const postAuthor = await getById(this.VK.api, payload.from_id as number);
