@@ -12,8 +12,8 @@ RUN npm ci --quiet && npm run build
 
 # Production stage
 FROM node:14-alpine
+WORKDIR /usr/src/vk2discord
 
-WORKDIR /vk2discord
 ENV NODE_ENV=production
 
 COPY package*.json ./
@@ -23,4 +23,4 @@ RUN npm ci --quiet --only=production
 COPY --from=builder /usr/src/vk2discord/dist ./dist
 COPY ./scripts ./scripts
 
-CMD npm start
+CMD ["npm", "start"]
