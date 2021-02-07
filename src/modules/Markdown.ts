@@ -47,6 +47,6 @@ export class Markdown {
     }
 
     sliceFix(text: string): string {
-        return text.replace(/\[([^\]\)]+)?\]?\(?([^\(\)\]\[]+)?…/g, "$1…");
+        return text.replace(/\[([^\])]+)?]?\(?([^()\]\[]+)?…/g, "$1…");
     }
 }
