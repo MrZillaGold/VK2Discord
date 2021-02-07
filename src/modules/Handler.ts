@@ -135,11 +135,17 @@ export class Handler {
         });
     }
 
-    async setCopyright({ copyright }: WallWallpostFull, builder: MessageEmbed): Promise<void> {
+    async setCopyright({ copyright, signer_id }: WallWallpostFull, builder: MessageEmbed): Promise<void> {
+        if (signer_id) {
+            const user = await getById(this.VK.api, signer_id);
+
+            builder.setFooter(user?.name, user?.photo_50);
+        }
+
         if (copyright) {
             const group = await getById(this.VK.api, copyright.id);
 
-            builder.setFooter(`Источник: ${copyright.name}`, group?.photo_50);
+            builder.setFooter(`${builder.footer?.text}${builder.footer?.text ? " • " : ""}Источник: ${copyright.name}`, builder.footer?.iconURL || group?.photo_50);
         }
     }
 }
