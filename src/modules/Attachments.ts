@@ -1,8 +1,16 @@
 import { MessageEmbed, MessageAttachment } from "discord.js";
 
+import { VK } from "./VK";
+
 import { Attachment, PoppedPhotoAttachment } from "../interfaces";
 
 export class Attachments {
+
+    VK: VK;
+
+    constructor(VK: VK) {
+        this.VK = VK;
+    }
 
     parse(attachments: Attachment[], builders: MessageEmbed[]): string {
         const [builder] = builders;
@@ -23,7 +31,9 @@ export class Attachments {
                     }
                     break;
                 case "video":
-                    return `\n[📹 Видео: ${video.title}](https://vk.com/video${video.owner_id}_${video.id})`;
+                    const context = `${video.owner_id > 0 ? "id" : "club"}${video.owner_id}`;
+
+                    return `\n[📹 Видео: ${video.title}](https://vk.com/${context}?z=video${video.owner_id}_${video.id})`;
                 case "link":
                     return `\n[🔗 ${link.button_text || "Ссылка"}: ${link.title}](${link.url})`;
                 case "doc":

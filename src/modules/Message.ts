@@ -40,7 +40,7 @@ export class Message {
         }
 
         if (payload.attachments) {
-            const parsedAttachments = new Attachments()
+            const parsedAttachments = new Attachments(VK)
                 .parse(payload.attachments as Attachment[], this.builders);
 
             if (parsedAttachments) {
@@ -61,7 +61,7 @@ export class Message {
             }
 
             if (repost.attachments) {
-                const parsedAttachments = new Attachments()
+                const parsedAttachments = new Attachments(VK)
                     .parse(repost.attachments as Attachment[], this.builders);
 
                 if (parsedAttachments) {
