@@ -145,7 +145,7 @@ export class Handler {
         if (copyright) {
             const group = await getById(this.VK.api, copyright.id);
 
-            builder.setFooter(`${builder.footer?.text}${builder.footer?.text ? " • " : ""}Источник: ${copyright.name}`, builder.footer?.iconURL || group?.photo_50);
+            builder.setFooter(`${builder.footer?.text || ""}${builder.footer?.text ? " • " : ""}Источник: ${copyright.name}`, builder.footer?.iconURL || group?.photo_50);
         }
     }
 }
