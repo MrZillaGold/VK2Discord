@@ -31,7 +31,7 @@ export class Attachments {
                     }
                     break;
                 case "video":
-                    const context = `${video.owner_id > 0 ? "id" : "club"}${video.owner_id}`;
+                    const context = `${video.owner_id > 0 ? "id" : "public"}${Math.abs(video.owner_id)}`;
 
                     return `\n[📹 Видео: ${video.title}](https://vk.com/${context}?z=video${video.owner_id}_${video.id})`;
                 case "link":
