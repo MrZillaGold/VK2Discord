@@ -5,7 +5,7 @@ import { VK } from "./VK.js";
 
 export class Markdown {
 
-    VK: VK;
+    readonly VK: VK;
 
     constructor(VK: VK) {
         this.VK = VK;
@@ -44,9 +44,5 @@ export class Markdown {
         } catch {
             return text;
         }
-    }
-
-    sliceFix(text: string): string {
-        return text.replace(/\[([^\])]+)?]?\(?([^()\]\[]+)?…/g, "$1…");
     }
 }

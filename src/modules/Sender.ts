@@ -1,7 +1,6 @@
 import { WebhookClient } from "discord.js";
 
 import { db } from "./DB.js";
-import { Markdown } from "./Markdown.js";
 import { Message } from "./Message.js";
 import { Keywords } from "./Keywords.js";
 
@@ -9,7 +8,7 @@ import { Cluster } from "../interfaces";
 
 export class Sender extends Message {
 
-    postDate: number;
+    private postDate: number;
 
     constructor(cluster: Cluster) {
         super(cluster);
@@ -48,12 +47,9 @@ export class Sender extends Message {
     }
 
     async send(): Promise<void> {
-        const { post, repost, builders: [builder], cluster: { index, VK, discord: { webhook_urls, content, username, avatar_url: avatarURL } } } = this;
+        const { post, repost, builders: [builder], cluster: { index, discord: { webhook_urls, content, username, avatar_url: avatarURL } } } = this;
 
-        builder.setDescription(
-            new Markdown(VK)
-                .sliceFix(post + repost)
-        );
+        builder.setDescription(post + repost);
 
         await this.pushDate(); // Сохраняем дату поста, чтобы не публиковать его заново
 
