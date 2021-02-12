@@ -54,7 +54,7 @@ export class Sender extends Message {
         await this.pushDate(); // Сохраняем дату поста, чтобы не публиковать его заново
 
         await Promise.allSettled(
-            webhook_urls.map((url) => {
+            webhook_urls.map((url, webhookIndex) => {
                 const isWebHookUrl = /https:\/\/(?:\w+\.)?discord(?:app)?\.com\/api\/webhooks\/([^]+)\/([^/]+)/g.exec(url);
 
                 if (isWebHookUrl) {
@@ -68,7 +68,7 @@ export class Sender extends Message {
                             avatarURL
                         });
                 } else {
-                    throw `[!] ${url} не является ссылкой на Discord Webhook.`;
+                    throw `[!] Строка #${webhookIndex + 1} (${url}) в кластере #${index} не является ссылкой на Discord Webhook.`;
                 }
             })
         )
@@ -77,7 +77,7 @@ export class Sender extends Message {
 
                 if (rejects.length) {
                     rejects.forEach(({ reason }) => {
-                        console.error("[!] Произошла ошибка при отправке сообщения:");
+                        console.error(`[!] Произошла ошибка при отправке сообщения в кластере #${index}:`);
                         console.error(reason);
                     });
                 } else {

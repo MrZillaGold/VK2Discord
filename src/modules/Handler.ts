@@ -80,10 +80,13 @@ export class Handler {
 
                         return sender.handle(post);
                     } else {
-                        console.log("[!] Не получено ни одной записи. Проверьте наличие записей в группе или измените значение фильтра в конфигурации.");
+                        console.log(`[!] В кластере #${index} не получено ни одной записи. Проверьте наличие записей в группе или измените значение фильтра в конфигурации.`);
                     }
                 })
-                .catch(console.error);
+                .catch((error) => {
+                    console.error(`[!] Произошла ошибка при получении записей ВКонтакте в кластере #${index}:`)
+                    console.error(error);
+                });
         }, interval * 1000);
     }
 
@@ -122,7 +125,10 @@ export class Handler {
             .then(() =>
                 console.log(`[VK2Discord] Кластер #${index} подключен к ВКонтакте с использованием LongPoll!`)
             )
-            .catch(console.error);
+            .catch((error) => {
+                console.error(`[!] Произошла ошибка при подключении к LongPoll ВКонтакте в кластере #${index}:`)
+                console.error(error);
+            });
     }
 
     private createSender(): Sender {
