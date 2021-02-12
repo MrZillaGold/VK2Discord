@@ -67,7 +67,8 @@ export class Attachments {
                     case "album":
                         return `\n[🖼️ Альбом: ${album.title}](https://vk.com/album${album.owner_id}_${album.id})`;
                 }
-            }) as ParsedAttachments
+            })
+                .filter((attachment) => attachment) as ParsedAttachments
         )
             .sort((a, b) => b.length - a.length);
 
