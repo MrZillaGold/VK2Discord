@@ -52,7 +52,7 @@ export class Message {
             this.repost += `\n>>> [**Репост записи**](https://vk.com/wall${repost.from_id}_${repost.id})`;
 
             if (repost.text) {
-                this.repost += `${
+                this.repost += `\n\n${
                     await new Markdown(VK)
                         .fix(repost.text)
                 }`;
