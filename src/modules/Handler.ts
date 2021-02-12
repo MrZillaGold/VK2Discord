@@ -10,9 +10,9 @@ import { Cluster, GetPostLinkOptions } from "../interfaces";
 
 export class Handler {
 
-    cluster: Pick<Cluster, "vk" | "discord" | "index">;
+    protected cluster: Pick<Cluster, "vk" | "discord" | "index">;
 
-    VK: VK;
+    protected VK: VK;
 
     constructor(cluster: Pick<Cluster, "vk" | "discord" | "index">) {
         this.cluster = cluster;
@@ -31,7 +31,7 @@ export class Handler {
         }
     }
 
-    startInterval(): void {
+    private startInterval(): void {
         const { index, vk: { interval, group_id, filter }, discord: { author, copyright } } = this.cluster;
 
         console.log(`[VK2Discord] Кластер #${index} будет проверять новые записи с интервалом в ${interval} секунд.`);
@@ -87,7 +87,7 @@ export class Handler {
         }, interval * 1000);
     }
 
-    async startPolling(): Promise<void> {
+    private async startPolling(): Promise<void> {
         const { index, discord: { author, copyright } } = this.cluster;
 
         this.VK.updates.on("wall_post_new", async (context) => {
@@ -125,7 +125,7 @@ export class Handler {
             .catch(console.error);
     }
 
-    createSender(): Sender {
+    private createSender(): Sender {
         const cluster = this.cluster;
         const VK = this.VK;
 
@@ -135,7 +135,7 @@ export class Handler {
         });
     }
 
-    async setCopyright({ copyright, signer_id }: WallWallpostFull, builder: MessageEmbed): Promise<void> {
+    private async setCopyright({ copyright, signer_id }: WallWallpostFull, builder: MessageEmbed): Promise<void> {
         if (signer_id) {
             const user = await getById(this.VK.api, signer_id);
 

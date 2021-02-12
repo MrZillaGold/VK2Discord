@@ -1,6 +1,6 @@
 export class Keywords {
 
-    keywords: string[];
+    readonly keywords: string[];
 
     constructor(keywords: string[]) {
         this.keywords = keywords;
