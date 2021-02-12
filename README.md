@@ -70,7 +70,7 @@
   <img alt="Лицензия Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/>
   </a>
   <br/>
-  <b>VK2DISCORD</b> доступен по 
+  <b>VK2Discord</b> доступен по 
   <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
     лицензии Creative Commons «Attribution-NonCommercial-ShareAlike» («Атрибуция —  Некоммерческое использование — На тех же условиях») 4.0 Всемирная
   </a>.
