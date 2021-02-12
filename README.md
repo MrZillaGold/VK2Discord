@@ -36,13 +36,6 @@
 <table>
   <tr>
     <td align="center">
-      <a href="https://discord.gg/deadbydaylight">
-        <img src="https://i.imgur.com/bjGpT8Y.jpg" width="100px;" alt="Dead by Daylight"/>
-        <br/>
-      <sub><b>Dead by Daylight</b></sub>
-      </a>
-    </td>
-    <td align="center">
       <a href="https://discord.gg/tAca6dX">
         <img src="https://i.imgur.com/ExjWQCI.png" width="100px;" alt="MINECRAFT RU"/>
         <br/>
