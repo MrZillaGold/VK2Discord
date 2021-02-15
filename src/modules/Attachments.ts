@@ -20,52 +20,72 @@ export class Attachments {
         const parsedAttachments = (
             attachments.map(({ type, photo, video, link, doc, audio, poll, album }) => {
                 switch (type) {
-                    case "photo":
-                        if (photo.sizes) {
+                    case "photo": {
+                        const { sizes } = photo;
+
+                        if (sizes) {
                             if (!builder.image) {
-                                builder.setImage(this.popAttachment(photo.sizes).url);
+                                builder.setImage(this.popAttachment(sizes).url);
                             } else {
                                 builders.push(
-                                    this.createImageEmbed(this.popAttachment(photo.sizes).url)
+                                    this.createImageEmbed(this.popAttachment(sizes).url)
                                 );
                             }
                         } else {
                             console.log("[!] В записи есть фотографии, но вы не установили версию LongPoll API 5.103 или выше.\nФотографии не будут обработаны.");
                         }
                         break;
-                    case "video":
-                        const context = `${video.owner_id > 0 ? "id" : "public"}${Math.abs(video.owner_id)}`;
+                    }
+                    case "video": {
+                        const { owner_id, title, id } = video;
+                        const context = `${owner_id > 0 ? "id" : "public"}${Math.abs(owner_id)}`;
 
-                        return `\n[📹 Видео: ${video.title}](https://vk.com/${context}?z=video${video.owner_id}_${video.id})`;
-                    case "link":
-                        return `\n[🔗 ${link.button_text || "Ссылка"}: ${link.title}](${link.url})`;
-                    case "doc":
-                        if (doc.ext === "gif") {
+                        return `\n[📹 Видео: ${title}](https://vk.com/${context}?z=video${owner_id}_${id})`;
+                    }
+                    case "link": {
+                        const { button_text = "Ссылка", description, title, url } = link;
+
+                        return `\n[🔗 ${description || button_text}: ${title}](${url})`;
+                    }
+                    case "doc": {
+                        const { ext, url, title } = doc;
+
+                        if (ext === "gif") {
                             if (!builder.image) {
                                 builder.attachFiles([
-                                    new MessageAttachment(doc.url, doc.title)
+                                    new MessageAttachment(url, title)
                                 ])
-                                    .setImage(`attachment://${doc.title}`);
+                                    .setImage(`attachment://${title}`);
                             } else {
                                 if (builders.length < 10) {
                                     builders.push(
-                                        this.createImageEmbed(`attachment://${doc.title}`)
+                                        this.createImageEmbed(`attachment://${title}`)
                                             .attachFiles([
-                                                new MessageAttachment(doc.url, doc.title)
+                                                new MessageAttachment(url, title)
                                             ])
                                     );
                                 }
                             }
                         } else {
-                            return `\n[📄 Файл: ${doc.title}](${doc.url})`;
+                            return `\n[📄 Файл: ${title}](${url})`;
                         }
                         break;
-                    case "audio":
-                        return `\n[🎵 Музыка: ${audio.artist} - ${audio.title}](https://vk.com/search?c[section]=audio&c[q]=${encodeURIComponent(audio.artist)}%20-%20${encodeURIComponent(audio.title)}&c[performer]=1)`;
-                    case "poll":
-                        return `\n[📊 Опрос: ${poll.question}](https://vk.com/feed?w=poll${poll.owner_id}_${poll.id})`;
-                    case "album":
-                        return `\n[🖼️ Альбом: ${album.title}](https://vk.com/album${album.owner_id}_${album.id})`;
+                    }
+                    case "audio": {
+                        const { artist, title } = audio;
+
+                        return `\n[🎵 Музыка: ${artist} - ${title}](https://vk.com/search?c[section]=audio&c[q]=${encodeURIComponent(artist)}%20-%20${encodeURIComponent(title)}&c[performer]=1)`;
+                    }
+                    case "poll": {
+                        const { question, owner_id, id } = poll;
+
+                        return `\n[📊 Опрос: ${question}](https://vk.com/feed?w=poll${owner_id}_${id})`;
+                    }
+                    case "album": {
+                        const { title, owner_id, id } = album;
+
+                        return `\n[🖼️ Альбом: ${title}](https://vk.com/album${owner_id}_${id})`;
+                    }
                 }
             })
                 .filter((attachment) => attachment) as ParsedAttachments
