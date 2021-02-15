@@ -3,9 +3,9 @@ import { AttachmentTypeString } from "vk-io";
 type AttachmentType = AttachmentTypeString | "album";
 
 export type Attachment = {
-    [key in AttachmentType]: any;
-} & {
     type: AttachmentType;
+} & {
+    [key in AttachmentType]: any;
 };
 
 export interface PoppedPhotoAttachment {
