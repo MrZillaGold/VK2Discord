@@ -8,10 +8,6 @@ export type Attachment = {
     [key in AttachmentType]: any;
 };
 
-export interface PoppedPhotoAttachment {
-    url: string
-}
-
 export type AttachmentFields = string[];
 export type ParsedAttachments = string[];
 

@@ -1,8 +1,8 @@
 import { MessageEmbed, MessageAttachment } from "discord.js";
 
-import { VK } from "./VK";
+import { VK } from "./VK.js";
 
-import { Attachment, PoppedPhotoAttachment, ParsedAttachments, AttachmentFields } from "../interfaces";
+import { Attachment, ParsedAttachments, AttachmentFields } from "../interfaces";
 
 export class Attachments {
 
@@ -25,10 +25,10 @@ export class Attachments {
 
                         if (sizes) {
                             if (!builder.image) {
-                                builder.setImage(this.popAttachment(sizes).url);
+                                builder.setImage(this.popAttachment(sizes));
                             } else {
                                 builders.push(
-                                    this.createImageEmbed(this.popAttachment(sizes).url)
+                                    this.createImageEmbed(this.popAttachment(sizes))
                                 );
                             }
                         } else {
@@ -111,10 +111,11 @@ export class Attachments {
         return attachmentFields;
     }
 
-    protected popAttachment(attachment: any[]): PoppedPhotoAttachment {
+    protected popAttachment(attachment: any[]): string {
         return attachment
             .sort((a, b) => a.width * a.height - b.width * b.height)
-            .pop();
+            .pop()
+            .url;
     }
 
     protected createImageEmbed(image_url: string): MessageEmbed {
