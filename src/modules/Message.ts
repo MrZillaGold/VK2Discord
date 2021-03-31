@@ -4,27 +4,24 @@ import { IWallAttachmentPayload } from "vk-io";
 import { Markdown } from "./Markdown.js";
 import { Attachments } from "./Attachments.js";
 
-import { Attachment, AttachmentFields, AttachmentFieldsType, Cluster } from "../interfaces";
+import { Attachment, AttachmentFields, AttachmentFieldsType, ICluster } from "../interfaces";
 
 export class Message {
 
-    cluster: Cluster;
+    cluster: ICluster;
 
-    protected post: string;
-    protected repost: string;
+    protected post = "";
+    protected repost = "";
 
     builders: MessageEmbed[];
 
-    constructor(cluster: Cluster) {
+    constructor(cluster: ICluster) {
         this.cluster = cluster;
 
-        this.post = "";
-        this.repost = "";
-
-        const color: string = cluster.discord.color;
+        const color = cluster.discord.color;
         this.builders = [
             new MessageEmbed()
-                .setColor(color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/m) ? color : "#aabbcc")
+                .setColor(color.match(/^#(?:\w{3}|\w{6})$/) ? color : "#aabbcc")
                 .setURL("https://twitter.com")
         ];
     }
@@ -46,7 +43,7 @@ export class Message {
             this.attachAttachments(parsedAttachments, "post");
         }
 
-        const repost: IWallAttachmentPayload | null = payload.copy_history ? payload.copy_history[0] : null;
+        const repost = payload.copy_history ? payload.copy_history[0] : null;
 
         if (repost) {
             this.repost += `\n>>> [**Репост записи**](https://vk.com/wall${repost.from_id}_${repost.id})`;
@@ -88,8 +85,7 @@ export class Message {
                         builder.fields.length >= 25 ?
                             12
                             :
-                            0
-                    );
+                            0);
                 }
 
                 attachmentFields.forEach((attachmentField, index) => {
@@ -114,6 +110,6 @@ export class Message {
     }
 
     protected sliceFix(text: string): string {
-        return text.replace(/\[([^\])]+)?]?\(?([^()\]\[]+)?…/g, "$1…");
+        return text.replace(/\[([^\])]+)?]?\(?([^()\][]+)?…/g, "$1…");
     }
 }

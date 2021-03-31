@@ -1,10 +1,8 @@
-interface Cluster {
+interface ICluster {
     last: number;
     published: number[];
 }
 
-export type DBCluster = Cluster | null;
-
-export interface DBSchema {
-    [key: string]: Cluster;
+export interface IDBSchema {
+    [key: string]: ICluster;
 }

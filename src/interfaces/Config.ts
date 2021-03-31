@@ -1,6 +1,6 @@
 import { VK } from "../modules/VK";
 
-export interface VKParams {
+export interface IVKParams {
     token: string;
     group_id: string;
     keywords: string[];
@@ -12,7 +12,7 @@ export interface VKParams {
     interval: number;
 }
 
-export interface DiscordParams {
+export interface IDiscordParams {
     webhook_urls: string[];
     username: string;
     avatar_url: string;
@@ -22,9 +22,9 @@ export interface DiscordParams {
     copyright: boolean;
 }
 
-export interface Cluster {
-    vk: VKParams;
-    discord: DiscordParams;
+export interface ICluster {
+    vk: IVKParams;
+    discord: IDiscordParams;
 
     VK: VK;
     index: number;

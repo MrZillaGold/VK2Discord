@@ -28,7 +28,7 @@ const cluster = {
         author: true,
         copyright: true
     }
-}
+};
 
 const vk = new VK({
     token: process.env.TOKEN
@@ -141,8 +141,6 @@ describe("Markdown", function() {
                 );
             });
         }
-
-
 
         it("Проверка текста c wiki-ссылкой", async function() {
             assert.deepStrictEqual(

@@ -1,4 +1,3 @@
-import { IResolvedOwnerResource, IResolvedTargetResource } from "vk-io";
 import replaceAsync from "string-replace-async";
 
 import { VK } from "./VK.js";
@@ -12,19 +11,21 @@ export class Markdown {
     }
 
     async fix(text: string): Promise<string> {
-        text = text // Fix ссылок
+        // Fix ссылок
+        text = text
             .replace(/(?:\[(https:\/\/vk.com\/[^]+?)\|([^]+?)])/g, "[$2]($1)")
             .replace(/(?:\[([^[]+?)\|([^]+?)])/g, "[$2](https://vk.com/$1)");
 
-        text = await replaceAsync(text, /(?:^|\s)#([^\s]+)/g, async (match, hashtag): Promise<string> => { // Fix хештегов
-            const space: string = match.startsWith("\n") ? "\n" : match.startsWith(" ") ? " " : "";
+        // Fix хештегов
+        text = await replaceAsync(text, /(?:^|\s)#([^\s]+)/g, async (match, hashtag): Promise<string> => {
+            const space = match.startsWith("\n") ? "\n" : match.startsWith(" ") ? " " : "";
 
-            const isNavigationHashtag: RegExpMatchArray | null = match.match(/#([^\s]+)@([a-zA-Z_]+)/);
+            const isNavigationHashtag = match.match(/#([^\s]+)@([a-zA-Z_]+)/);
 
             if (isNavigationHashtag) {
                 const [, hashtag, group] = isNavigationHashtag;
 
-                const resource: IResolvedTargetResource | IResolvedOwnerResource | null = await this.VK.resolveResource(group)
+                const resource = await this.VK.resolveResource(group)
                     .catch(() => null);
 
                 if (resource?.type === "group") {

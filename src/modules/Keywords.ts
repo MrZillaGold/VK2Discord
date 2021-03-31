@@ -6,17 +6,16 @@ export class Keywords {
         this.keywords = keywords;
     }
 
-    check(text: string): boolean {
+    check(text: string | void): boolean {
         const { keywords } = this;
 
         if (keywords.length && text) {
-            return keywords.some((keyword) => {
-                return text.match(
-                    new RegExp(keyword, "gi")
-                );
-            });
+            return keywords.some((keyword) => text.match(
+                new RegExp(keyword, "gi")
+            ));
         } else {
             return true;
         }
     }
+
 }

@@ -1,20 +1,20 @@
+import { IWallPostContextPayload } from "vk-io";
 import { MessageEmbed } from "discord.js";
-import { WallWallpostFull } from "vk-io/lib/api/schemas/objects";
 
 import { VK } from "./VK.js";
 import { Sender } from "./Sender.js";
 
 import { getById, getPostAuthor, getPostLink, getResourceId } from "./functions.js";
 
-import { Cluster, GetPostLinkOptions } from "../interfaces";
+import { ICluster, IGetPostLinkOptions } from "../interfaces";
 
 export class Handler {
 
-    protected cluster: Pick<Cluster, "vk" | "discord" | "index">;
+    protected cluster: Pick<ICluster, "vk" | "discord" | "index">;
 
     protected VK: VK;
 
-    constructor(cluster: Pick<Cluster, "vk" | "discord" | "index">) {
+    constructor(cluster: Pick<ICluster, "vk" | "discord" | "index">) {
         this.cluster = cluster;
 
         this.VK = new VK({
@@ -42,10 +42,17 @@ export class Handler {
 
         setInterval(async () => {
             const sender = this.createSender();
-            const id = await getResourceId(this.VK, group_id);
+            const id = await getResourceId(this.VK, group_id)
+                .then((id) => {
+                    if (!id) {
+                        return console.error(`[!] ${group_id} не является ID-пользователя или группы ВКонтакте!`);
+                    }
+
+                    return id;
+                });
 
             if (!id) {
-                return console.error(`[!] ${group_id} не является ID-пользователя или группы ВКонтакте!`)
+                return;
             }
 
             const [builder] = sender.builders;
@@ -55,7 +62,7 @@ export class Handler {
                 count: 2,
                 extended: 1,
                 filter: filter ? "owner" : "all",
-                v: "5.126"
+                v: "5.130"
             })
                 .then(async ({ groups, profiles, items }) => {
                     if (items.length) {
@@ -65,32 +72,32 @@ export class Handler {
                         builder.setTimestamp(post.date as number * 1000);
 
                         if (author) {
-                            const postAuthor = getPostAuthor(post, profiles, groups);
+                            const postAuthor = getPostAuthor(post as IWallPostContextPayload, profiles, groups);
 
                             if (postAuthor) {
                                 const { name, photo_50 } = postAuthor;
 
-                                builder.setAuthor(name, photo_50, getPostLink(post as GetPostLinkOptions));
+                                builder.setAuthor(name, photo_50, getPostLink(post as IGetPostLinkOptions));
                             }
                         }
 
                         if (copyright) {
-                            await this.setCopyright(post, builder);
+                            await this.setCopyright(post as IWallPostContextPayload, builder);
                         }
 
-                        return sender.handle(post);
+                        return sender.handle(post as IWallPostContextPayload);
                     } else {
                         console.log(`[!] В кластере #${index} не получено ни одной записи. Проверьте наличие записей в группе или измените значение фильтра в конфигурации.`);
                     }
                 })
                 .catch((error) => {
-                    console.error(`[!] Произошла ошибка при получении записей ВКонтакте в кластере #${index}:`)
+                    console.error(`[!] Произошла ошибка при получении записей ВКонтакте в кластере #${index}:`);
                     console.error(error);
                 });
         }, interval * 1000);
     }
 
-    private async startPolling(): Promise<void> {
+    private startPolling(): void {
         const { index, discord: { author, copyright } } = this.cluster;
 
         this.VK.updates.on("wall_post_new", async (context) => {
@@ -114,7 +121,7 @@ export class Handler {
                 }
 
                 if (copyright) {
-                    await this.setCopyright(payload as WallWallpostFull, builder);
+                    await this.setCopyright(payload, builder);
                 }
 
                 return sender.handle(payload);
@@ -122,11 +129,9 @@ export class Handler {
         });
 
         this.VK.updates.start()
-            .then(() =>
-                console.log(`[VK2Discord] Кластер #${index} подключен к ВКонтакте с использованием LongPoll!`)
-            )
+            .then(() => console.log(`[VK2Discord] Кластер #${index} подключен к ВКонтакте с использованием LongPoll!`))
             .catch((error) => {
-                console.error(`[!] Произошла ошибка при подключении к LongPoll ВКонтакте в кластере #${index}:`)
+                console.error(`[!] Произошла ошибка при подключении к LongPoll ВКонтакте в кластере #${index}:`);
                 console.error(error);
             });
     }
@@ -141,7 +146,8 @@ export class Handler {
         });
     }
 
-    private async setCopyright({ copyright, signer_id }: WallWallpostFull, builder: MessageEmbed): Promise<void> {
+    // @ts-ignore Invalid lib types
+    private async setCopyright({ copyright, signer_id }: IWallPostContextPayload, builder: MessageEmbed): Promise<void> {
         if (signer_id) {
             const user = await getById(this.VK.api, signer_id);
 

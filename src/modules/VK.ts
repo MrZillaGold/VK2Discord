@@ -8,4 +8,5 @@ export class VK extends _VK {
             api: this.api
         });
     }
+
 }

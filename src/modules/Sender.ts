@@ -1,22 +1,15 @@
 import { WebhookClient } from "discord.js";
+import { IWallPostContextPayload } from "vk-io";
 
 import { db } from "./DB.js";
 import { Message } from "./Message.js";
 import { Keywords } from "./Keywords.js";
 
-import { Cluster } from "../interfaces";
-
 export class Sender extends Message {
 
-    private postDate: number;
+    private postDate = 0;
 
-    constructor(cluster: Cluster) {
-        super(cluster);
-
-        this.postDate = 0;
-    }
-
-    async handle(payload: any): Promise<void> {
+    async handle(payload: IWallPostContextPayload): Promise<void> {
         const { index, vk: { longpoll, filter, group_id, keywords, ads, donut, words_blacklist } } = this.cluster;
 
         const news = await db.get(group_id)
@@ -24,19 +17,19 @@ export class Sender extends Message {
 
         if (
             news?.last !== payload.date &&
-            !news?.published.includes(payload.date) &&
+            !news?.published.includes(payload.date as number) &&
             new Keywords(keywords).check(payload.text) &&
             (words_blacklist.length ? !new Keywords(words_blacklist).check(payload.text) : true)
         ) { // Проверяем что пост не был опубликован ранее и соответствует ключевым словам
             if (
                 (longpoll && filter && payload.owner_id !== payload.from_id) || // Фильтр на записи "Только от имени группы" для LongPoll API
-                (!ads && payload.marked_as_ads) ||
+                (!ads && payload.marked_as_ads) || // @ts-ignore Invalid lib type
                 (!donut && payload.donut.is_donut)
             ) {
                 return console.log(`[!] Новая запись в кластере #${index} не соответствуют настройкам конфига, пропустим ее.`);
             }
 
-            this.postDate = payload.date;
+            this.postDate = payload.date as number;
 
             await this.parsePost(payload);
 
