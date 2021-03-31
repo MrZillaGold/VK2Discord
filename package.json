@@ -6,11 +6,14 @@
   "main": "build/index.js",
   "scripts": {
     "start": "node --experimental-modules --experimental-json-modules --unhandled-rejections=warn --es-module-specifier-resolution=node ./dist/index.js",
-    "prestart": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/check.mjs",
-    "build": "tsc && node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/cleanUpBuild.mjs",
-    "prebuild": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/buildInit.mjs",
-    "update": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./scripts/update.mjs",
-    "test": "npm run build && node --experimental-modules --experimental-json-modules node_modules/mocha/bin/_mocha --reporter spec --exit --timeout=30000"
+    "prestart": "node ./scripts/check.mjs",
+    "prebuild": "node ./scripts/buildInit.mjs",
+    "build": "tsc && node ./scripts/cleanUpBuild.mjs",
+    "update": "node ./scripts/update.mjs",
+    "pretest": "npm run-script build",
+    "test": "npm run-script eslint:check && node --experimental-modules --experimental-json-modules node_modules/mocha/bin/_mocha --reporter spec --exit --timeout=30000",
+    "eslint:check": "eslint ./src/**/*",
+    "eslint:fix": "eslint ./src/**/* --fix"
   },
   "type": "module",
   "homepage": "https://github.com/MrZillaGold/VK2Discord#readme",
@@ -33,6 +36,9 @@
     "@types/lowdb": "^1.0.9",
     "@types/node": "^14.14.37",
     "@types/ws": "^7.4.0",
+    "@typescript-eslint/eslint-plugin": "^4.18.0",
+    "@typescript-eslint/parser": "^4.17.0",
+    "eslint": "^7.22.0",
     "mocha": "^8.3.2",
     "typescript": "^4.2.3"
   },

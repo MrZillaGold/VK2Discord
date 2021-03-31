@@ -4,6 +4,7 @@
 node_modules
 Procfile
 .gitignore
+.eslintrc.json
 npm-debug.log
 config_example.json
 config_old.json
