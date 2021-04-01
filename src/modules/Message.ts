@@ -8,12 +8,12 @@ import { Attachment, AttachmentFields, AttachmentFieldsType, ICluster } from "..
 
 export class Message {
 
-    cluster: ICluster;
+    readonly cluster: ICluster;
 
     protected post = "";
     protected repost = "";
 
-    builders: MessageEmbed[];
+    protected builders: MessageEmbed[];
 
     constructor(cluster: ICluster) {
         this.cluster = cluster;
@@ -100,16 +100,16 @@ export class Message {
 
         if ((post + repost).length > 2048) {
             if (post) {
-                this.post = this.sliceFix(`${post.slice(0, (repost ? 1024 : 2048) - 3)}…\n`);
+                this.post = Message.sliceFix(`${post.slice(0, (repost ? 1024 : 2048) - 3)}…\n`);
             }
 
             if (repost) {
-                this.repost = this.sliceFix(`${repost.slice(0, (post ? 1024 : 2048) - 1)}…`);
+                this.repost = Message.sliceFix(`${repost.slice(0, (post ? 1024 : 2048) - 1)}…`);
             }
         }
     }
 
-    protected sliceFix(text: string): string {
+    private static sliceFix(text: string): string {
         return text.replace(/\[([^\])]+)?]?\(?([^()\][]+)?…/g, "$1…");
     }
 }

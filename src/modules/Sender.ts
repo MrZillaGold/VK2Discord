@@ -1,9 +1,10 @@
 import { WebhookClient } from "discord.js";
 import { IWallPostContextPayload } from "vk-io";
 
-import { db } from "./DB.js";
 import { Message } from "./Message.js";
 import { Keywords } from "./Keywords.js";
+
+import { db } from "./DB.js";
 
 export class Sender extends Message {
 
@@ -12,34 +13,39 @@ export class Sender extends Message {
     async handle(payload: IWallPostContextPayload): Promise<void> {
         const { index, vk: { longpoll, filter, group_id, keywords, ads, donut, words_blacklist } } = this.cluster;
 
-        const news = await db.get(group_id)
+        this.postDate = payload.date as number;
+
+        const cache = await db.get(group_id)
             .value();
 
         if (
-            news?.last !== payload.date &&
-            !news?.published.includes(payload.date as number) &&
-            new Keywords(keywords).check(payload.text) &&
-            (words_blacklist.length ? !new Keywords(words_blacklist).check(payload.text) : true)
-        ) { // Проверяем что пост не был опубликован ранее и соответствует ключевым словам
+            cache?.last !== payload.date &&
+            cache?.published && !cache.published.includes(payload.date as number)
+        ) {
             if (
-                (longpoll && filter && payload.owner_id !== payload.from_id) || // Фильтр на записи "Только от имени группы" для LongPoll API
-                (!ads && payload.marked_as_ads) || // @ts-ignore Invalid lib type
-                (!donut && payload.donut.is_donut)
+                new Keywords(keywords).check(payload.text) &&
+                words_blacklist.length && !new Keywords(words_blacklist).check(payload.text)
             ) {
-                return console.log(`[!] Новая запись в кластере #${index} не соответствуют настройкам конфига, пропустим ее.`);
+                if (
+                    (longpoll && filter && payload.owner_id !== payload.from_id) || // Фильтр на записи "Только от имени группы" для LongPoll API
+                    (!ads && payload.marked_as_ads) || // @ts-ignore Invalid lib type
+                    (!donut && payload.donut.is_donut)
+                ) {
+                    return console.log(`[!] Новая запись в кластере #${index} не соответствует настройкам конфига, игнорируем ее.`);
+                }
+
+                await this.parsePost(payload);
+
+                await this.send();
             }
 
-            this.postDate = payload.date as number;
-
-            await this.parsePost(payload);
-
-            await this.send();
-        } else {
-            console.log(`[!] Новых записей в кластере #${index} нет или они не соответствуют ключевым словам!`);
+            return console.log(`[!] Новая запись в кластере #${index} не соответствует ключевым словам, игнорируем ее.`);
         }
+
+        return console.log(`[!] Новых записей в кластере #${index} нет.`);
     }
 
-    async send(): Promise<void> {
+    private async send(): Promise<void> {
         const { post, repost, builders: [builder], cluster: { index, discord: { webhook_urls, content, username, avatar_url: avatarURL } } } = this;
 
         builder.setDescription(post + repost);
@@ -69,17 +75,17 @@ export class Sender extends Message {
                 const rejects = outputs.filter(({ status }) => status === "rejected") as PromiseRejectedResult[];
 
                 if (rejects.length) {
-                    rejects.forEach(({ reason }) => {
+                    return rejects.forEach(({ reason }) => {
                         console.error(`[!] Произошла ошибка при отправке сообщения в кластере #${index}:`);
                         console.error(reason);
                     });
-                } else {
-                    console.log(`[VK2Discord] Запись в кластере #${index} опубликована.`);
                 }
+
+                console.log(`[VK2Discord] Запись в кластере #${index} опубликована.`);
             });
     }
 
-    async pushDate(): Promise<void> {
+    private async pushDate(): Promise<void> {
         const { cluster: { vk: { group_id } }, postDate } = this;
 
         if (db.has(group_id).value()) {
