@@ -5,6 +5,7 @@ services:
     image: mrzillagold/vk2discord:latest
     volumes:
       - /opt/vk2discord/config.json:/usr/src/vk2discord/config.json
+      - /opt/vk2discord/cache.json:/usr/src/vk2discord/cache.json
       - /opt/vk2discord/news.json:/usr/src/vk2discord/news.json
     restart: always
     tmpfs:

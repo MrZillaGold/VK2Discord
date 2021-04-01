@@ -2,7 +2,7 @@ import { promises as fs } from "fs";
 
 import { LATEST_CONFIG_VERSION, NODE_MAJOR_VERSION } from "./constants.mjs";
 
-if (Number(NODE_MAJOR_VERSION) < 14) {
+if (NODE_MAJOR_VERSION < 14) {
     throw "\n\n[!] Для запуска скрипта необходима NodeJS 14 или выше!\n\n";
 }
 
@@ -10,9 +10,10 @@ fs.readdir("./")
     .then(async (files) => {
         if (files.includes("config.json")) {
             try {
-                const config = await import("../config.json");
+                const config = await import("../config.json")
+                    .default;
 
-                if (config.default.version_dont_modify_me !== LATEST_CONFIG_VERSION) {
+                if (config.version_dont_modify_me !== LATEST_CONFIG_VERSION) {
                     await rename();
                     await createConfig();
 
@@ -37,13 +38,17 @@ fs.readdir("./")
         }
 
         if (files.includes("news.json")) {
+            return renameCache();
+        }
+
+        if (files.includes("cache.json")) {
             try {
-                await import("../news.json");
+                await import("../cache.json");
             } catch {
-                await createNews();
+                await createCache();
             }
         } else {
-            await createNews();
+            await createCache();
         }
     })
     .catch((error) => {
@@ -89,6 +94,10 @@ function rename() {
     return fs.rename("./config.json", "./config_old.json");
 }
 
-function createNews() {
-    return fs.writeFile("./news.json", JSON.stringify({}, null, "\t"));
+function createCache() {
+    return fs.writeFile("./cache.json", JSON.stringify({}, null, "\t"));
+}
+
+function renameCache() {
+    return fs.rename("./news.json", "./cache.json");
 }
