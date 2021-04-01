@@ -168,13 +168,14 @@ if (process.env.TOKEN) {
 
         describe("pushDate();", function () {
             it("Проверка на соответствие даты опубликованной записи", async function() {
-                const { default: news } = await import("../news.json");
+                const cache = await import("../cache.json")
+                    .default;
 
-                const group = news[cluster.vk.group_id];
+                const group = cache[cluster.vk.group_id];
 
                 assert.ok(
-                    group.last === payload.date &&
-                    group.published.includes(payload.date)
+                    group?.last === payload.date &&
+                    group?.published.includes(payload.date)
                 );
             });
         });
