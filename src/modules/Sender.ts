@@ -20,11 +20,19 @@ export class Sender extends Message {
 
         if (
             cache?.last !== payload.date &&
-            cache?.published && !cache.published.includes(payload.date as number)
+            !cache?.published?.includes(payload.date as number)
         ) {
             if (
-                new Keywords(keywords).check(payload.text) &&
-                words_blacklist.length && !new Keywords(words_blacklist).check(payload.text)
+                new Keywords({
+                    type: "keywords",
+                    keywords
+                })
+                    .check(payload.text) &&
+                new Keywords({
+                    type: "blacklist",
+                    keywords: words_blacklist
+                })
+                    .check(payload.text)
             ) {
                 if (
                     (longpoll && filter && payload.owner_id !== payload.from_id) || // Фильтр на записи "Только от имени группы" для LongPoll API
@@ -36,7 +44,7 @@ export class Sender extends Message {
 
                 await this.parsePost(payload);
 
-                await this.send();
+                return this.send();
             }
 
             return console.log(`[!] Новая запись в кластере #${index} не соответствует ключевым словам, игнорируем ее.`);

@@ -7,5 +7,5 @@ const adapter = new FileAsync<IDBSchema>("./cache.json");
 
 export const db = await lowdb(adapter);
 
-db.defaults({ })
+db.defaults({})
     .write();

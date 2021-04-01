@@ -46,36 +46,34 @@ describe("Keywords", function() {
 
         it("Проверка текста на соответствие ключевым словам", function() {
             assert.ok(
-                new Keywords(keyword)
-                    .check(text1)
-            );
-
-            assert.ok(
-                new Keywords(keywords)
+                new Keywords({
+                    type: "keywords",
+                    keywords
+                })
                     .check(text1)
             );
         });
 
         it("Проверка текста на несоответствие ключевым словам", function() {
-            assert.deepStrictEqual(
-                new Keywords(keyword)
-                    .check(text2),
-                false
-            );
-
-            assert.deepStrictEqual(
-                new Keywords(keywords)
-                    .check(text2),
-                false
+            assert.ok(
+                new Keywords({
+                    type: "blacklist",
+                    keywords: keyword
+                })
+                    .check(text2)
             );
         });
 
         it("Проверка функции на ошибки при отсутствии текста", function() {
             assert.doesNotThrow(() => {
-                new Keywords(keywords)
+                new Keywords({
+                    keywords: []
+                })
                     .check("")
 
-                new Keywords(keywords)
+                new Keywords({
+                    keywords: []
+                })
                     .check(null)
             });
         });
@@ -168,7 +166,7 @@ if (process.env.TOKEN) {
 
         describe("pushDate();", function () {
             it("Проверка на соответствие даты опубликованной записи", async function() {
-                const cache = await import("../cache.json")
+                const cache = (await import("../cache.json"))
                     .default;
 
                 const group = cache[cluster.vk.group_id];
