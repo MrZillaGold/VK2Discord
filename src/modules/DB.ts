@@ -3,7 +3,7 @@ import FileAsync from "lowdb/adapters/FileAsync.js";
 
 import { IDBSchema } from "../interfaces";
 
-const adapter = new FileAsync<IDBSchema>("./news.json");
+const adapter = new FileAsync<IDBSchema>("./cache.json");
 
 export const db = await lowdb(adapter);
 
