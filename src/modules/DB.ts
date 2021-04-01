@@ -6,3 +6,6 @@ import { IDBSchema } from "../interfaces";
 const adapter = new FileAsync<IDBSchema>("./news.json");
 
 export const db = await lowdb(adapter);
+
+db.defaults({ })
+    .write();
