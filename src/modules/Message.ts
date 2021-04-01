@@ -13,7 +13,7 @@ export class Message {
     protected post = "";
     protected repost = "";
 
-    protected builders: MessageEmbed[];
+    builders: MessageEmbed[];
 
     constructor(cluster: ICluster) {
         this.cluster = cluster;
