@@ -1,6 +1,7 @@
 interface ICluster {
-    last: number;
-    published: number[];
+    id?: number;
+    last?: number;
+    published?: number[];
 }
 
 export interface IDBSchema {

@@ -4,7 +4,16 @@ import { IGetPostLinkOptions, IProfile } from "../interfaces";
 
 import { VK } from "./VK.js";
 
-export function getResourceId(VK: VK, resource: string): Promise<number | null> {
+import { db } from "./DB";
+
+export async function getResourceId(VK: VK, resource: string): Promise<number | null> {
+    const cache = await db.get(resource)
+        .value();
+
+    if (cache?.id) {
+        return cache.id;
+    }
+
     return VK.resolveResource(resource)
         .then(({ id, type }) => type === "user" ?
             id
@@ -13,6 +22,12 @@ export function getResourceId(VK: VK, resource: string): Promise<number | null> 
                 -id
                 :
                 null)
+        .then((id) => {
+            db.set(`${resource}.id`, id)
+                .write();
+
+            return id;
+        })
         .catch((error) => {
             console.error("[!] Произошла ошибка при получении ID-ресурса.");
             console.error(error);
