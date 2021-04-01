@@ -1,21 +1,31 @@
+import { IKeywordOptions } from "../interfaces";
+
 export class Keywords {
 
-    readonly keywords: string[];
+    readonly keywords: IKeywordOptions["keywords"];
+    readonly type: IKeywordOptions["type"];
 
-    constructor(keywords: string[]) {
+    constructor({ keywords, type }: IKeywordOptions) {
         this.keywords = keywords;
+        this.type = type;
     }
 
     check(text: string | void): boolean {
-        const { keywords } = this;
-
-        if (keywords.length && text) {
-            return keywords.some((keyword) => text.match(
+        if (this.keywords.length && text) {
+            const match = this.keywords.some((keyword) => text.match(
                 new RegExp(keyword, "gi")
             ));
-        } else {
-            return true;
+
+            return this.reverse(match);
         }
+
+        return true;
     }
 
+    private reverse(value: boolean) {
+        return this.type === "keywords" ?
+            value
+            :
+            !value;
+    }
 }
