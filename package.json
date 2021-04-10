@@ -6,10 +6,10 @@
   "main": "build/index.js",
   "scripts": {
     "start": "node --experimental-modules --experimental-json-modules --unhandled-rejections=warn --es-module-specifier-resolution=node ./dist/index.js",
-    "prestart": "node ./scripts/check.mjs",
+    "prestart": "node --experimental-modules --experimental-json-modules --unhandled-rejections=warn --es-module-specifier-resolution=node ./scripts/check.mjs",
     "prebuild": "node ./scripts/buildInit.mjs",
     "build": "tsc && node ./scripts/cleanUpBuild.mjs",
-    "update": "node ./scripts/update.mjs",
+    "update": "node --experimental-modules --experimental-json-modules --unhandled-rejections=warn --es-module-specifier-resolution=node ./scripts/update.mjs",
     "pretest": "npm run-script build",
     "test": "npm run-script eslint:check && node --experimental-modules --experimental-json-modules node_modules/mocha/bin/_mocha --reporter spec --exit --timeout=30000",
     "eslint:check": "eslint ./src/**/*",
