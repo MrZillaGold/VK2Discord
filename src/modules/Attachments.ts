@@ -129,7 +129,7 @@ export class Attachments {
             .setImage(image_url);
     }
 
-    protected generateAttachmentContext({ owner_id }: ISharedAttachmentPayload) {
+    protected generateAttachmentContext({ owner_id }: ISharedAttachmentPayload): string {
         const isUser = owner_id > 0;
 
         return `${isUser ? "id" : "feed"}${isUser ? Math.abs(owner_id) : ""}`;
