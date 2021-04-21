@@ -2,6 +2,8 @@ import { MessageEmbed, MessageAttachment } from "discord.js";
 
 import { VK } from "./VK.js";
 
+import { LINK_PREFIX } from "./functions";
+
 import { Attachment, ParsedAttachments, AttachmentFields } from "../interfaces";
 
 export class Attachments {
@@ -37,10 +39,10 @@ export class Attachments {
                         break;
                     }
                     case "video": {
-                        const { owner_id, title, id } = video;
+                        const { owner_id, title } = video;
                         const context = `${owner_id > 0 ? "id" : "public"}${Math.abs(owner_id)}`;
 
-                        return `\n[📹 Видео: ${title}](https://vk.com/${context}?z=video${owner_id}_${id})`;
+                        return `\n[📹 Видео: ${title}](${LINK_PREFIX}${context}?z=${String(video)})`;
                     }
                     case "link": {
                         const { button_text = "Ссылка", description, title, url } = link;
@@ -74,17 +76,17 @@ export class Attachments {
                     case "audio": {
                         const { artist, title } = audio;
 
-                        return `\n[🎵 Музыка: ${artist} - ${title}](https://vk.com/search?c[section]=audio&c[q]=${encodeURIComponent(artist)}%20-%20${encodeURIComponent(title)}&c[performer]=1)`;
+                        return `\n[🎵 Аудиозапись: ${artist} - ${title}](https://vk.com/search?c[section]=audio&c[q]=${encodeURIComponent(artist)}%20-%20${encodeURIComponent(title)}&c[performer]=1)`;
                     }
                     case "poll": {
-                        const { question, owner_id, id } = poll;
+                        const { question } = poll;
 
-                        return `\n[📊 Опрос: ${question}](https://vk.com/feed?w=poll${owner_id}_${id})`;
+                        return `\n[📊 Опрос: ${question}](${LINK_PREFIX}feed?w=${String(poll)})`;
                     }
                     case "album": {
-                        const { title, owner_id, id } = album;
+                        const { title } = album;
 
-                        return `\n[🖼️ Альбом: ${title}](https://vk.com/album${owner_id}_${id})`;
+                        return `\n[🖼️ Альбом: ${title}](${LINK_PREFIX}${String(album)})`;
                     }
                 }
             })

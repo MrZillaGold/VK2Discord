@@ -6,6 +6,8 @@ import { VK } from "./VK.js";
 
 import { db } from "./DB";
 
+export const LINK_PREFIX = "https://vk.com/";
+
 export async function getResourceId(VK: VK, resource: string): Promise<number | null> {
     const cache = await db.get(resource)
         .value();
@@ -37,7 +39,7 @@ export async function getResourceId(VK: VK, resource: string): Promise<number | 
 }
 
 export function getPostLink({ owner_id, id }: IGetPostLinkOptions): string {
-    return `https://vk.com/wall${owner_id}_${id}`;
+    return `${LINK_PREFIX}wall${owner_id}_${id}`;
 }
 
 export function getPostAuthor(post: IWallPostContextPayload, profiles: GroupsProfileItem[], groups: GroupsGroupFull[]): IProfile | GroupsGroupFull {
