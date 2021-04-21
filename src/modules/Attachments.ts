@@ -2,7 +2,7 @@ import { MessageEmbed, MessageAttachment } from "discord.js";
 
 import { VK } from "./VK.js";
 
-import { LINK_PREFIX } from "./functions";
+import { LINK_PREFIX } from "./functions.js";
 
 import { Attachment, ParsedAttachments, AttachmentFields } from "../interfaces";
 
