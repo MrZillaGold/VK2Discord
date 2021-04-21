@@ -39,10 +39,10 @@ export class Attachments {
                         break;
                     }
                     case "video": {
-                        const { owner_id, title } = video;
+                        const { owner_id, id, title } = video;
                         const context = `${owner_id > 0 ? "id" : "public"}${Math.abs(owner_id)}`;
 
-                        return `[📹 Видео: ${title}](${LINK_PREFIX}${context}?z=${String(video)})`;
+                        return `[📹 Видео: ${title}](${LINK_PREFIX}${context}?z=video${owner_id}_${id})`;
                     }
                     case "link": {
                         const { button_text = "Ссылка", description, title, url } = link;
@@ -74,19 +74,19 @@ export class Attachments {
                         break;
                     }
                     case "audio": {
-                        const { artist, title } = audio;
+                        const { owner_id, id, artist, title } = audio;
 
-                        return `[🎵 Аудиозапись: ${artist} - ${title}](${LINK_PREFIX}${String(audio)}`;
+                        return `[🎵 Аудиозапись: ${artist} - ${title}](${LINK_PREFIX}audio${owner_id}_${id})`;
                     }
                     case "poll": {
-                        const { question } = poll;
+                        const { owner_id, id, question } = poll;
 
-                        return `[📊 Опрос: ${question}](${LINK_PREFIX}feed?w=${String(poll)})`;
+                        return `[📊 Опрос: ${question}](${LINK_PREFIX}feed?w=poll${owner_id}_${id})`;
                     }
                     case "album": {
-                        const { title } = album;
+                        const { owner_id, id, title } = album;
 
-                        return `[🖼️ Альбом: ${title}](${LINK_PREFIX}${String(album)})`;
+                        return `[🖼️ Альбом: ${title}](${LINK_PREFIX}album${owner_id}_${id})`;
                     }
                 }
             })
