@@ -42,12 +42,12 @@ export class Attachments {
                         const { owner_id, title } = video;
                         const context = `${owner_id > 0 ? "id" : "public"}${Math.abs(owner_id)}`;
 
-                        return `\n[📹 Видео: ${title}](${LINK_PREFIX}${context}?z=${String(video)})`;
+                        return `[📹 Видео: ${title}](${LINK_PREFIX}${context}?z=${String(video)})`;
                     }
                     case "link": {
                         const { button_text = "Ссылка", description, title, url } = link;
 
-                        return `\n[🔗 ${description || button_text}: ${title}](${url})`;
+                        return `[🔗 ${description || button_text}: ${title}](${url})`;
                     }
                     case "doc": {
                         const { ext, url, title } = doc;
@@ -69,30 +69,31 @@ export class Attachments {
                                 }
                             }
                         } else {
-                            return `\n[📄 Файл: ${title}](${url})`;
+                            return `[📄 Файл: ${title}](${url})`;
                         }
                         break;
                     }
                     case "audio": {
                         const { artist, title } = audio;
 
-                        return `\n[🎵 Аудиозапись: ${artist} - ${title}](${LINK_PREFIX}${String(audio)}`;
+                        return `[🎵 Аудиозапись: ${artist} - ${title}](${LINK_PREFIX}${String(audio)}`;
                     }
                     case "poll": {
                         const { question } = poll;
 
-                        return `\n[📊 Опрос: ${question}](${LINK_PREFIX}feed?w=${String(poll)})`;
+                        return `[📊 Опрос: ${question}](${LINK_PREFIX}feed?w=${String(poll)})`;
                     }
                     case "album": {
                         const { title } = album;
 
-                        return `\n[🖼️ Альбом: ${title}](${LINK_PREFIX}${String(album)})`;
+                        return `[🖼️ Альбом: ${title}](${LINK_PREFIX}${String(album)})`;
                     }
                 }
             })
                 .filter((attachment) => attachment) as ParsedAttachments
         )
-            .sort((a, b) => b.length - a.length);
+            .sort((a, b) => b.length - a.length)
+            .map((attachment) => `\n${attachment}`);
 
         parsedAttachments.forEach((attachment, index) => {
             if (!index) {
