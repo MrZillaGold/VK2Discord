@@ -1,5 +1,5 @@
 import { MessageEmbed, MessageAttachment } from "discord.js";
-import { AttachmentType } from "vk-io";
+import { AttachmentType, ISharedAttachmentPayload } from "vk-io";
 
 import { VK } from "./VK.js";
 
@@ -43,9 +43,8 @@ export class Attachments {
                     }
                     case VIDEO: {
                         const { owner_id, id, title } = video;
-                        const context = `${owner_id > 0 ? "id" : "public"}${Math.abs(owner_id)}`;
 
-                        return `[📹 Видео: ${title}](${LINK_PREFIX}${context}?z=${VIDEO}${owner_id}_${id})`;
+                        return `[📹 Видео: ${title}](${LINK_PREFIX}${this.generateAttachmentContext(video)}?z=${VIDEO}${owner_id}_${id})`;
                     }
                     case LINK: {
                         const { button_text = "Ссылка", description, title, url } = link;
@@ -84,7 +83,7 @@ export class Attachments {
                     case POLL: {
                         const { owner_id, id, question } = poll;
 
-                        return `[📊 Опрос: ${question}](${LINK_PREFIX}feed?w=${POLL}${owner_id}_${id})`;
+                        return `[📊 Опрос: ${question}](${LINK_PREFIX}${this.generateAttachmentContext(poll)}?w=${POLL}${owner_id}_${id})`;
                     }
                     case "album": { // todo https://github.com/negezor/vk-io/pull/416/commits/43023a51c8e4cb53e9783f84a60eddb4ccaf93d5
                         const { owner_id, id, title } = album;
@@ -128,5 +127,11 @@ export class Attachments {
         return new MessageEmbed()
             .setURL("https://twitter.com")
             .setImage(image_url);
+    }
+
+    protected generateAttachmentContext({ owner_id }: ISharedAttachmentPayload) {
+        const isUser = owner_id > 0;
+
+        return `${isUser ? "id" : "feed"}${isUser ? Math.abs(owner_id) : ""}`;
     }
 }
