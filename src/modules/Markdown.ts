@@ -1,5 +1,7 @@
 import replaceAsync from "string-replace-async";
 
+import { LINK_PREFIX } from "./functions.js";
+
 import { VK } from "./VK.js";
 
 export class Markdown {
@@ -12,13 +14,17 @@ export class Markdown {
 
     async fix(text: string): Promise<string> {
         // Fix ссылок
-        text = text
-            .replace(/(?:\[(https:\/\/vk.com\/[^]+?)\|([^]+?)])/g, "[$2]($1)")
-            .replace(/(?:\[([^[]+?)\|([^]+?)])/g, "[$2](https://vk.com/$1)");
+        text = text.replace(/\[([^[]+?)\|([^]+?)]/g, (match, link, title) => `[${title}](${!link.startsWith(LINK_PREFIX) ? LINK_PREFIX : ""}${link})`);
 
         // Fix хештегов
         text = await replaceAsync(text, /(?:^|\s)#([^\s]+)/g, async (match, hashtag): Promise<string> => {
-            const space = match.startsWith("\n") ? "\n" : match.startsWith(" ") ? " " : "";
+            const space = match.startsWith("\n") ?
+                "\n"
+                :
+                match.startsWith(" ") ?
+                    " "
+                    :
+                    "";
 
             const isNavigationHashtag = match.match(/#([^\s]+)@([a-zA-Z_]+)/);
 
