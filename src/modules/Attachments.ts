@@ -125,7 +125,6 @@ export class Attachments {
 
     protected createImageEmbed(image_url: string): MessageEmbed {
         return new MessageEmbed()
-            .setURL("https://twitter.com")
             .setImage(image_url);
     }
 
