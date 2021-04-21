@@ -4,7 +4,7 @@ import { IGetPostLinkOptions, IProfile } from "../interfaces";
 
 import { VK } from "./VK.js";
 
-import { db } from "./DB";
+import { db } from "./DB.js";
 
 export const LINK_PREFIX = "https://vk.com/";
 
