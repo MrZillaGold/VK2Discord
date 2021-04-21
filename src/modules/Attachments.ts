@@ -1,10 +1,13 @@
 import { MessageEmbed, MessageAttachment } from "discord.js";
+import { AttachmentType } from "vk-io";
 
 import { VK } from "./VK.js";
 
 import { LINK_PREFIX } from "./functions.js";
 
 import { Attachment, ParsedAttachments, AttachmentFields } from "../interfaces";
+
+const { AUDIO, DOCUMENT, LINK, PHOTO, POLL, VIDEO } = AttachmentType;
 
 export class Attachments {
 
@@ -22,7 +25,7 @@ export class Attachments {
         const parsedAttachments = (
             attachments.map(({ type, photo, video, link, doc, audio, poll, album }) => {
                 switch (type) {
-                    case "photo": {
+                    case PHOTO: {
                         const { sizes } = photo;
 
                         if (sizes) {
@@ -38,18 +41,18 @@ export class Attachments {
                         }
                         break;
                     }
-                    case "video": {
+                    case VIDEO: {
                         const { owner_id, id, title } = video;
                         const context = `${owner_id > 0 ? "id" : "public"}${Math.abs(owner_id)}`;
 
-                        return `[📹 Видео: ${title}](${LINK_PREFIX}${context}?z=video${owner_id}_${id})`;
+                        return `[📹 Видео: ${title}](${LINK_PREFIX}${context}?z=${VIDEO}${owner_id}_${id})`;
                     }
-                    case "link": {
+                    case LINK: {
                         const { button_text = "Ссылка", description, title, url } = link;
 
                         return `[🔗 ${description || button_text}: ${title}](${url})`;
                     }
-                    case "doc": {
+                    case DOCUMENT: {
                         const { ext, url, title } = doc;
 
                         if (ext === "gif") {
@@ -73,17 +76,17 @@ export class Attachments {
                         }
                         break;
                     }
-                    case "audio": {
+                    case AUDIO: {
                         const { owner_id, id, artist, title } = audio;
 
-                        return `[🎵 Аудиозапись: ${artist} - ${title}](${LINK_PREFIX}audio${owner_id}_${id})`;
+                        return `[🎵 Аудиозапись: ${artist} - ${title}](${LINK_PREFIX}${AUDIO}${owner_id}_${id})`;
                     }
-                    case "poll": {
+                    case POLL: {
                         const { owner_id, id, question } = poll;
 
-                        return `[📊 Опрос: ${question}](${LINK_PREFIX}feed?w=poll${owner_id}_${id})`;
+                        return `[📊 Опрос: ${question}](${LINK_PREFIX}feed?w=${POLL}${owner_id}_${id})`;
                     }
-                    case "album": {
+                    case "album": { // todo https://github.com/negezor/vk-io/pull/416/commits/43023a51c8e4cb53e9783f84a60eddb4ccaf93d5
                         const { owner_id, id, title } = album;
 
                         return `[🖼️ Альбом: ${title}](${LINK_PREFIX}album${owner_id}_${id})`;
