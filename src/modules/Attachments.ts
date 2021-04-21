@@ -76,7 +76,7 @@ export class Attachments {
                     case "audio": {
                         const { artist, title } = audio;
 
-                        return `\n[🎵 Аудиозапись: ${artist} - ${title}](https://vk.com/search?c[section]=audio&c[q]=${encodeURIComponent(artist)}%20-%20${encodeURIComponent(title)}&c[performer]=1)`;
+                        return `\n[🎵 Аудиозапись: ${artist} - ${title}](${LINK_PREFIX}${String(audio)}`;
                     }
                     case "poll": {
                         const { question } = poll;
