@@ -27,6 +27,9 @@
     <a href="https://hub.docker.com/r/mrzillagold/vk2discord">
         <img align="center" alt="Docker Pulls" src="https://img.shields.io/docker/pulls/mrzillagold/vk2discord">
     </a>
+    <a href="https://wakatime.com/badge/github/MrZillaGold/VK2Discord">
+        <img align="center" alt="Docker Pulls" src="https://wakatime.com/badge/github/MrZillaGold/VK2Discord.svg">
+    </a>
 </p>
 
 <p align="center">
