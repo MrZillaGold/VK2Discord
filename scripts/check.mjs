@@ -10,7 +10,7 @@ fs.readdir("./")
     .then(async (files) => {
         if (files.includes("config.json")) {
             try {
-                const config = await import("../config.json")
+                const config = (await import("../config.json"))
                     .default;
 
                 if (config.version_dont_modify_me !== LATEST_CONFIG_VERSION) {
