@@ -21,9 +21,7 @@ fs.readdir("./")
 
                     process.exit(-1);
                 }
-            } catch (error) {
-                console.log(error)
-                
+            } catch {
                 await rename();
                 await createConfig();
 
