@@ -1,6 +1,6 @@
 import { API, IWallPostContextPayload } from "vk-io";
 import { GroupsGroupFull, GroupsProfileItem } from "vk-io/lib/api/schemas/objects";
-import { IGetPostLinkOptions, IProfile } from "../interfaces";
+import { DBSchema, IGetPostLinkOptions, IProfile } from "../interfaces";
 
 import { VK } from "./VK.js";
 
@@ -9,11 +9,14 @@ import { db } from "./DB.js";
 export const LINK_PREFIX = "https://vk.com/";
 
 export async function getResourceId(VK: VK, resource: string): Promise<number | null> {
-    const cache = await db.get(resource)
-        .value();
+    const cache = (db.data as DBSchema)[resource];
 
-    if (cache?.id) {
-        return cache.id;
+    if (cache) {
+        if (cache?.id) {
+            return cache.id;
+        }
+    } else {
+        (db.data as DBSchema)[resource] = {};
     }
 
     return VK.resolveResource(resource)
@@ -25,8 +28,9 @@ export async function getResourceId(VK: VK, resource: string): Promise<number | 
                 :
                 null)
         .then((id) => {
-            db.set(`${resource}.id`, id)
-                .write();
+            (db.data as DBSchema)[resource].id = id as number;
+
+            db.write();
 
             return id;
         })
@@ -64,7 +68,7 @@ export function getPostAuthor(post: IWallPostContextPayload, profiles: GroupsPro
 }
 
 // eslint-disable-next-line require-await
-export async function getById(api: API, id: number): Promise<IProfile | GroupsGroupFull | null> {
+export async function getById(api: API, id?: number): Promise<IProfile | GroupsGroupFull | null> {
     return id ?
         id > 0 ?
             api.users.get({

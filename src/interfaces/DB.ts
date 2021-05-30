@@ -4,6 +4,4 @@ interface ICluster {
     published?: number[];
 }
 
-export interface IDBSchema {
-    [key: string]: ICluster;
-}
+export type DBSchema = Record<string, ICluster>;

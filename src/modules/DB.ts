@@ -1,11 +1,13 @@
-import lowdb from "lowdb";
-import FileAsync from "lowdb/adapters/FileAsync.js";
+import { Low, JSONFile } from "lowdb";
 
-import { IDBSchema } from "../interfaces";
+import { DBSchema } from "../interfaces";
 
-const adapter = new FileAsync<IDBSchema>("./cache.json");
+const adapter = new JSONFile<DBSchema>("./cache.json");
 
-export const db = await lowdb(adapter);
+export const db = new Low(adapter);
 
-db.defaults({})
-    .write();
+await db.read();
+
+db.data ||= {};
+
+db.write();

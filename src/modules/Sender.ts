@@ -6,6 +6,8 @@ import { Keywords } from "./Keywords.js";
 
 import { db } from "./DB.js";
 
+import { DBSchema } from "../interfaces";
+
 export class Sender extends Message {
 
     private postDate = 0;
@@ -15,8 +17,7 @@ export class Sender extends Message {
 
         this.postDate = payload.date as number;
 
-        const cache = await db.get(group_id)
-            .value();
+        const cache = (db.data as DBSchema)[group_id];
 
         if (
             cache?.last !== payload.date &&
@@ -96,18 +97,11 @@ export class Sender extends Message {
     private async pushDate(): Promise<void> {
         const { cluster: { vk: { group_id } }, postDate } = this;
 
-        if (db.has(group_id).value()) {
-            await db.set(`${group_id}.last`, postDate)
-                .update(`${group_id}.published`, (published) => [postDate, ...published].splice(0, 50))
-                .write();
-        } else {
-            await db.set(group_id, {
-                last: postDate,
-                published: [
-                    postDate
-                ]
-            })
-                .write();
-        }
+        const cache = (db.data as DBSchema)[group_id];
+
+        cache.last = postDate;
+        cache.published = [postDate, ...(cache.published || [])].splice(0, 50);
+
+        await db.write();
     }
 }
