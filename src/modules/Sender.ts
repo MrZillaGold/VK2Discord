@@ -97,6 +97,10 @@ export class Sender extends Message {
     private async pushDate(): Promise<void> {
         const { cluster: { vk: { group_id } }, postDate } = this;
 
+        if (!(db.data as DBSchema)[group_id]) {
+            (db.data as DBSchema)[group_id] = {};
+        }
+
         const cache = (db.data as DBSchema)[group_id];
 
         cache.last = postDate;

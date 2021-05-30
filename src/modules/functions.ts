@@ -10,14 +10,14 @@ export const LINK_PREFIX = "https://vk.com/";
 
 // eslint-disable-next-line require-await
 export async function getResourceId(VK: VK, resource: string): Promise<number | null> {
+    if (!(db.data as DBSchema)[resource]) {
+        (db.data as DBSchema)[resource] = {};
+    }
+
     const cache = (db.data as DBSchema)[resource];
 
-    if (cache) {
-        if (cache?.id) {
-            return cache.id;
-        }
-    } else {
-        (db.data as DBSchema)[resource] = {};
+    if (cache?.id) {
+        return cache.id;
     }
 
     return VK.resolveResource(resource)
