@@ -11,4 +11,4 @@ export type Attachment = {
 export type AttachmentFields = string[];
 export type ParsedAttachments = string[];
 
-export type AttachmentFieldsType = "post" | "repost";
+export type AttachmentFieldType = "post" | "repost";

@@ -4,7 +4,7 @@ import { IWallAttachmentPayload } from "vk-io";
 import { Markdown } from "./Markdown.js";
 import { Attachments } from "./Attachments.js";
 
-import { Attachment, AttachmentFields, AttachmentFieldsType, ICluster } from "../interfaces";
+import { Attachment, AttachmentFields, AttachmentFieldType, ICluster } from "../interfaces";
 
 export class Message {
 
@@ -66,7 +66,7 @@ export class Message {
         this.sliceMessage();
     }
 
-    private attachAttachments(attachmentFields: AttachmentFields, type: AttachmentFieldsType) {
+    private attachAttachments(attachmentFields: AttachmentFields, type: AttachmentFieldType) {
         const { builders: [builder] } = this;
 
         switch (type) {
