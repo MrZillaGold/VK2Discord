@@ -7,7 +7,7 @@ import { LINK_PREFIX } from "./functions.js";
 
 import { Attachment, ParsedAttachments, AttachmentFields } from "../interfaces";
 
-const { AUDIO, DOCUMENT, LINK, PHOTO, POLL, VIDEO } = AttachmentType;
+const { AUDIO, DOCUMENT, LINK, PHOTO, POLL, VIDEO, ALBUM } = AttachmentType;
 
 export class Attachments {
 
@@ -23,7 +23,7 @@ export class Attachments {
         const attachmentFields: AttachmentFields = [];
 
         const parsedAttachments = (
-            attachments.map(({ type, photo, video, link, doc, audio, poll, album }) => {
+            attachments.map(({ type, photo, video, link, doc, audio, poll, album, textlive }) => {
                 switch (type) {
                     case PHOTO: {
                         const { sizes } = photo;
@@ -85,10 +85,15 @@ export class Attachments {
 
                         return `[📊 Опрос: ${question}](${LINK_PREFIX}${this.generateAttachmentContext(poll)}?w=${POLL}${owner_id}_${id})`;
                     }
-                    case "album": { // todo https://github.com/negezor/vk-io/pull/416/commits/43023a51c8e4cb53e9783f84a60eddb4ccaf93d5
+                    case ALBUM: {
                         const { owner_id, id, title } = album;
 
-                        return `[🖼️ Альбом: ${title}](${LINK_PREFIX}album${owner_id}_${id})`;
+                        return `[🖼️ Альбом: ${title}](${LINK_PREFIX}${ALBUM}${owner_id}_${id})`;
+                    }
+                    case "textlive": {
+                        const { textlive_id, title } = textlive;
+
+                        return `[📣 Репортаж: ${title}](${LINK_PREFIX}textlive${textlive_id})`;
                     }
                 }
             })

@@ -62,7 +62,7 @@ export class Handler {
                 count: 2,
                 extended: 1,
                 filter: filter ? "owner" : "all",
-                v: "5.130"
+                v: "5.131"
             })
                 .then(async ({ groups, profiles, items }) => {
                     if (items.length) {
@@ -146,7 +146,6 @@ export class Handler {
         });
     }
 
-    // @ts-ignore Invalid lib types
     private async setCopyright({ copyright, signer_id }: IWallPostContextPayload, builder: MessageEmbed): Promise<void> {
         if (signer_id) {
             const user = await getById(this.VK.api, signer_id);

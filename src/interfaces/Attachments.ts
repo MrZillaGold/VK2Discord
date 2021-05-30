@@ -1,11 +1,11 @@
 import { AttachmentTypeString } from "vk-io";
 
-type AttachmentType = AttachmentTypeString | "album";
+type AttachmentTypeUnion = AttachmentTypeString | "textlive";
 
 export type Attachment = {
-    type: AttachmentType;
+    type: AttachmentTypeUnion;
 } & {
-    [key in AttachmentType]: any;
+    [key in AttachmentTypeUnion]: any;
 };
 
 export type AttachmentFields = string[];
