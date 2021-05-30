@@ -8,6 +8,7 @@ import { db } from "./DB.js";
 
 export const LINK_PREFIX = "https://vk.com/";
 
+// eslint-disable-next-line require-await
 export async function getResourceId(VK: VK, resource: string): Promise<number | null> {
     const cache = (db.data as DBSchema)[resource];
 
