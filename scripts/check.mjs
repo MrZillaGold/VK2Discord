@@ -1,9 +1,9 @@
 import { promises as fs } from "fs";
 
-import { LATEST_CONFIG_VERSION, NODE_MAJOR_VERSION } from "./constants.mjs";
+import { LATEST_CONFIG_VERSION, NODE_MAJOR_VERSION, ENGINE_SUPPORT_VERSION } from "./constants.mjs";
 
-if (NODE_MAJOR_VERSION < 14) {
-    throw "\n\n[!] Для запуска скрипта необходима NodeJS 14 или выше!\n\n";
+if (NODE_MAJOR_VERSION < ENGINE_SUPPORT_VERSION) {
+    throw `\n\n[!] Для запуска скрипта необходим NodeJS ${ENGINE_SUPPORT_VERSION} или выше!\n\n`;
 }
 
 fs.readdir("./")
