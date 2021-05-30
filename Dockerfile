@@ -1,5 +1,5 @@
 # Builder stage
-FROM node:14-alpine AS builder
+FROM node:15-alpine AS builder
 WORKDIR /usr/src/vk2discord
 
 COPY package*.json ./
@@ -11,7 +11,7 @@ COPY ./scripts ./scripts
 RUN npm ci --quiet && npm run build
 
 # Production stage
-FROM node:14-alpine
+FROM node:15-alpine
 WORKDIR /usr/src/vk2discord
 
 ENV NODE_ENV=production

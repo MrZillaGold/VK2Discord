@@ -5,4 +5,4 @@ workflows:
   matrix-tests:
     jobs:
       - node/test:
-          version: 14.17.0
+          version: 15.0.0
