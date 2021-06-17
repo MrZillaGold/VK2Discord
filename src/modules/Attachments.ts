@@ -42,9 +42,9 @@ export class Attachments {
                         break;
                     }
                     case VIDEO: {
-                        const { owner_id, id, title } = video;
+                        const { owner_id, id, title, live } = video;
 
-                        return `[📹 Видео: ${title}](${LINK_PREFIX}${this.generateAttachmentContext(video)}?z=${VIDEO}${owner_id}_${id})`;
+                        return `[${live ? "🔴 Трансляция" : "📹 Видео"}: ${title}](${LINK_PREFIX}${this.generateAttachmentContext(video)}?z=${VIDEO}${owner_id}_${id})`;
                     }
                     case LINK: {
                         const { button_text = "Ссылка", description, title, url } = link;
