@@ -7,7 +7,7 @@ import { LINK_PREFIX } from "./functions.js";
 
 import { Attachment, ParsedAttachments, AttachmentFields } from "../interfaces";
 
-const { AUDIO, DOCUMENT, LINK, PHOTO, POLL, VIDEO, ALBUM } = AttachmentType;
+const { AUDIO, DOCUMENT, LINK, PHOTO, POLL, VIDEO, ALBUM, MARKET, MARKET_ALBUM } = AttachmentType;
 
 export class Attachments {
 
@@ -23,7 +23,7 @@ export class Attachments {
         const attachmentFields: AttachmentFields = [];
 
         const parsedAttachments = (
-            attachments.map(({ type, photo, video, link, doc, audio, poll, album, textlive }) => {
+            attachments.map(({ type, photo, video, link, doc, audio, poll, album, textlive, market }) => {
                 switch (type) {
                     case PHOTO: {
                         const { sizes } = photo;
@@ -89,6 +89,16 @@ export class Attachments {
                         const { owner_id, id, title } = album;
 
                         return `[🖼️ Альбом: ${title}](${LINK_PREFIX}${ALBUM}${owner_id}_${id})`;
+                    }
+                    case MARKET: {
+                        const { owner_id, id, title } = market;
+
+                        return `[🛍️ Товар: ${title}](${LINK_PREFIX}${MARKET}${owner_id}?w=product${owner_id}_${id})`;
+                    }
+                    case MARKET_ALBUM: {
+                        const { owner_id, id, title } = market;
+
+                        return `[🛍️ Подборка товаров: ${title}](${LINK_PREFIX}${MARKET}${owner_id}?section=${ALBUM}_${id})`;
                     }
                     case "textlive": {
                         const { textlive_id, title } = textlive;
