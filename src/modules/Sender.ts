@@ -63,7 +63,7 @@ export class Sender extends Message {
 
         const results = await Promise.allSettled(
             webhook_urls.map((url, webhookIndex) => {
-                const isWebHookUrl = WEBHOOK_REGEXP.exec(url);
+                const isWebHookUrl = url.match(WEBHOOK_REGEXP);
 
                 if (isWebHookUrl) {
                     const [, id, token] = isWebHookUrl;
