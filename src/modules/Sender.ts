@@ -37,8 +37,8 @@ export class Sender extends Message {
             ) {
                 if (
                     (longpoll && filter && payload.owner_id !== payload.from_id) || // Фильтр на записи "Только от имени группы" для LongPoll API
-                    (!ads && payload.marked_as_ads) || // @ts-ignore Invalid lib type
-                    (!donut && payload.donut.is_donut)
+                    (!ads && payload.marked_as_ads) ||
+                    (!donut && payload?.donut?.is_donut)
                 ) {
                     return console.log(`[!] Новая запись в кластере #${index} не соответствует настройкам конфига, игнорируем ее.`);
                 }
