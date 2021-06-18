@@ -5,7 +5,7 @@ import { Message } from "./Message.js";
 import { Keywords } from "./Keywords.js";
 
 import { db } from "./DB.js";
-import { WEBHOOK_REGEXP } from "./functions";
+import { WEBHOOK_REGEXP } from "./functions.js";
 
 import { DBSchema } from "../interfaces";
 
