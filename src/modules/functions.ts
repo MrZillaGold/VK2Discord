@@ -7,6 +7,7 @@ import { VK } from "./VK.js";
 import { db } from "./DB.js";
 
 export const LINK_PREFIX = "https://vk.com/";
+export const WEBHOOK_REGEXP = /^https:\/\/(?:\w+\.)?discord(?:app)?\.com\/api\/webhooks\/([^]+)\/([^/]+)$/g;
 
 // eslint-disable-next-line require-await
 export async function getResourceId(VK: VK, resource: string): Promise<number | null> {
