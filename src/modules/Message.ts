@@ -98,13 +98,13 @@ export class Message {
     private sliceMessage(): void {
         const { post, repost } = this;
 
-        if ((post + repost).length > 2048) {
+        if ((post + repost).length > 4096) {
             if (post) {
-                this.post = Message.sliceFix(`${post.slice(0, (repost ? 1024 : 2048) - 3)}…\n`);
+                this.post = Message.sliceFix(`${post.slice(0, (repost ? 2048 : 4096) - 3)}…\n`);
             }
 
             if (repost) {
-                this.repost = Message.sliceFix(`${repost.slice(0, (post ? 1024 : 2048) - 1)}…`);
+                this.repost = Message.sliceFix(`${repost.slice(0, (post ? 2048 : 4096) - 1)}…`);
             }
         }
     }
