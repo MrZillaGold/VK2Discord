@@ -19,6 +19,6 @@ jobs:
       - name: Build
         run: npm run-script build
       - name: Run test
-      - env:
+        env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
         run: npm run-script test
