@@ -19,9 +19,7 @@ jobs:
       - name: Build
         run: npm run-script build
       - name: Run test
-        run: echo ${{ secrets }}
-      - name: Run test
         env:
-          WEBHOOK: ${{ secrets.WEBHOOK }}
-          TOKEN: ${{ secrets.TOKEN }}
+          WEBHOOK: ${{ secrets.CI.WEBHOOK }}
+          TOKEN: ${{ secrets.CI.TOKEN }}
         run: npm run-script test
