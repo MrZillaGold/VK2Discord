@@ -14,12 +14,14 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-        env:
-          WEBHOOK: ${{ secrets.WEBHOOK }}
-          TOKEN: ${{ secrets.TOKEN }}
       - name: Install dependencies
         run: npm ci
       - name: Build
         run: npm run-script build
       - name: Run test
+        run: echo ${{ secrets }}
+      - name: Run test
+        env:
+          WEBHOOK: ${{ secrets.WEBHOOK }}
+          TOKEN: ${{ secrets.TOKEN }}
         run: npm run-script test
