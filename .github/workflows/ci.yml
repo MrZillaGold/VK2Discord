@@ -21,4 +21,5 @@ jobs:
       - name: Run test
         env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
+          TOKEN: ${{ secrets.TOKEN }}
         run: npm run-script test
