@@ -1,4 +1,3 @@
-.circleci
 .idea
 .github
 node_modules
