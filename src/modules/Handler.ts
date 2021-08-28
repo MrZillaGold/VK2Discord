@@ -1,25 +1,25 @@
-import { IWallPostContextPayload } from "vk-io";
-import { MessageEmbed } from "discord.js";
+import { IWallPostContextPayload } from 'vk-io';
+import { MessageEmbed } from 'discord.js';
 
-import { VK } from "./VK.js";
-import { Sender } from "./Sender.js";
+import { VK } from './VK.js';
+import { Sender } from './Sender.js';
 
-import { getById, getPostAuthor, getPostLink, getResourceId } from "./functions.js";
+import { getById, getPostAuthor, getPostLink, getResourceId } from './functions.js';
 
-import { ICluster, IGetPostLinkOptions } from "../interfaces";
+import { ICluster, IGetPostLinkOptions } from '../interfaces';
 
 export class Handler {
 
-    protected cluster: Pick<ICluster, "vk" | "discord" | "index">;
+    protected cluster: Pick<ICluster, 'vk' | 'discord' | 'index'>;
 
     protected VK: VK;
 
-    constructor(cluster: Pick<ICluster, "vk" | "discord" | "index">) {
+    constructor(cluster: Pick<ICluster, 'vk' | 'discord' | 'index'>) {
         this.cluster = cluster;
 
         this.VK = new VK({
             token: cluster.vk.token,
-            apiMode: "parallel"
+            apiMode: 'parallel'
         });
     }
 
@@ -37,7 +37,7 @@ export class Handler {
         console.log(`[VK2Discord] Кластер #${index} будет проверять новые записи с интервалом в ${interval} секунд.`);
 
         if (interval < 30) {
-            console.warn("[!] Не рекомендуем ставить интервал получения постов меньше 30 секунд, во избежания лимитов ВКонтакте!");
+            console.warn('[!] Не рекомендуем ставить интервал получения постов меньше 30 секунд, во избежания лимитов ВКонтакте!');
         }
 
         setInterval(async () => {
@@ -61,8 +61,8 @@ export class Handler {
                 owner_id: id,
                 count: 2,
                 extended: 1,
-                filter: filter ? "owner" : "all",
-                v: "5.131"
+                filter: filter ? 'owner' : 'all',
+                v: '5.131'
             })
                 .then(async ({ groups, profiles, items }) => {
                     if (items.length) {
@@ -100,10 +100,10 @@ export class Handler {
     private startPolling(): void {
         const { index, discord: { author, copyright } } = this.cluster;
 
-        this.VK.updates.on("wall_post_new", async (context) => {
-            const payload = context["payload"];
+        this.VK.updates.on('wall_post_new', async (context) => {
+            const payload = context['payload'];
 
-            if (payload.post_type === "post") {
+            if (payload.post_type === 'post') {
                 const sender = this.createSender();
 
                 const [builder] = sender.builders;
@@ -156,7 +156,7 @@ export class Handler {
         if (copyright) {
             const group = await getById(this.VK.api, copyright.id);
 
-            builder.setFooter(`${builder.footer?.text ? `${builder.footer.text} • ` : ""}Источник: ${copyright.name}`, builder.footer?.iconURL || group?.photo_50);
+            builder.setFooter(`${builder.footer?.text ? `${builder.footer.text} • ` : ''}Источник: ${copyright.name}`, builder.footer?.iconURL || group?.photo_50);
         }
     }
 }

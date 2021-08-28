@@ -1,6 +1,6 @@
-import { AttachmentTypeString } from "vk-io";
+import { AttachmentTypeString } from 'vk-io';
 
-type AttachmentTypeUnion = AttachmentTypeString | "textlive";
+type AttachmentTypeUnion = AttachmentTypeString | 'textlive';
 
 export type Attachment = {
     type: AttachmentTypeUnion;
@@ -11,4 +11,4 @@ export type Attachment = {
 export type AttachmentFields = string[];
 export type ParsedAttachments = string[];
 
-export type AttachmentFieldType = "post" | "repost";
+export type AttachmentFieldType = 'post' | 'repost';

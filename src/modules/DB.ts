@@ -1,8 +1,8 @@
-import { Low, JSONFile } from "lowdb";
+import { Low, JSONFile } from 'lowdb';
 
-import { DBSchema } from "../interfaces";
+import { DBSchema } from '../interfaces';
 
-const adapter = new JSONFile<DBSchema>("./cache.json");
+const adapter = new JSONFile<DBSchema>('./cache.json');
 
 export const db = new Low(adapter);
 

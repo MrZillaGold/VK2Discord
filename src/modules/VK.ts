@@ -1,4 +1,4 @@
-import { VK as _VK, resolveResource, IResolvedTargetResource, IResolvedOwnerResource } from "vk-io";
+import { VK as _VK, resolveResource, IResolvedTargetResource, IResolvedOwnerResource } from 'vk-io';
 
 export class VK extends _VK {
 

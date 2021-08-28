@@ -1,12 +1,12 @@
-import { API, IWallPostContextPayload } from "vk-io";
-import { GroupsGroupFull, GroupsProfileItem } from "vk-io/lib/api/schemas/objects";
-import { DBSchema, IGetPostLinkOptions, IProfile } from "../interfaces";
+import { API, IWallPostContextPayload } from 'vk-io';
+import { GroupsGroupFull, GroupsProfileItem } from 'vk-io/lib/api/schemas/objects';
+import { DBSchema, IGetPostLinkOptions, IProfile } from '../interfaces';
 
-import { VK } from "./VK.js";
+import { VK } from './VK.js';
 
-import { db } from "./DB.js";
+import { db } from './DB.js';
 
-export const LINK_PREFIX = "https://vk.com/";
+export const LINK_PREFIX = 'https://vk.com/';
 export const WEBHOOK_REGEXP = /^https:\/\/(?:\w+\.)?discord(?:app)?\.com\/api\/webhooks\/([^]+)\/([^/]+)$/;
 
 // eslint-disable-next-line require-await
@@ -22,10 +22,10 @@ export async function getResourceId(VK: VK, resource: string): Promise<number | 
     }
 
     return VK.resolveResource(resource)
-        .then(({ id, type }) => type === "user" ?
+        .then(({ id, type }) => type === 'user' ?
             id
             :
-            type === "group" ?
+            type === 'group' ?
                 -id
                 :
                 null)
@@ -37,7 +37,7 @@ export async function getResourceId(VK: VK, resource: string): Promise<number | 
             return id;
         })
         .catch((error) => {
-            console.error("[!] Произошла ошибка при получении ID-ресурса.");
+            console.error('[!] Произошла ошибка при получении ID-ресурса.');
             console.error(error);
 
             return null;
@@ -75,7 +75,7 @@ export async function getById(api: API, id?: number): Promise<IProfile | GroupsG
         id > 0 ?
             api.users.get({
                 user_ids: String(id),
-                fields: ["photo_50"]
+                fields: ['photo_50']
             })
                 .then(([{ first_name, last_name, photo_50 }]) => ({
                     name: `${first_name} ${last_name}`,

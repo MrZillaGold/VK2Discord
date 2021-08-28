@@ -1,11 +1,11 @@
-import { MessageEmbed, MessageAttachment } from "discord.js";
-import { AttachmentType, ISharedAttachmentPayload } from "vk-io";
+import { MessageEmbed, MessageAttachment } from 'discord.js';
+import { AttachmentType, ISharedAttachmentPayload } from 'vk-io';
 
-import { VK } from "./VK.js";
+import { VK } from './VK.js';
 
-import { LINK_PREFIX } from "./functions.js";
+import { LINK_PREFIX } from './functions.js';
 
-import { Attachment, ParsedAttachments, AttachmentFields } from "../interfaces";
+import { Attachment, ParsedAttachments, AttachmentFields } from '../interfaces';
 
 const { AUDIO, DOCUMENT, LINK, PHOTO, POLL, VIDEO, ALBUM, MARKET, MARKET_ALBUM } = AttachmentType;
 
@@ -37,24 +37,24 @@ export class Attachments {
                                 );
                             }
                         } else {
-                            console.log("[!] В записи есть фотографии, но вы не установили версию LongPoll API 5.103 или выше.\nФотографии не будут обработаны.");
+                            console.log('[!] В записи есть фотографии, но вы не установили версию LongPoll API 5.103 или выше.\nФотографии не будут обработаны.');
                         }
                         break;
                     }
                     case VIDEO: {
                         const { owner_id, id, title, live } = video;
 
-                        return `[${live ? "🔴 Трансляция" : "📹 Видео"}: ${title}](${LINK_PREFIX}${this.generateAttachmentContext(video)}?z=${VIDEO}${owner_id}_${id})`;
+                        return `[${live ? '🔴 Трансляция' : '📹 Видео'}: ${title}](${LINK_PREFIX}${this.generateAttachmentContext(video)}?z=${VIDEO}${owner_id}_${id})`;
                     }
                     case LINK: {
-                        const { button_text = "Ссылка", description, title, url } = link;
+                        const { button_text = 'Ссылка', description, title, url } = link;
 
                         return `[🔗 ${description || button_text}: ${title}](${url})`;
                     }
                     case DOCUMENT: {
                         const { ext, url, title } = doc;
 
-                        if (ext === "gif") {
+                        if (ext === 'gif') {
                             if (!builder.image) {
                                 builder.attachFiles([
                                     new MessageAttachment(url, title)
@@ -100,7 +100,7 @@ export class Attachments {
 
                         return `[🛍️ Подборка товаров: ${title}](${LINK_PREFIX}${MARKET}${owner_id}?section=${ALBUM}_${id})`;
                     }
-                    case "textlive": {
+                    case 'textlive': {
                         const { textlive_id, title } = textlive;
 
                         return `[📣 Репортаж: ${title}](${LINK_PREFIX}textlive${textlive_id})`;
@@ -114,7 +114,7 @@ export class Attachments {
 
         parsedAttachments.forEach((attachment, index) => {
             if (!index) {
-                attachmentFields[0] = "";
+                attachmentFields[0] = '';
             }
 
             const field = attachmentFields[attachmentFields.length - 1];
@@ -140,13 +140,13 @@ export class Attachments {
 
     protected createImageEmbed(image_url: string): MessageEmbed {
         return new MessageEmbed()
-            .setURL("https://twitter.com")
+            .setURL('https://twitter.com')
             .setImage(image_url);
     }
 
     protected generateAttachmentContext({ owner_id }: ISharedAttachmentPayload): string {
         const isUser = owner_id > 0;
 
-        return `${isUser ? "id" : "feed"}${isUser ? Math.abs(owner_id) : ""}`;
+        return `${isUser ? 'id' : 'feed'}${isUser ? Math.abs(owner_id) : ''}`;
     }
 }

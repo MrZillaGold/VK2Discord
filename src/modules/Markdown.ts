@@ -1,8 +1,8 @@
-import replaceAsync from "string-replace-async";
+import replaceAsync from 'string-replace-async';
 
-import { LINK_PREFIX } from "./functions.js";
+import { LINK_PREFIX } from './functions.js';
 
-import { VK } from "./VK.js";
+import { VK } from './VK.js';
 
 export class Markdown {
 
@@ -14,17 +14,17 @@ export class Markdown {
 
     async fix(text: string): Promise<string> {
         // Fix ссылок
-        text = text.replace(/\[([^[]+?)\|([^]+?)]/g, (match, link, title) => `[${title}](${!link.startsWith(LINK_PREFIX) ? LINK_PREFIX : ""}${link})`);
+        text = text.replace(/\[([^[]+?)\|([^]+?)]/g, (match, link, title) => `[${title}](${!link.startsWith(LINK_PREFIX) ? LINK_PREFIX : ''}${link})`);
 
         // Fix хештегов
         text = await replaceAsync(text, /(?:^|\s)#([^\s]+)/g, async (match, hashtag): Promise<string> => {
-            const space = match.startsWith("\n") ?
-                "\n"
+            const space = match.startsWith('\n') ?
+                '\n'
                 :
-                match.startsWith(" ") ?
-                    " "
+                match.startsWith(' ') ?
+                    ' '
                     :
-                    "";
+                    '';
 
             const isNavigationHashtag = match.match(/#([^\s]+)@([a-zA-Z_]+)/);
 
@@ -34,7 +34,7 @@ export class Markdown {
                 const resource = await this.VK.resolveResource(group)
                     .catch(() => null);
 
-                if (resource?.type === "group") {
+                if (resource?.type === 'group') {
                     if (hashtag.match(/[a-zA-Z]+/)) {
                         return `${space}[#${hashtag}@${group}](https://vk.com/${group}/${hashtag})`;
                     }

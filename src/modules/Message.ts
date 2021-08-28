@@ -1,17 +1,17 @@
-import { MessageEmbed } from "discord.js";
-import { IWallAttachmentPayload } from "vk-io";
+import { MessageEmbed } from 'discord.js';
+import { IWallAttachmentPayload } from 'vk-io';
 
-import { Markdown } from "./Markdown.js";
-import { Attachments } from "./Attachments.js";
+import { Markdown } from './Markdown.js';
+import { Attachments } from './Attachments.js';
 
-import { Attachment, AttachmentFields, AttachmentFieldType, ICluster } from "../interfaces";
+import { Attachment, AttachmentFields, AttachmentFieldType, ICluster } from '../interfaces';
 
 export class Message {
 
     readonly cluster: ICluster;
 
-    protected post = "";
-    protected repost = "";
+    protected post = '';
+    protected repost = '';
 
     builders: MessageEmbed[];
 
@@ -21,8 +21,8 @@ export class Message {
         const color = cluster.discord.color;
         this.builders = [
             new MessageEmbed()
-                .setColor(color.match(/^#(?:\w{3}|\w{6})$/) ? color : "#aabbcc")
-                .setURL("https://twitter.com")
+                .setColor(color.match(/^#(?:\w{3}|\w{6})$/) ? color : '#aabbcc')
+                .setURL('https://twitter.com')
         ];
     }
 
@@ -40,7 +40,7 @@ export class Message {
             const parsedAttachments = new Attachments(VK)
                 .parse(payload.attachments as Attachment[], this.builders);
 
-            this.attachAttachments(parsedAttachments, "post");
+            this.attachAttachments(parsedAttachments, 'post');
         }
 
         const repost = payload.copy_history ? payload.copy_history[0] : null;
@@ -59,7 +59,7 @@ export class Message {
                 const parsedAttachments = new Attachments(VK)
                     .parse(repost.attachments as Attachment[], this.builders);
 
-                this.attachAttachments(parsedAttachments, "repost");
+                this.attachAttachments(parsedAttachments, 'repost');
             }
         }
 
@@ -70,14 +70,14 @@ export class Message {
         const { builders: [builder] } = this;
 
         switch (type) {
-            case "post":
+            case 'post':
                 attachmentFields = attachmentFields.slice(0, 24);
 
                 attachmentFields.forEach((attachmentField, index) => {
-                    builder.addField(!index ? "Вложения" : "⠀", attachmentField);
+                    builder.addField(!index ? 'Вложения' : '⠀', attachmentField);
                 });
                 break;
-            case "repost":
+            case 'repost':
                 if (builder.fields.length) {
                     attachmentFields = attachmentFields.slice(0, (builder.fields.length ? 12 : 25) - 1);
 
@@ -89,7 +89,7 @@ export class Message {
                 }
 
                 attachmentFields.forEach((attachmentField, index) => {
-                    builder.addField(!index ? "Вложения репоста" : "⠀", attachmentField);
+                    builder.addField(!index ? 'Вложения репоста' : '⠀', attachmentField);
                 });
                 break;
         }
@@ -110,6 +110,6 @@ export class Message {
     }
 
     private static sliceFix(text: string): string {
-        return text.replace(/\[([^\])]+)?]?\(?([^()\][]+)?…/g, "$1…");
+        return text.replace(/\[([^\])]+)?]?\(?([^()\][]+)?…/g, '$1…');
     }
 }

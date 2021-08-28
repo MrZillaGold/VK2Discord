@@ -1,4 +1,4 @@
 export interface IKeywordOptions {
     keywords: string[];
-    type: "keywords" | "blacklist";
+    type: 'keywords' | 'blacklist';
 }

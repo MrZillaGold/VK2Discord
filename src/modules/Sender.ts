@@ -1,13 +1,13 @@
-import { WebhookClient } from "discord.js";
-import { IWallPostContextPayload } from "vk-io";
+import { WebhookClient } from 'discord.js';
+import { IWallPostContextPayload } from 'vk-io';
 
-import { Message } from "./Message.js";
-import { Keywords } from "./Keywords.js";
+import { Message } from './Message.js';
+import { Keywords } from './Keywords.js';
 
-import { db } from "./DB.js";
-import { WEBHOOK_REGEXP } from "./functions.js";
+import { db } from './DB.js';
+import { WEBHOOK_REGEXP } from './functions.js';
 
-import { DBSchema } from "../interfaces";
+import { DBSchema } from '../interfaces';
 
 export class Sender extends Message {
 
@@ -34,13 +34,13 @@ export class Sender extends Message {
         }
 
         const hasKeywords = new Keywords({
-            type: "keywords",
+            type: 'keywords',
             keywords
         })
             .check(payload.text);
 
         const notHasBlacklistWords = new Keywords({
-            type: "blacklist",
+            type: 'blacklist',
             keywords: words_blacklist
         })
             .check(payload.text);
@@ -81,7 +81,7 @@ export class Sender extends Message {
             })
         );
 
-        const rejects = results.filter(({ status }) => status === "rejected") as PromiseRejectedResult[];
+        const rejects = results.filter(({ status }) => status === 'rejected') as PromiseRejectedResult[];
 
         if (rejects.length) {
             return rejects.forEach(({ reason }) => {

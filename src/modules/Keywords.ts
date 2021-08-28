@@ -1,9 +1,9 @@
-import { IKeywordOptions } from "../interfaces";
+import { IKeywordOptions } from '../interfaces';
 
 export class Keywords {
 
-    readonly keywords: IKeywordOptions["keywords"];
-    readonly type: IKeywordOptions["type"];
+    readonly keywords: IKeywordOptions['keywords'];
+    readonly type: IKeywordOptions['type'];
 
     constructor({ keywords, type }: IKeywordOptions) {
         this.keywords = keywords;
@@ -15,7 +15,7 @@ export class Keywords {
             if (text) {
                 const match = this.keywords.some((keyword) => (
                     text.match(
-                        new RegExp(keyword, "gi")
+                        new RegExp(keyword, 'gi')
                     )
                 ));
 
@@ -29,7 +29,7 @@ export class Keywords {
     }
 
     private reverse(value: boolean) {
-        return this.type === "keywords" ?
+        return this.type === 'keywords' ?
             value
             :
             !value;

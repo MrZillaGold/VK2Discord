@@ -1,4 +1,4 @@
-import { VK } from "../modules/VK";
+import { VK } from '../modules/VK';
 
 export interface IVKParams {
     token: string;
