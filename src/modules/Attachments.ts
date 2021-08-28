@@ -43,9 +43,23 @@ export class Attachments {
                         break;
                     }
                     case VIDEO: {
-                        const { owner_id, id, title, live } = video;
+                        let { owner_id, id, title, live, type, main_artists } = video;
 
-                        return `[${live ? '🔴 Трансляция' : '📹 Видео'}: ${title}](${LINK_PREFIX}${this.generateAttachmentContext(video)}?z=${VIDEO}${owner_id}_${id})`;
+                        const prefix = type === 'music_video' ?
+                            '📼 Клип'
+                            :
+                            live ?
+                                '🔴 Трансляция'
+                                :
+                                '📹 Видео';
+
+                        if (main_artists.length) {
+                            const [{ name }] = main_artists;
+
+                            title += ` - ${name}`;
+                        }
+
+                        return `[${prefix}: ${title}](${LINK_PREFIX}${this.generateAttachmentContext(video)}?z=${VIDEO}${owner_id}_${id})`;
                     }
                     case LINK: {
                         const { button_text = 'Ссылка', description, title, url } = link;
