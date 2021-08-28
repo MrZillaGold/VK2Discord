@@ -37,7 +37,7 @@ export class Handler {
         console.log(`[VK2Discord] Кластер #${index} будет проверять новые записи с интервалом в ${interval} секунд.`);
 
         if (interval < 30) {
-            console.warn('[!] Не рекомендуем ставить интервал получения постов меньше 30 секунд, во избежания лимитов ВКонтакте!');
+            console.warn('[!] Не рекомендуем ставить интервал получения постов меньше 20 секунд, во избежания лимитов ВКонтакте!');
         }
 
         setInterval(async () => {
@@ -55,7 +55,7 @@ export class Handler {
                 return;
             }
 
-            const [builder] = sender.builders;
+            const [embed] = sender.embeds;
 
             this.VK.api.wall.get({
                 owner_id: id,
@@ -66,10 +66,13 @@ export class Handler {
             })
                 .then(async ({ groups, profiles, items }) => {
                     if (items.length) {
-                        // @ts-ignore
-                        const post = items.length === 2 && items[0].date < items[1].date ? items[1] : items[0]; // Проверяем наличие закрепа, если он есть берем свежую запись
+                        // Проверяем наличие закрепа, если он есть берем свежую запись
+                        const post = items.length === 2 && Number(items[0].date) < Number(items[1].date) ?
+                            items[1]
+                            :
+                            items[0];
 
-                        builder.setTimestamp(post.date as number * 1000);
+                        embed.setTimestamp(post.date as number * 1000);
 
                         if (author) {
                             const postAuthor = getPostAuthor(post as IWallPostContextPayload, profiles, groups);
@@ -77,12 +80,12 @@ export class Handler {
                             if (postAuthor) {
                                 const { name, photo_50 } = postAuthor;
 
-                                builder.setAuthor(name, photo_50, getPostLink(post as IGetPostLinkOptions));
+                                embed.setAuthor(name, photo_50, getPostLink(post as IGetPostLinkOptions));
                             }
                         }
 
                         if (copyright) {
-                            await this.setCopyright(post as IWallPostContextPayload, builder);
+                            await this.setCopyright(post as IWallPostContextPayload, embed);
                         }
 
                         return sender.handle(post as IWallPostContextPayload);
@@ -106,9 +109,9 @@ export class Handler {
             if (payload.post_type === 'post') {
                 const sender = this.createSender();
 
-                const [builder] = sender.builders;
+                const [embed] = sender.embeds;
 
-                builder.setTimestamp(payload.date as number * 1000);
+                embed.setTimestamp(payload.date as number * 1000);
 
                 if (author) {
                     const postAuthor = await getById(this.VK.api, payload.from_id as number);
@@ -116,12 +119,12 @@ export class Handler {
                     if (postAuthor) {
                         const { photo_50, name } = postAuthor;
 
-                        builder.setAuthor(name, photo_50, getPostLink(payload));
+                        embed.setAuthor(name, photo_50, getPostLink(payload));
                     }
                 }
 
                 if (copyright) {
-                    await this.setCopyright(payload, builder);
+                    await this.setCopyright(payload, embed);
                 }
 
                 return sender.handle(payload);
@@ -146,17 +149,17 @@ export class Handler {
         });
     }
 
-    private async setCopyright({ copyright, signer_id }: IWallPostContextPayload, builder: MessageEmbed): Promise<void> {
+    private async setCopyright({ copyright, signer_id }: IWallPostContextPayload, embed: MessageEmbed): Promise<void> {
         if (signer_id) {
             const user = await getById(this.VK.api, signer_id);
 
-            builder.setFooter(user?.name, user?.photo_50);
+            embed.setFooter(user?.name as string, user?.photo_50);
         }
 
         if (copyright) {
             const group = await getById(this.VK.api, copyright.id);
 
-            builder.setFooter(`${builder.footer?.text ? `${builder.footer.text} • ` : ''}Источник: ${copyright.name}`, builder.footer?.iconURL || group?.photo_50);
+            embed.setFooter(`${embed.footer?.text ? `${embed.footer.text} • ` : ''}Источник: ${copyright.name}`, embed.footer?.iconURL || group?.photo_50);
         }
     }
 }

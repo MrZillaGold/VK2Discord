@@ -5,7 +5,6 @@ import { Message } from './Message.js';
 import { Keywords } from './Keywords.js';
 
 import { db } from './DB.js';
-import { WEBHOOK_REGEXP } from './functions.js';
 
 import { DBSchema } from '../interfaces';
 
@@ -55,30 +54,25 @@ export class Sender extends Message {
     }
 
     private async send(): Promise<void> {
-        const { post, repost, builders: [builder], cluster: { index, discord: { webhook_urls, content, username, avatar_url: avatarURL } } } = this;
+        const { post, repost, embeds: [embed], cluster: { index, discord: { webhook_urls, content, username, avatar_url: avatarURL } } } = this;
 
-        builder.setDescription(post + repost);
+        embed.setDescription(post + repost);
 
         await this.pushDate(); // Сохраняем дату поста, чтобы не публиковать его заново
 
         const results = await Promise.allSettled(
-            webhook_urls.map((url, webhookIndex) => {
-                const isWebHookUrl = url.match(WEBHOOK_REGEXP);
-
-                if (isWebHookUrl) {
-                    const [, id, token] = isWebHookUrl;
-
-                    return new WebhookClient(id, token)
-                        .send({ // @ts-ignore Отсутствует тип в самой библиотеке
-                            content,
-                            embeds: this.builders,
-                            username: username.slice(0, 80),
-                            avatarURL
-                        });
-                }
-
-                throw `[!] Строка #${webhookIndex + 1} (${url}) в кластере #${index} не является ссылкой на Discord Webhook.`;
-            })
+            webhook_urls.map((url) => (
+                new WebhookClient({
+                    url
+                })
+                    .send({
+                        content: content || null,
+                        avatarURL,
+                        embeds: this.embeds,
+                        files: this.files,
+                        username: username.slice(0, 80)
+                    })
+            ))
         );
 
         const rejects = results.filter(({ status }) => status === 'rejected') as PromiseRejectedResult[];

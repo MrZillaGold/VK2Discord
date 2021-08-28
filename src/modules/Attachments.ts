@@ -2,8 +2,9 @@ import { MessageEmbed, MessageAttachment } from 'discord.js';
 import { AttachmentType, ISharedAttachmentPayload } from 'vk-io';
 
 import { VK } from './VK.js';
+import { Message } from './Message';
 
-import { LINK_PREFIX } from './functions.js';
+import { generateRandomString, LINK_PREFIX } from './functions.js';
 
 import { Attachment, ParsedAttachments, AttachmentFields } from '../interfaces';
 
@@ -17,8 +18,8 @@ export class Attachments {
         this.VK = VK;
     }
 
-    parse(attachments: Attachment[], builders: MessageEmbed[]): string[] {
-        const [builder] = builders;
+    parse(attachments: Attachment[], embeds: Message['embeds'], files: Message['files']): string[] {
+        const [embed] = embeds;
 
         const attachmentFields: AttachmentFields = [];
 
@@ -29,10 +30,10 @@ export class Attachments {
                         const { sizes } = photo;
 
                         if (sizes) {
-                            if (!builder.image) {
-                                builder.setImage(this.popAttachment(sizes));
+                            if (!embed.image) {
+                                embed.setImage(this.popAttachment(sizes));
                             } else {
-                                builders.push(
+                                embeds.push(
                                     this.createImageEmbed(this.popAttachment(sizes))
                                 );
                             }
@@ -55,20 +56,22 @@ export class Attachments {
                         const { ext, url, title } = doc;
 
                         if (ext === 'gif') {
-                            if (!builder.image) {
-                                builder.attachFiles([
-                                    new MessageAttachment(url, title)
-                                ])
-                                    .setImage(`attachment://${title}`);
-                            } else {
-                                if (builders.length < 10) {
-                                    builders.push(
-                                        this.createImageEmbed(`attachment://${title}`)
-                                            .attachFiles([
-                                                new MessageAttachment(url, title)
-                                            ])
-                                    );
-                                }
+                            const filename = `${generateRandomString(6)}.${ext}`;
+                            
+                            if (!embed.image) {
+                                files.push(
+                                    new MessageAttachment(url, filename)
+                                );
+
+                                embed.setImage(`attachment://${filename}`);
+                            } else if (embeds.length < 10) {
+                                files.push(
+                                    new MessageAttachment(url, filename)
+                                );
+
+                                embeds.push(
+                                    this.createImageEmbed(`attachment://${filename}`)
+                                );
                             }
                         } else {
                             return `[📄 Файл: ${title}](${url})`;
@@ -109,7 +112,7 @@ export class Attachments {
             })
                 .filter((attachment) => attachment) as ParsedAttachments
         )
-            .sort((a, b) => b.length - a.length)
+            .sort((a, b) => a.localeCompare(b))
             .map((attachment) => `\n${attachment}`);
 
         parsedAttachments.forEach((attachment, index) => {
@@ -121,10 +124,8 @@ export class Attachments {
 
             if ((field + attachment).length < 1024) {
                 attachmentFields[attachmentFields.length - 1] += attachment;
-            } else {
-                if (attachment.length <= 1024) {
-                    attachmentFields.push(attachment);
-                }
+            } else if (attachment.length <= 1024) {
+                attachmentFields.push(attachment);
             }
         });
 

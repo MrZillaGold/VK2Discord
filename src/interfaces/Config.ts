@@ -1,3 +1,5 @@
+import { HexColorString } from 'discord.js';
+
 import { VK } from '../modules/VK';
 
 export interface IVKParams {
@@ -17,7 +19,7 @@ export interface IDiscordParams {
     username: string;
     avatar_url: string;
     content: string;
-    color: string;
+    color: string | HexColorString;
     author: boolean;
     copyright: boolean;
 }

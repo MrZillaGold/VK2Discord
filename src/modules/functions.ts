@@ -7,7 +7,6 @@ import { VK } from './VK.js';
 import { db } from './DB.js';
 
 export const LINK_PREFIX = 'https://vk.com/';
-export const WEBHOOK_REGEXP = /^https:\/\/(?:\w+\.)?discord(?:app)?\.com\/api\/webhooks\/([^]+)\/([^/]+)$/;
 
 // eslint-disable-next-line require-await
 export async function getResourceId(VK: VK, resource: string): Promise<number | null> {
@@ -88,4 +87,16 @@ export async function getById(api: API, id?: number): Promise<IProfile | GroupsG
                 .then(([group]) => group)
         :
         null;
+}
+
+export function generateRandomString(length: number): string {
+    const characters = 'abcdefghijklmnopqrstuvwxyz';
+
+    let id = '';
+
+    for (let i = 0; i < length; i++) {
+        id += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+
+    return id;
 }

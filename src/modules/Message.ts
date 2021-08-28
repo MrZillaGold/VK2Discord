@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { HexColorString, MessageAttachment, MessageEmbed } from 'discord.js';
 import { IWallAttachmentPayload } from 'vk-io';
 
 import { Markdown } from './Markdown.js';
@@ -13,15 +13,16 @@ export class Message {
     protected post = '';
     protected repost = '';
 
-    builders: MessageEmbed[];
+    embeds: MessageEmbed[];
+    files: MessageAttachment[] = [];
 
     constructor(cluster: ICluster) {
         this.cluster = cluster;
 
         const color = cluster.discord.color;
-        this.builders = [
+        this.embeds = [
             new MessageEmbed()
-                .setColor(color.match(/^#(?:\w{3}|\w{6})$/) ? color : '#aabbcc')
+                .setColor(color.match(/^#(?:\w{3}|\w{6})$/) ? color as HexColorString : '#aabbcc')
                 .setURL('https://twitter.com')
         ];
     }
@@ -38,7 +39,7 @@ export class Message {
 
         if (payload.attachments) {
             const parsedAttachments = new Attachments(VK)
-                .parse(payload.attachments as Attachment[], this.builders);
+                .parse(payload.attachments as Attachment[], this.embeds, this.files);
 
             this.attachAttachments(parsedAttachments, 'post');
         }
@@ -57,7 +58,7 @@ export class Message {
 
             if (repost.attachments) {
                 const parsedAttachments = new Attachments(VK)
-                    .parse(repost.attachments as Attachment[], this.builders);
+                    .parse(repost.attachments as Attachment[], this.embeds, this.files);
 
                 this.attachAttachments(parsedAttachments, 'repost');
             }
@@ -67,29 +68,31 @@ export class Message {
     }
 
     private attachAttachments(attachmentFields: AttachmentFields, type: AttachmentFieldType) {
-        const { builders: [builder] } = this;
+        const { embeds: [embed] } = this;
 
         switch (type) {
             case 'post':
                 attachmentFields = attachmentFields.slice(0, 24);
 
                 attachmentFields.forEach((attachmentField, index) => {
-                    builder.addField(!index ? 'Вложения' : '⠀', attachmentField);
+                    embed.addField(!index ? 'Вложения' : '⠀', attachmentField);
                 });
                 break;
             case 'repost':
-                if (builder.fields.length) {
-                    attachmentFields = attachmentFields.slice(0, (builder.fields.length ? 12 : 25) - 1);
+                if (embed.fields.length) {
+                    attachmentFields = attachmentFields.slice(0, (embed.fields.length ? 12 : 25) - 1);
 
-                    builder.spliceFields(-1,
-                        builder.fields.length >= 25 ?
+                    embed.spliceFields(
+                        -1,
+                        embed.fields.length >= 25 ?
                             12
                             :
-                            0);
+                            0
+                    );
                 }
 
                 attachmentFields.forEach((attachmentField, index) => {
-                    builder.addField(!index ? 'Вложения репоста' : '⠀', attachmentField);
+                    embed.addField(!index ? 'Вложения репоста' : '⠀', attachmentField);
                 });
                 break;
         }
