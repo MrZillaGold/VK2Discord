@@ -53,7 +53,7 @@ export class Attachments {
                                 :
                                 '📹 Видео';
 
-                        if (main_artists.length) {
+                        if (main_artists?.length) {
                             const [{ name }] = main_artists;
 
                             title += ` - ${name}`;
