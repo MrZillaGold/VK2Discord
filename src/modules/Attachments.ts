@@ -31,7 +31,8 @@ export class Attachments {
 
                         if (sizes) {
                             if (!embed.image) {
-                                embed.setImage(this.popAttachment(sizes));
+                                embed.setImage(this.popAttachment(sizes))
+                                    .setURL('https://twitter.com');
                             } else {
                                 embeds.push(
                                     this.createImageEmbed(this.popAttachment(sizes))

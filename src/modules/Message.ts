@@ -23,7 +23,6 @@ export class Message {
         this.embeds = [
             new MessageEmbed()
                 .setColor(color)
-                .setURL('https://twitter.com')
         ];
     }
 
