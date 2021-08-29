@@ -1,51 +1,53 @@
 import { WebhookClient } from 'discord.js';
 import { IWallPostContextPayload } from 'vk-io';
 
-import { Message } from './Message.js';
-import { Keywords } from './Keywords.js';
+import { db, DBSchema, Message, Keywords, KeywordsType } from './';
 
-import { db } from './DB.js';
-
-import { DBSchema } from '../interfaces';
+import { ICluster } from '../';
 
 export class Sender extends Message {
 
-    private postDate = 0;
+    readonly payload: Message['payload'];
 
-    async handle(payload: IWallPostContextPayload): Promise<void> {
-        const { index, vk: { longpoll, filter, group_id, keywords, ads, donut, words_blacklist } } = this.cluster;
+    constructor(cluster: ICluster, payload: IWallPostContextPayload) {
+        super(cluster);
 
-        this.postDate = payload.date as number;
+        this.payload = payload;
+    }
+
+    async handle(): Promise<void> {
+        const { index, vk: { longpoll, filter, group_id, keywords, ads, donut: donutStatus, words_blacklist } } = this.cluster;
+        const { date, owner_id, from_id, marked_as_ads, donut, text } = this.payload;
 
         const cache = (db.data as DBSchema)[group_id];
-        const hasInCache = cache?.last === payload.date || cache?.published?.includes(payload.date as number);
+        const hasInCache = cache?.last === date || cache?.published?.includes(date as number);
 
         if (hasInCache) {
             return console.log(`[!] Новых записей в кластере #${index} нет.`);
         }
 
-        const isNotFromGroupName = longpoll && filter && payload.owner_id !== payload.from_id;
-        const hasAds = !ads && payload.marked_as_ads;
-        const hasDonut = !donut && payload?.donut?.is_donut;
+        const isNotFromGroupName = longpoll && filter && owner_id !== from_id;
+        const hasAds = !ads && marked_as_ads;
+        const hasDonut = !donutStatus && donut?.is_donut;
 
         if (isNotFromGroupName || hasAds || hasDonut) {
             return console.log(`[!] Новая запись в кластере #${index} не соответствует настройкам конфигурации, игнорируем ее.`);
         }
 
         const hasKeywords = new Keywords({
-            type: 'keywords',
+            type: KeywordsType.KEYWORDS,
             keywords
         })
-            .check(payload.text);
+            .check(text);
 
         const notHasBlacklistWords = new Keywords({
-            type: 'blacklist',
+            type: KeywordsType.BLACKLIST,
             keywords: words_blacklist
         })
-            .check(payload.text);
+            .check(text);
 
         if (hasKeywords && notHasBlacklistWords) {
-            await this.parsePost(payload);
+            await this.parsePost();
 
             return this.send();
         }
@@ -58,7 +60,7 @@ export class Sender extends Message {
 
         embed.setDescription(post + repost);
 
-        await this.pushDate(); // Сохраняем дату поста, чтобы не публиковать его заново
+        await this.pushDate();
 
         const results = await Promise.allSettled(
             webhook_urls.map((url) => (
@@ -88,7 +90,7 @@ export class Sender extends Message {
     }
 
     private async pushDate(): Promise<void> {
-        const { cluster: { vk: { group_id } }, postDate } = this;
+        const { cluster: { vk: { group_id } }, payload: { date } } = this;
 
         if (!(db.data as DBSchema)[group_id]) {
             (db.data as DBSchema)[group_id] = {};
@@ -96,8 +98,8 @@ export class Sender extends Message {
 
         const cache = (db.data as DBSchema)[group_id];
 
-        cache.last = postDate;
-        cache.published = [postDate, ...(cache.published || [])].splice(0, 50);
+        cache.last = date;
+        cache.published = [date as number, ...(cache.published || [])].splice(0, 50);
 
         await db.write();
     }

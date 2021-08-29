@@ -155,12 +155,12 @@ if (process.env.TOKEN) {
         ...cluster,
         index: 1,
         VK: vk
-    });
+    }, payload);
 
     describe('Sender', function() {
         describe('post();', function() {
             it('Проверка на отсутствие ошибок при отправке записи в Discord', async function() {
-                await sender.handle(payload);
+                await sender.handle();
             });
         });
 

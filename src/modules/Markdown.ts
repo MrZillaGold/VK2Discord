@@ -1,8 +1,8 @@
 import replaceAsync from 'string-replace-async';
 
-import { LINK_PREFIX } from './functions.js';
+import { VK } from './';
 
-import { VK } from './VK.js';
+import { LINK_PREFIX } from '../utils';
 
 export class Markdown {
 

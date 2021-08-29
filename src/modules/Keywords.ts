@@ -1,4 +1,12 @@
-import { IKeywordOptions } from '../interfaces';
+export interface IKeywordOptions {
+    keywords: string[];
+    type: KeywordsType;
+}
+
+export enum KeywordsType {
+    KEYWORDS = 'keywords',
+    BLACKLIST = 'blacklist'
+}
 
 export class Keywords {
 

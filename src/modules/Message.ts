@@ -1,14 +1,19 @@
 import { MessageAttachment, MessageEmbed } from 'discord.js';
-import { IWallAttachmentPayload } from 'vk-io';
+import { IWallPostContextPayload } from 'vk-io';
 
-import { Markdown } from './Markdown.js';
-import { Attachments } from './Attachments.js';
+import { Markdown, Attachments, Attachment } from './';
 
-import { Attachment, AttachmentFields, AttachmentFieldType, ICluster } from '../interfaces';
+import { ICluster } from '../';
 
-export class Message {
+export enum PostType {
+    POST = 'post',
+    REPOST = 'repost'
+}
+
+export abstract class Message {
 
     readonly cluster: ICluster;
+    readonly abstract payload: IWallPostContextPayload;
 
     protected post = '';
     protected repost = '';
@@ -16,7 +21,7 @@ export class Message {
     embeds: MessageEmbed[];
     files: MessageAttachment[] = [];
 
-    constructor(cluster: ICluster) {
+    protected constructor(cluster: ICluster) {
         const { discord: { color } } = cluster;
 
         this.cluster = cluster;
@@ -30,58 +35,60 @@ export class Message {
         this.embeds = [embed];
     }
 
-    protected async parsePost(payload: IWallAttachmentPayload): Promise<void> {
-        const { cluster: { VK } } = this;
+    protected async parsePost(): Promise<void> {
+        const { cluster: { VK }, payload: { text, attachments, copy_history } } = this;
 
-        if (payload.text) {
+        if (text) {
             this.post += `${
                 await new Markdown(VK)
-                    .fix(payload.text)
+                    .fix(text)
             }\n`;
         }
 
-        if (payload.attachments) {
+        if (attachments) {
             const parsedAttachments = new Attachments(VK)
-                .parse(payload.attachments as Attachment[], this.embeds, this.files);
+                .parse(attachments as Attachment[], this.embeds, this.files);
 
-            this.attachAttachments(parsedAttachments, 'post');
+            this.attachAttachments(parsedAttachments, PostType.POST);
         }
 
-        const repost = payload.copy_history ? payload.copy_history[0] : null;
+        const repost = copy_history ? copy_history[0] : null;
 
         if (repost) {
-            this.repost += `\n>>> [**Репост записи**](https://vk.com/wall${repost.from_id}_${repost.id})`;
+            const { text, from_id, id, attachments } = repost;
 
-            if (repost.text) {
+            this.repost += `\n>>> [**Репост записи**](https://vk.com/wall${from_id}_${id})`;
+
+            if (text) {
                 this.repost += `\n\n${
                     await new Markdown(VK)
-                        .fix(repost.text)
+                        .fix(text)
                 }`;
             }
 
-            if (repost.attachments) {
+            if (attachments) {
                 const parsedAttachments = new Attachments(VK)
-                    .parse(repost.attachments as Attachment[], this.embeds, this.files);
+                    .parse(attachments as Attachment[], this.embeds, this.files);
 
-                this.attachAttachments(parsedAttachments, 'repost');
+                this.attachAttachments(parsedAttachments, PostType.REPOST);
             }
         }
 
         this.sliceMessage();
     }
 
-    private attachAttachments(attachmentFields: AttachmentFields, type: AttachmentFieldType) {
+    private attachAttachments(attachmentFields: string[], type: PostType): void {
         const { embeds: [embed] } = this;
 
         switch (type) {
-            case 'post':
+            case PostType.POST:
                 attachmentFields = attachmentFields.slice(0, 24);
 
                 attachmentFields.forEach((attachmentField, index) => {
                     embed.addField(!index ? 'Вложения' : '⠀', attachmentField);
                 });
                 break;
-            case 'repost':
+            case PostType.REPOST:
                 if (embed.fields.length) {
                     attachmentFields = attachmentFields.slice(0, (embed.fields.length ? 12 : 25) - 1);
 

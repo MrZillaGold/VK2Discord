@@ -1,12 +1,17 @@
 import { MessageEmbed, MessageAttachment } from 'discord.js';
-import { AttachmentType, ISharedAttachmentPayload } from 'vk-io';
+import { AttachmentType, ISharedAttachmentPayload, AttachmentTypeString } from 'vk-io';
 
-import { VK } from './VK.js';
-import { Message } from './Message';
+import { VK, Message } from './';
 
-import { generateRandomString, LINK_PREFIX } from './functions.js';
+import { generateRandomString, LINK_PREFIX } from '../utils';
 
-import { Attachment, ParsedAttachments, AttachmentFields } from '../interfaces';
+type AttachmentTypeUnion = AttachmentTypeString | 'textlive';
+
+export type Attachment = {
+    type: AttachmentTypeUnion;
+} & {
+    [key in AttachmentTypeUnion]: any;
+};
 
 const { AUDIO, DOCUMENT, LINK, PHOTO, POLL, VIDEO, ALBUM, MARKET, MARKET_ALBUM } = AttachmentType;
 
@@ -21,7 +26,7 @@ export class Attachments {
     parse(attachments: Attachment[], embeds: Message['embeds'], files: Message['files']): string[] {
         const [embed] = embeds;
 
-        const attachmentFields: AttachmentFields = [];
+        const attachmentFields: string[] = [];
 
         const parsedAttachments = (
             attachments.map(({ type, photo, video, link, doc, audio, poll, album, textlive, market }) => {
@@ -123,7 +128,7 @@ export class Attachments {
                     }
                 }
             })
-                .filter((attachment) => attachment) as ParsedAttachments
+                .filter((attachment) => attachment) as string[]
         )
             .sort((a, b) => a.localeCompare(b))
             .map((attachment) => `\n${attachment}`);

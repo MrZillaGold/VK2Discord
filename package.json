@@ -12,7 +12,7 @@
     "build": "tsc && node ./scripts/cleanUpBuild.mjs",
     "update": "node --experimental-modules --experimental-json-modules --unhandled-rejections=warn --es-module-specifier-resolution=node ./scripts/update.mjs",
     "pretest": "npm run-script build",
-    "test": "node --experimental-modules --experimental-json-modules node_modules/mocha/bin/_mocha --reporter spec --exit --timeout=30000",
+    "test": "mocha --package ./package.json",
     "eslint:github-action": "eslint ./src/**/*",
     "eslint:fix": "eslint ./src/**/* --fix"
   },
@@ -38,10 +38,20 @@
     "@typescript-eslint/eslint-plugin": "^4.22.1",
     "@typescript-eslint/parser": "^4.22.1",
     "eslint": "^7.25.0",
-    "mocha": "^9.0.0",
+    "mocha": "^9.1.1",
     "typescript": "^4.2.4"
   },
   "engines": {
     "node": ">=15.0.0"
+  },
+  "mocha": {
+    "exit": true,
+    "timeout": 30000,
+    "reporter": "spec",
+    "node-option": [
+      "experimental-modules",
+      "experimental-json-modules",
+      "es-module-specifier-resolution=node"
+    ]
   }
 }

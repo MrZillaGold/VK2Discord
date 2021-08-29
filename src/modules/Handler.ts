@@ -1,12 +1,11 @@
 import { IWallPostContextPayload } from 'vk-io';
 import { MessageEmbed } from 'discord.js';
 
-import { VK } from './VK.js';
-import { Sender } from './Sender.js';
+import { VK, Sender } from './';
 
-import { getById, getPostAuthor, getPostLink, getResourceId } from './functions.js';
+import { getById, getPostAuthor, getPostLink, getResourceId, IGetPostLinkOptions } from '../utils';
 
-import { ICluster, IGetPostLinkOptions } from '../interfaces';
+import { ICluster } from '../';
 
 export class Handler {
 
@@ -41,7 +40,6 @@ export class Handler {
         }
 
         setInterval(async () => {
-            const sender = this.createSender();
             const id = await getResourceId(this.VK, group_id)
                 .then((id) => {
                     if (!id) {
@@ -55,8 +53,6 @@ export class Handler {
                 return;
             }
 
-            const [embed] = sender.embeds;
-
             this.VK.api.wall.get({
                 owner_id: id,
                 count: 2,
@@ -67,31 +63,37 @@ export class Handler {
                 .then(async ({ groups, profiles, items }) => {
                     if (items.length) {
                         // Проверяем наличие закрепа, если он есть берем свежую запись
-                        const post = items.length === 2 && Number(items[0].date) < Number(items[1].date) ?
-                            items[1]
-                            :
-                            items[0];
+                        const payload = (
+                            items.length === 2 && Number(items[0].date) < Number(items[1].date) ?
+                                items[1]
+                                :
+                                items[0]
+                        ) as IWallPostContextPayload;
 
-                        embed.setTimestamp(post.date as number * 1000);
+                        const sender = this.createSender(payload);
+
+                        const [embed] = sender.embeds;
+
+                        embed.setTimestamp(payload.date as number * 1000);
 
                         if (author) {
-                            const postAuthor = getPostAuthor(post as IWallPostContextPayload, profiles, groups);
+                            const postAuthor = getPostAuthor(payload as IWallPostContextPayload, profiles, groups);
 
                             if (postAuthor) {
                                 const { name, photo_50 } = postAuthor;
 
-                                embed.setAuthor(name, photo_50, getPostLink(post as IGetPostLinkOptions));
+                                embed.setAuthor(name, photo_50, getPostLink(payload as IGetPostLinkOptions));
                             }
                         }
 
                         if (copyright) {
-                            await this.setCopyright(post as IWallPostContextPayload, embed);
+                            await this.setCopyright(payload as IWallPostContextPayload, embed);
                         }
 
-                        return sender.handle(post as IWallPostContextPayload);
-                    } else {
-                        console.log(`[!] В кластере #${index} не получено ни одной записи. Проверьте наличие записей в группе или измените значение фильтра в конфигурации.`);
+                        return sender.handle();
                     }
+
+                    console.log(`[!] В кластере #${index} не получено ни одной записи. Проверьте наличие записей в группе или измените значение фильтра в конфигурации.`);
                 })
                 .catch((error) => {
                     console.error(`[!] Произошла ошибка при получении записей ВКонтакте в кластере #${index}:`);
@@ -107,7 +109,7 @@ export class Handler {
             const payload = context['payload'];
 
             if (payload.post_type === 'post') {
-                const sender = this.createSender();
+                const sender = this.createSender(payload);
 
                 const [embed] = sender.embeds;
 
@@ -127,7 +129,7 @@ export class Handler {
                     await this.setCopyright(payload, embed);
                 }
 
-                return sender.handle(payload);
+                return sender.handle();
             }
         });
 
@@ -139,14 +141,14 @@ export class Handler {
             });
     }
 
-    private createSender(): Sender {
+    private createSender(payload: Sender['payload']): Sender {
         const cluster = this.cluster;
         const VK = this.VK;
 
         return new Sender({
             ...cluster,
             VK
-        });
+        }, payload);
     }
 
     private async setCopyright({ copyright, signer_id }: IWallPostContextPayload, embed: MessageEmbed): Promise<void> {
