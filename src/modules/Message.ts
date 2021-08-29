@@ -17,13 +17,17 @@ export class Message {
     files: MessageAttachment[] = [];
 
     constructor(cluster: ICluster) {
+        const { discord: { color } } = cluster;
+
         this.cluster = cluster;
 
-        const color = cluster.discord.color;
-        this.embeds = [
-            new MessageEmbed()
-                .setColor(color)
-        ];
+        const embed = new MessageEmbed();
+
+        if (color) {
+            embed.setColor(color);
+        }
+
+        this.embeds = [embed];
     }
 
     protected async parsePost(payload: IWallAttachmentPayload): Promise<void> {
