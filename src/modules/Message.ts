@@ -1,4 +1,4 @@
-import { HexColorString, MessageAttachment, MessageEmbed } from 'discord.js';
+import { MessageAttachment, MessageEmbed } from 'discord.js';
 import { IWallAttachmentPayload } from 'vk-io';
 
 import { Markdown } from './Markdown.js';
@@ -22,7 +22,7 @@ export class Message {
         const color = cluster.discord.color;
         this.embeds = [
             new MessageEmbed()
-                .setColor(color.match(/^#(?:\w{3}|\w{6})$/) ? color as HexColorString : '#aabbcc')
+                .setColor(color)
                 .setURL('https://twitter.com')
         ];
     }

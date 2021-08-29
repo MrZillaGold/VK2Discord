@@ -19,7 +19,7 @@ export interface IDiscordParams {
     username: string;
     avatar_url: string;
     content: string;
-    color: string | HexColorString;
+    color: HexColorString;
     author: boolean;
     copyright: boolean;
 }
