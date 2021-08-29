@@ -37,8 +37,6 @@ export class Attachments {
                                     this.createImageEmbed(this.popAttachment(sizes))
                                 );
                             }
-                        } else {
-                            console.log('[!] В записи есть фотографии, но вы не установили версию LongPoll API 5.103 или выше.\nФотографии не будут обработаны.');
                         }
                         break;
                     }
