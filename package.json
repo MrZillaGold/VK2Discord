@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "discord.js": "^13.1.0",
-    "lowdb": "^2.1.0",
+    "lowdb": "^3.0.0",
     "string-replace-async": "^3.0.1",
     "vk-io": "^4.1.4"
   },
