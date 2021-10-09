@@ -86,14 +86,14 @@ export class Handler {
                 )) as [UsersGetResponse | null, GroupsGetByIdObjectLegacyResponse | null]
             ));
 
-        if (users) {
+        if (users?.length) {
             const [{ id }] = users;
 
             this.VK.setTokenType(TokenType.USER);
             this.storage.setPrefix(String(id));
 
             this.startInterval();
-        } else if (groups) {
+        } else if (groups?.length) {
             const [{ id }] = groups;
 
             this.cluster.vk.longpoll = true;
