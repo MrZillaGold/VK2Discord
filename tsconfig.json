@@ -4,7 +4,7 @@
       "ESNext"
     ],
     "rootDir": "src",
-    "outDir": "build",
+    "outDir": "dist",
     "declaration": false,
     "experimentalDecorators": true,
     "strict": true,
