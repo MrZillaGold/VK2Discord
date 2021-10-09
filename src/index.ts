@@ -1,6 +1,4 @@
-import { HexColorString } from 'discord.js';
-
-import { AttachmentTypeUnion, Handler, Storage, VK } from './modules';
+import { Handler, ICluster, Storage } from './modules';
 
 // @ts-ignore
 import config from '../config.json';
@@ -8,46 +6,6 @@ import config from '../config.json';
 export interface IConfig {
     clusters: ICluster[];
     version_dont_modify_me: number;
-}
-
-export interface IVKParams {
-    token: string;
-    group_id: string;
-    keywords: string[];
-    words_blacklist: string[];
-    filter: boolean;
-    donut: boolean;
-    ads: boolean;
-    longpoll: boolean;
-    interval: number;
-}
-
-export enum Exclude {
-    TEXT = 'text',
-    ATTACHMENTS = 'attachments',
-    REPOST_TEXT = 'repost_text',
-    REPOST_ATTACHMENTS = 'repost_attachments'
-}
-
-export interface IDiscordParams {
-    webhook_urls: string[];
-    username: string;
-    avatar_url: string;
-    content: string;
-    color: HexColorString;
-    author: boolean;
-    copyright: boolean;
-    date: boolean;
-    exclude_content: (AttachmentTypeUnion | Exclude)[];
-}
-
-export interface ICluster {
-    vk: IVKParams;
-    discord: IDiscordParams;
-
-    VK: VK;
-    storage: Storage;
-    index: number;
 }
 
 const { clusters } = config as unknown as IConfig;

@@ -1,9 +1,10 @@
 import { WebhookClient } from 'discord.js';
 import { IWallPostContextPayload } from 'vk-io';
 
-import { FieldType, Keywords, KeywordsType, Message } from './';
-
-import { ICluster } from '../';
+import { Keywords, KeywordsType } from './Keywords';
+import { Message } from './Message';
+import { FieldType } from './Storage';
+import { ICluster } from './Handler';
 
 export class Sender extends Message {
 

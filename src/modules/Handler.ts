@@ -1,12 +1,53 @@
 import { IWallPostContextPayload } from 'vk-io';
 import { GroupsGetByIdObjectLegacyResponse, UsersGetResponse } from 'vk-io/lib/api/schemas/responses';
-import { MessageEmbed } from 'discord.js';
+import { HexColorString, MessageEmbed } from 'discord.js';
 
-import { Sender, Storage, TokenType, VK } from './';
+import { Sender } from './Sender';
+import { Storage } from './Storage';
+import { VK, TokenType } from './VK';
+import { AttachmentTypeUnion } from './Attachments';
 
 import { getById, getPostAuthor, getPostLink, getResourceId, IGetPostLinkOptions } from '../utils';
 
-import { ICluster } from '../';
+export interface IVKParams {
+    token: string;
+    group_id: string;
+    keywords: string[];
+    words_blacklist: string[];
+    filter: boolean;
+    donut: boolean;
+    ads: boolean;
+    longpoll: boolean;
+    interval: number;
+}
+
+export enum Exclude {
+    TEXT = 'text',
+    ATTACHMENTS = 'attachments',
+    REPOST_TEXT = 'repost_text',
+    REPOST_ATTACHMENTS = 'repost_attachments'
+}
+
+export interface IDiscordParams {
+    webhook_urls: string[];
+    username: string;
+    avatar_url: string;
+    content: string;
+    color: HexColorString;
+    author: boolean;
+    copyright: boolean;
+    date: boolean;
+    exclude_content: (AttachmentTypeUnion | Exclude)[];
+}
+
+export interface ICluster {
+    vk: IVKParams;
+    discord: IDiscordParams;
+
+    VK: VK;
+    storage: Storage;
+    index: number;
+}
 
 export class Handler {
 

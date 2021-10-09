@@ -1,8 +1,8 @@
 import { MessageEmbed, MessageAttachment } from 'discord.js';
 import { AttachmentType, ISharedAttachmentPayload, AttachmentTypeString } from 'vk-io';
 
-import { Message } from './';
-import { ICluster } from '../';
+import { Message } from './Message';
+import { ICluster } from './Handler';
 
 import { generateRandomString, LINK_PREFIX } from '../utils';
 
@@ -18,7 +18,7 @@ const { AUDIO, DOCUMENT, LINK, PHOTO, POLL, VIDEO, ALBUM, MARKET, MARKET_ALBUM }
 
 export class Attachments {
 
-    private cluster: ICluster;
+    private readonly cluster: ICluster;
 
     constructor(cluster: Attachments['cluster']) {
         this.cluster = cluster;

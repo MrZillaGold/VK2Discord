@@ -1,9 +1,9 @@
 import { MessageAttachment, MessageEmbed } from 'discord.js';
 import { IWallPostContextPayload } from 'vk-io';
 
-import { Attachment, Attachments, Markdown } from './';
-
-import { Exclude, ICluster } from '../';
+import { Attachment, Attachments } from './Attachments';
+import { Markdown } from './Markdown';
+import { Exclude, ICluster } from './Handler';
 
 export enum PostType {
     POST = 'post',

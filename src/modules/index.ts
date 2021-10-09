@@ -1,5 +1,5 @@
-export * from './Attachments';
 export * from './Handler';
+export * from './Attachments';
 export * from './Keywords';
 export * from './Markdown';
 export * from './Message';
