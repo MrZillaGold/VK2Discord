@@ -29,6 +29,13 @@ export class Attachments {
         const attachmentFields: string[] = [];
 
         const parsedAttachments = attachments
+            // Fix для гифок (если первым вложением гифка, то следующие фотографии переносятся в другой embed)
+            .sort((a, b) => (
+                b.type === DOCUMENT && b.doc.ext === 'gif' ?
+                    -1
+                    :
+                    1
+            ))
             .reduce<string[]>((parsedAttachments, {
                 type, photo, video, link, doc, audio, poll, album, textlive, market
             }) => {
