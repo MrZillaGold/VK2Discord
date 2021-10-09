@@ -1,6 +1,6 @@
 import assert from 'assert';
 
-import { Keywords, Markdown, Sender, VK } from '../dist/modules';
+import { Keywords, Markdown, Sender, VK, Storage, FieldType, TokenType } from '../dist/modules';
 
 import payload from './payload.json';
 
@@ -11,7 +11,7 @@ const cluster = {
         filter: false,
         donut: false,
         ads: false,
-        group_id: 'Test',
+        group_id: 'test',
         longpoll: false
     },
     discord: {
@@ -30,6 +30,8 @@ const cluster = {
 const vk = new VK({
     token: process.env.TOKEN
 });
+
+vk.tokenType = TokenType.USER;
 
 describe('Keywords', () => {
     describe('check();', () => {
@@ -148,10 +150,18 @@ describe('Markdown', () => {
 });
 
 if (process.env.TOKEN) {
+    const { group_id } = cluster.vk;
+
+    const storage = new Storage({
+        vk,
+        prefix: group_id
+    });
+
     const sender = new Sender({
         ...cluster,
-        index: 1,
-        VK: vk
+        storage,
+        VK: vk,
+        index: 1
     }, payload);
 
     describe('Sender', () => {
@@ -163,14 +173,14 @@ if (process.env.TOKEN) {
 
         describe('pushDate();', () => {
             it('Проверка на соответствие даты опубликованной записи', async () => {
-                const cache = (await import('../cache.json'))
-                    .default;
-
-                const group = cache[cluster.vk.group_id];
+                const [last, published] = await Promise.all([
+                    storage.get(`${group_id}-last`, FieldType.NUMBER),
+                    storage.get(`${group_id}-published`, FieldType.ARRAY_NUMBER)
+                ]);
 
                 assert.ok(
-                    group?.last === payload.date &&
-                    group?.published.includes(payload.date)
+                    last === payload.date &&
+                    published.includes(payload.date)
                 );
             });
         });

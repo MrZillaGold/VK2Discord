@@ -1,7 +1,8 @@
 import { IWallPostContextPayload } from 'vk-io';
+import { GroupsGetByIdObjectLegacyResponse, UsersGetResponse } from 'vk-io/lib/api/schemas/responses';
 import { MessageEmbed } from 'discord.js';
 
-import { VK, Sender } from './';
+import { Sender, Storage, TokenType, VK } from './';
 
 import { getById, getPostAuthor, getPostLink, getResourceId, IGetPostLinkOptions } from '../utils';
 
@@ -9,25 +10,62 @@ import { ICluster } from '../';
 
 export class Handler {
 
-    protected cluster: Pick<ICluster, 'vk' | 'discord' | 'index'>;
+    readonly cluster: Pick<ICluster, 'vk' | 'discord' | 'index'>;
 
     protected VK: VK;
+    readonly storage: Storage;
 
-    constructor(cluster: Pick<ICluster, 'vk' | 'discord' | 'index'>) {
+    constructor(cluster: Handler['cluster']) {
         this.cluster = cluster;
 
-        this.VK = new VK({
+        const vk = new VK({
             token: cluster.vk.token,
             apiMode: 'parallel'
         });
+
+        this.VK = vk;
+        this.storage = new Storage({
+            vk
+        });
     }
 
-    init(): void {
-        if (!this.cluster.vk.longpoll) {
+    async init(): Promise<this> {
+        const { api } = this.VK;
+
+        const [users, groups] = await Promise.allSettled([
+            api.users.get({}),
+            api.groups.getById({})
+        ])
+            .then((results) => (
+                results.map(({ status, ...rest }) => (
+                    status === 'fulfilled' && 'value' in rest ?
+                        rest.value
+                        :
+                        null
+                )) as [UsersGetResponse | null, GroupsGetByIdObjectLegacyResponse | null]
+            ));
+
+        if (users) {
+            const [{ id }] = users;
+
+            this.VK.setTokenType(TokenType.USER);
+            this.storage.setPrefix(String(id));
+
             this.startInterval();
-        } else {
+        } else if (groups) {
+            const [{ id }] = groups;
+
+            this.cluster.vk.longpoll = true;
+
+            this.VK.setTokenType(TokenType.GROUP);
+            this.storage.setPrefix(`-${id}`);
+
             this.startPolling();
+        } else {
+            this.storage.setPrefix(this.cluster.vk.token);
         }
+
+        return this;
     }
 
     private startInterval(): void {
@@ -35,7 +73,7 @@ export class Handler {
 
         console.log(`[VK2Discord] Кластер #${index} будет проверять новые записи с интервалом в ${interval} секунд.`);
 
-        if (interval < 30) {
+        if (interval < 20) {
             console.warn('[!] Не рекомендуем ставить интервал получения постов меньше 20 секунд, во избежания лимитов ВКонтакте!');
         }
 
@@ -142,12 +180,12 @@ export class Handler {
     }
 
     private createSender(payload: Sender['payload']): Sender {
-        const cluster = this.cluster;
-        const VK = this.VK;
+        const { cluster, VK, storage } = this;
 
         return new Sender({
             ...cluster,
-            VK
+            VK,
+            storage
         }, payload);
     }
 

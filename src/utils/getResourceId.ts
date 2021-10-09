@@ -1,29 +1,30 @@
-import { VK, db, DBSchema } from '../modules';
+import { FieldType, Storage, VK } from '../modules';
 
-// eslint-disable-next-line require-await
-export async function getResourceId(VK: VK, resource: string): Promise<number | null> {
-    if (!(db.data as DBSchema)[resource]) {
-        (db.data as DBSchema)[resource] = {};
+export async function getResourceId(vk: VK, resource: string): Promise<number | null> {
+    const storage = new Storage({
+        vk,
+        prefix: resource
+    });
+
+    const cacheKey = `${resource}-id`;
+    const cachedId = await storage.get<number>(cacheKey, FieldType.NUMBER);
+
+    if (cachedId) {
+        return cachedId;
     }
 
-    const cache = (db.data as DBSchema)[resource];
-
-    if (cache?.id) {
-        return cache.id;
-    }
-
-    return VK.resolveResource(resource)
-        .then(({ id, type }) => type === 'user' ?
-            id
-            :
-            type === 'group' ?
-                -id
+    return vk.resolveResource(resource)
+        .then(({ id, type }) => (
+            type === 'user' ?
+                id
                 :
-                null)
+                type === 'group' ?
+                    -id
+                    :
+                    null
+        ))
         .then((id) => {
-            (db.data as DBSchema)[resource].id = id as number;
-
-            db.write();
+            storage.set(cacheKey, id);
 
             return id;
         })

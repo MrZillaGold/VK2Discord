@@ -1,7 +1,7 @@
 import { WebhookClient } from 'discord.js';
 import { IWallPostContextPayload } from 'vk-io';
 
-import { db, DBSchema, Message, Keywords, KeywordsType } from './';
+import { FieldType, Keywords, KeywordsType, Message } from './';
 
 import { ICluster } from '../';
 
@@ -16,11 +16,15 @@ export class Sender extends Message {
     }
 
     async handle(): Promise<void> {
-        const { index, vk: { longpoll, filter, group_id, keywords, ads, donut: donutStatus, words_blacklist } } = this.cluster;
+        const { index, storage, vk: { longpoll, filter, group_id, keywords, ads, donut: donutStatus, words_blacklist } } = this.cluster;
         const { date, owner_id, from_id, marked_as_ads, donut, text } = this.payload;
 
-        const cache = (db.data as DBSchema)[group_id];
-        const hasInCache = cache?.last === date || cache?.published?.includes(date as number);
+        const [last, published] = await Promise.all([
+            storage.get<number>(`${group_id}-last`, FieldType.NUMBER),
+            storage.get<number[]>(`${group_id}-published`, FieldType.ARRAY_NUMBER)
+        ]);
+
+        const hasInCache = last === date || published.includes(date as number);
 
         if (hasInCache) {
             return console.log(`[!] Новых записей в кластере #${index} нет.`);
@@ -90,17 +94,13 @@ export class Sender extends Message {
     }
 
     private async pushDate(): Promise<void> {
-        const { cluster: { vk: { group_id } }, payload: { date } } = this;
+        const { cluster: { vk: { group_id }, storage }, payload: { date } } = this;
 
-        if (!(db.data as DBSchema)[group_id]) {
-            (db.data as DBSchema)[group_id] = {};
-        }
+        const published = await storage.get<number[]>(`${group_id}-published`, FieldType.ARRAY_NUMBER);
 
-        const cache = (db.data as DBSchema)[group_id];
-
-        cache.last = date;
-        cache.published = [date as number, ...(cache.published || [])].splice(0, 50);
-
-        await db.write();
+        await Promise.all([
+            storage.set(`${group_id}-last`, date),
+            storage.set(`${group_id}-published`, [date, ...published].splice(0, 50))
+        ]);
     }
 }
