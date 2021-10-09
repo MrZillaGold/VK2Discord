@@ -3,8 +3,7 @@ import { GroupsGroupFull } from 'vk-io/lib/api/schemas/objects';
 
 import { IProfile } from './getPostAuthor';
 
-// eslint-disable-next-line require-await
-export async function getById(api: API, id?: number): Promise<IProfile | GroupsGroupFull | null> {
+export function getById(api: API, id?: number): Promise<IProfile | GroupsGroupFull | null> {
     return id ?
         id > 0 ?
             api.users.get({
@@ -21,5 +20,5 @@ export async function getById(api: API, id?: number): Promise<IProfile | GroupsG
             })
                 .then(([group]) => group)
         :
-        null;
+        Promise.resolve(null);
 }
