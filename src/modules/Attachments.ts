@@ -28,8 +28,10 @@ export class Attachments {
 
         const attachmentFields: string[] = [];
 
-        const parsedAttachments = (
-            attachments.map(({ type, photo, video, link, doc, audio, poll, album, textlive, market }) => {
+        const parsedAttachments = attachments
+            .reduce<string[]>((parsedAttachments, {
+                type, photo, video, link, doc, audio, poll, album, textlive, market
+            }) => {
                 switch (type) {
                     case PHOTO: {
                         const { sizes } = photo;
@@ -63,19 +65,23 @@ export class Attachments {
                             title += ` - ${name}`;
                         }
 
-                        return `[${prefix}: ${title}](${LINK_PREFIX}${this.generateAttachmentContext(video)}?z=${VIDEO}${owner_id}_${id})`;
+                        parsedAttachments.push(
+                            `[${prefix}: ${title}](${LINK_PREFIX}${this.generateAttachmentContext(video)}?z=${VIDEO}${owner_id}_${id})`
+                        );
+                        break;
                     }
                     case LINK: {
                         const { button_text = 'Ссылка', description, title, url } = link;
 
-                        return `[🔗 ${description || button_text}: ${title}](${url})`;
+                        parsedAttachments.push(`[🔗 ${description || button_text}: ${title}](${url})`);
+                        break;
                     }
                     case DOCUMENT: {
                         const { ext, url, title } = doc;
 
                         if (ext === 'gif') {
                             const filename = `${generateRandomString(6)}.${ext}`;
-                            
+
                             if (!embed.image) {
                                 files.push(
                                     new MessageAttachment(url, filename)
@@ -92,44 +98,62 @@ export class Attachments {
                                 );
                             }
                         } else {
-                            return `[📄 Файл: ${title}](${url})`;
+                            parsedAttachments.push(`[📄 Файл: ${title}](${url})`);
                         }
                         break;
                     }
                     case AUDIO: {
                         const { owner_id, id, artist, title } = audio;
 
-                        return `[🎵 Аудиозапись: ${artist} - ${title}](${LINK_PREFIX}${AUDIO}${owner_id}_${id})`;
+                        parsedAttachments.push(
+                            `[🎵 Аудиозапись: ${artist} - ${title}](${LINK_PREFIX}${AUDIO}${owner_id}_${id})`
+                        );
+                        break;
                     }
                     case POLL: {
                         const { owner_id, id, question } = poll;
 
-                        return `[📊 Опрос: ${question}](${LINK_PREFIX}${this.generateAttachmentContext(poll)}?w=${POLL}${owner_id}_${id})`;
+                        parsedAttachments.push(
+                            `[📊 Опрос: ${question}](${LINK_PREFIX}${this.generateAttachmentContext(poll)}?w=${POLL}${owner_id}_${id})`
+                        );
+                        break;
                     }
                     case ALBUM: {
                         const { owner_id, id, title } = album;
 
-                        return `[🖼️ Альбом: ${title}](${LINK_PREFIX}${ALBUM}${owner_id}_${id})`;
+                        parsedAttachments.push(
+                            `[🖼️ Альбом: ${title}](${LINK_PREFIX}${ALBUM}${owner_id}_${id})`
+                        );
+                        break;
                     }
                     case MARKET: {
                         const { owner_id, id, title } = market;
 
-                        return `[🛍️ Товар: ${title}](${LINK_PREFIX}${MARKET}${owner_id}?w=product${owner_id}_${id})`;
+                        parsedAttachments.push(
+                            `[🛍️ Товар: ${title}](${LINK_PREFIX}${MARKET}${owner_id}?w=product${owner_id}_${id})`
+                        );
+                        break;
                     }
                     case MARKET_ALBUM: {
                         const { owner_id, id, title } = market;
 
-                        return `[🛍️ Подборка товаров: ${title}](${LINK_PREFIX}${MARKET}${owner_id}?section=${ALBUM}_${id})`;
+                        parsedAttachments.push(
+                            `[🛍️ Подборка товаров: ${title}](${LINK_PREFIX}${MARKET}${owner_id}?section=${ALBUM}_${id})`
+                        );
+                        break;
                     }
                     case 'textlive': {
                         const { textlive_id, title } = textlive;
 
-                        return `[📣 Репортаж: ${title}](${LINK_PREFIX}textlive${textlive_id})`;
+                        parsedAttachments.push(
+                            `[📣 Репортаж: ${title}](${LINK_PREFIX}textlive${textlive_id})`
+                        );
+                        break;
                     }
                 }
-            })
-                .filter((attachment) => attachment) as string[]
-        )
+
+                return parsedAttachments;
+            }, [])
             .sort((a, b) => a.localeCompare(b))
             .map((attachment) => `\n${attachment}`);
 
