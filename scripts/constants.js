@@ -1,4 +1,4 @@
-import scriptPackage from "../package.json";
+import scriptPackage from '../package.json';
 
 const { LATEST_CONFIG_VERSION, engines: { node } } = scriptPackage;
 
@@ -10,5 +10,5 @@ export {
 };
 
 function getMajorVersion(version) {
-    return Number(version.split(".")[0]);
+    return Number(version.split('.')[0]);
 }
