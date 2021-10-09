@@ -10,7 +10,8 @@ const { clusters, version_dont_modify_me } = config;
 const changes = new Map([
     [2, [{}, { author: true, copyright: true }]],
     [3, [{}, { content: '', username: '', avatar_url: '' }]],
-    [4, [{ donut: false, ads: false, words_blacklist: [] }, {}]]
+    [4, [{ donut: false, ads: false, words_blacklist: [] }, {}]],
+    [5, [{}, { date: true, exclude_content: [] }]]
 ]);
 
 if (!clusters || !version_dont_modify_me) {

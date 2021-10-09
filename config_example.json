@@ -20,7 +20,8 @@
         "content": "@everyone",
         "color": "#aabbcc",
         "author": true,
-        "copyright": false
+        "copyright": false,
+        "date": false
       }
     },
     {
@@ -45,7 +46,8 @@
         "content": "",
         "color": "#ffbbff",
         "author": true,
-        "copyright": true
+        "copyright": true,
+        "date": true
       }
     }
   ],

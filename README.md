@@ -13,7 +13,7 @@
         <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/mrzillagold/vk2discord?label=%D0%97%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BA%D0%B8%20Docker&logo=docker">
     </a>
     <a href="https://wakatime.com/badge/github/MrZillaGold/VK2Discord">
-        <img alt="Docker Pulls" src="https://wakatime.com/badge/github/MrZillaGold/VK2Discord.svg">
+        <img alt="wakatime" src="https://wakatime.com/badge/github/MrZillaGold/VK2Discord.svg">
     </a>
     <a href="https://github.com/MrZillaGold/VK2Discord/actions/workflows/ci.yml">
         <img alt="Build Status" src="https://github.com/MrZillaGold/VK2Discord/actions/workflows/ci.yml/badge.svg">

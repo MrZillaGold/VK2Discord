@@ -68,7 +68,9 @@ function createConfig() {
                     content: '',
                     color: '#aabbcc',
                     author: true,
-                    copyright: true
+                    copyright: true,
+                    date: true,
+                    exclude_content: []
                 }
             }
         ],

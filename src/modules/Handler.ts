@@ -69,7 +69,7 @@ export class Handler {
     }
 
     private startInterval(): void {
-        const { index, vk: { interval, group_id, filter }, discord: { author, copyright } } = this.cluster;
+        const { index, vk: { interval, group_id, filter }, discord: { author, copyright, date } } = this.cluster;
 
         console.log(`[VK2Discord] Кластер #${index} будет проверять новые записи с интервалом в ${interval} секунд.`);
 
@@ -112,7 +112,9 @@ export class Handler {
 
                         const [embed] = sender.embeds;
 
-                        embed.setTimestamp(payload.date as number * 1000);
+                        if (date) {
+                            embed.setTimestamp(payload.date as number * 1_000);
+                        }
 
                         if (author) {
                             const postAuthor = getPostAuthor(payload as IWallPostContextPayload, profiles, groups);
@@ -141,7 +143,7 @@ export class Handler {
     }
 
     private startPolling(): void {
-        const { index, discord: { author, copyright } } = this.cluster;
+        const { index, discord: { author, copyright, date } } = this.cluster;
 
         this.VK.updates.on('wall_post_new', async (context) => {
             const payload = context['payload'];
@@ -151,7 +153,9 @@ export class Handler {
 
                 const [embed] = sender.embeds;
 
-                embed.setTimestamp(payload.date as number * 1000);
+                if (date) {
+                    embed.setTimestamp(payload.date as number * 1_000);
+                }
 
                 if (author) {
                     const postAuthor = await getById(this.VK.api, payload.from_id as number);

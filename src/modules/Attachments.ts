@@ -1,11 +1,12 @@
 import { MessageEmbed, MessageAttachment } from 'discord.js';
 import { AttachmentType, ISharedAttachmentPayload, AttachmentTypeString } from 'vk-io';
 
-import { VK, Message } from './';
+import { Message } from './';
+import { ICluster } from '../';
 
 import { generateRandomString, LINK_PREFIX } from '../utils';
 
-type AttachmentTypeUnion = AttachmentTypeString | 'textlive';
+export type AttachmentTypeUnion = AttachmentTypeString | 'textlive';
 
 export type Attachment = {
     type: AttachmentTypeUnion;
@@ -17,13 +18,14 @@ const { AUDIO, DOCUMENT, LINK, PHOTO, POLL, VIDEO, ALBUM, MARKET, MARKET_ALBUM }
 
 export class Attachments {
 
-    VK: VK;
+    private cluster: ICluster;
 
-    constructor(VK: VK) {
-        this.VK = VK;
+    constructor(cluster: Attachments['cluster']) {
+        this.cluster = cluster;
     }
 
     parse(attachments: Attachment[], embeds: Message['embeds'], files: Message['files']): string[] {
+        const { discord: { exclude_content } } = this.cluster;
         const [embed] = embeds;
 
         const attachmentFields: string[] = [];
@@ -39,6 +41,10 @@ export class Attachments {
             .reduce<string[]>((parsedAttachments, {
                 type, photo, video, link, doc, audio, poll, album, textlive, market
             }) => {
+                if (exclude_content.includes(type)) {
+                    return parsedAttachments;
+                }
+
                 switch (type) {
                     case PHOTO: {
                         const { sizes } = photo;

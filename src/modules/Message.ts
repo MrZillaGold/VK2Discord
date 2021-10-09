@@ -1,9 +1,9 @@
 import { MessageAttachment, MessageEmbed } from 'discord.js';
 import { IWallPostContextPayload } from 'vk-io';
 
-import { Markdown, Attachments, Attachment } from './';
+import { Attachment, Attachments, Markdown } from './';
 
-import { ICluster } from '../';
+import { Exclude, ICluster } from '../';
 
 export enum PostType {
     POST = 'post',
@@ -36,48 +36,44 @@ export abstract class Message {
     }
 
     protected async parsePost(): Promise<void> {
-        const { cluster: { VK }, payload: { text, attachments, copy_history } } = this;
+        const { cluster, payload: { text, attachments, copy_history } } = this;
+        const { VK, discord: { exclude_content } } = cluster;
 
-        if (text) {
-            this.post += `${
-                await new Markdown(VK)
-                    .fix(text)
-            }\n`;
+        const attachmentsParser = new Attachments(cluster);
+        const markdown = new Markdown(VK);
+
+        if (text && !exclude_content.includes(Exclude.TEXT)) {
+            this.post += `${await markdown.fix(text)}\n`;
         }
 
-        if (attachments) {
-            const parsedAttachments = new Attachments(VK)
-                .parse(attachments as Attachment[], this.embeds, this.files);
+        if (attachments && !exclude_content.includes(Exclude.ATTACHMENTS)) {
+            const parsedAttachments = attachmentsParser.parse(attachments as Attachment[], this.embeds, this.files);
 
-            this.attachAttachments(parsedAttachments, PostType.POST);
+            this.attach(parsedAttachments, PostType.POST);
         }
 
         const repost = copy_history ? copy_history[0] : null;
 
-        if (repost) {
+        if (repost && !exclude_content.includes(Exclude.REPOST_TEXT) && !exclude_content.includes(Exclude.REPOST_ATTACHMENTS)) {
             const { text, from_id, id, attachments } = repost;
 
             this.repost += `\n>>> [**Репост записи**](https://vk.com/wall${from_id}_${id})`;
 
-            if (text) {
-                this.repost += `\n\n${
-                    await new Markdown(VK)
-                        .fix(text)
-                }`;
+            if (text && !exclude_content.includes(Exclude.REPOST_TEXT)) {
+                this.repost += `\n\n${await markdown.fix(text)}`;
             }
 
-            if (attachments) {
-                const parsedAttachments = new Attachments(VK)
-                    .parse(attachments as Attachment[], this.embeds, this.files);
+            if (attachments && !exclude_content.includes(Exclude.REPOST_ATTACHMENTS)) {
+                const parsedAttachments = attachmentsParser.parse(attachments as Attachment[], this.embeds, this.files);
 
-                this.attachAttachments(parsedAttachments, PostType.REPOST);
+                this.attach(parsedAttachments, PostType.REPOST);
             }
         }
 
         this.sliceMessage();
     }
 
-    private attachAttachments(attachmentFields: string[], type: PostType): void {
+    private attach(attachmentFields: string[], type: PostType): void {
         const { embeds: [embed] } = this;
 
         switch (type) {

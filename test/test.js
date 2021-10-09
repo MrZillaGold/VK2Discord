@@ -23,7 +23,8 @@ const cluster = {
         content: '',
         color: '#ffbbff',
         author: true,
-        copyright: true
+        copyright: true,
+        exclude_content: []
     }
 };
 

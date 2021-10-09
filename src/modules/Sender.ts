@@ -66,6 +66,14 @@ export class Sender extends Message {
 
         await this.pushDate();
 
+        if (
+            !embed.description &&
+            !embed.fields.length &&
+            !embed.image
+        ) {
+            return;
+        }
+
         const results = await Promise.allSettled(
             webhook_urls.map((url) => (
                 new WebhookClient({

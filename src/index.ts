@@ -1,6 +1,6 @@
 import { HexColorString } from 'discord.js';
 
-import { Handler, Storage, VK } from './modules';
+import { AttachmentTypeUnion, Handler, Storage, VK } from './modules';
 
 // @ts-ignore
 import config from '../config.json';
@@ -22,6 +22,13 @@ export interface IVKParams {
     interval: number;
 }
 
+export enum Exclude {
+    TEXT = 'text',
+    ATTACHMENTS = 'attachments',
+    REPOST_TEXT = 'repost_text',
+    REPOST_ATTACHMENTS = 'repost_attachments'
+}
+
 export interface IDiscordParams {
     webhook_urls: string[];
     username: string;
@@ -30,6 +37,8 @@ export interface IDiscordParams {
     color: HexColorString;
     author: boolean;
     copyright: boolean;
+    date: boolean;
+    exclude_content: (AttachmentTypeUnion | Exclude)[];
 }
 
 export interface ICluster {
