@@ -1,6 +1,6 @@
 import { TokenType, VK } from './VK';
 
-export interface IStorageOption {
+export interface IStorageOptions {
     vk: VK;
     prefix?: string;
 }
@@ -19,7 +19,7 @@ export class Storage {
     private vk: VK;
     prefix!: string;
 
-    constructor({ vk, prefix }: IStorageOption) {
+    constructor({ vk, prefix }: IStorageOptions) {
         this.vk = vk;
 
         if (prefix) {
