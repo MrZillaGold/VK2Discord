@@ -174,6 +174,8 @@ if (process.env.TOKEN) {
 
         describe('pushDate();', () => {
             it('Проверка на соответствие даты опубликованной записи', async () => {
+                Storage.cache.clear();
+
                 const [last, published] = await Promise.all([
                     storage.get(`${group_id}-last`, FieldType.NUMBER),
                     storage.get(`${group_id}-published`, FieldType.ARRAY_NUMBER)
