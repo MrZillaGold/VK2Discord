@@ -1,10 +1,9 @@
-<h3 align="center">
+<h2 align="center">
     VK2Discord
-</h3>
+</h2>
 <p align="center">
-    Публикация постов из группы или профиля VK в Discord с полным покрытием вложений к ним
+    Публикация постов из группы или профиля ВКонтакте в Discord с полным покрытием вложений к ним
 </p>
-<br>
 <p align="center">
     <a href="https://github.com/MrZillaGold/VK2Discord/releases/latest">
         <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/MrZillaGold/VK2Discord?label=%D0%9F%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%BD%D1%8F%D1%8F%20%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D1%8F&logo=github">
@@ -32,9 +31,23 @@
   </a>
 </p>
 <br>
-<p align="center">
-  Скрипт используют крупные Discord сервера и сообщества:
-</p>
+<details>
+  <summary>Пример работы</summary>
+  <p align="center">
+    <img src="https://repository-images.githubusercontent.com/192033596/86f73000-29b8-11eb-836d-40feada70107">
+  </p>
+</details>
+<br>
+
+#### Почему VK2Discord?
+
+* Поддержка всех вложений ВКонтакте: встраивание до 4 фотографий в 1 сообщение, поддержка GIF и репостов
+* Гибкая настройка итогового сообщений: удаляйте ненужные вложения и текст, добавляйте упоминания
+* Фильры: ограничивайте публикацию контента используя ключевые слова
+* Помимо своей группы, есть возможность сбора записей из чужих сообществ и страниц пользователей
+* Работа с несколькими сообществами и каналами Discord в одном процессе
+* [Docker образ](https://hub.docker.com/r/mrzillagold/vk2discord)
+* Скрипт используют крупные Discord сервера и сообщества:
 <table>
   <tr>
     <td align="center">
@@ -65,11 +78,6 @@
     </td>
     </tr>
 </table>
-<br>
-<br>
-<p align="center">
-  <img src="https://repository-images.githubusercontent.com/192033596/86f73000-29b8-11eb-836d-40feada70107">
-</p>
 
 ***
 
