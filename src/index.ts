@@ -1,7 +1,7 @@
 import { Handler, ICluster, Storage } from './modules';
 
 // @ts-ignore
-import config from '../config.json';
+import config from '../config.json' assert { type: 'json' };
 
 export interface IConfig {
     clusters: ICluster[];

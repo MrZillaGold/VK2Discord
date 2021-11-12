@@ -2,7 +2,7 @@ import fs from 'fs';
 
 import { LATEST_CONFIG_VERSION } from './constants';
 
-import config from '../config.json';
+import config from '../config.json' assert { type: 'json' };
 
 const { clusters, version_dont_modify_me } = config;
 

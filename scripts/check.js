@@ -16,7 +16,7 @@ const files = await fs.readdir('./')
 
 if (files) {
     if (files.includes('config.json')) {
-        await import('../config.json')
+        await import('../config.json', { assert: { type: 'json' } })
             .then(async ({ default: { version_dont_modify_me } }) => {
                 if (version_dont_modify_me !== LATEST_CONFIG_VERSION) {
                     await rename();
@@ -27,9 +27,10 @@ if (files) {
                     process.exit(-1);
                 }
             })
-            .catch(async () => {
-                await rename();
-                await createConfig();
+            .catch(async (error) => {
+                console.log(error);
+              /*  await rename();
+                await createConfig();*/
 
                 console.error('\n\n[!] Конфиг поврежден либо настроен неправильно, файл был переименован в config_old.json. Был создан новый файл, настройте его следуя инструкции.\n\n');
 
