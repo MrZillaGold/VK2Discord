@@ -1,4 +1,5 @@
 import { MessageEmbed, MessageAttachment } from 'discord.js';
+import { hyperlink } from '@discordjs/builders';
 import { AttachmentType, ISharedAttachmentPayload, AttachmentTypeString } from 'vk-io';
 
 import { Message } from './Message';
@@ -16,6 +17,10 @@ export type Attachment = {
 
 const { AUDIO, DOCUMENT, LINK, PHOTO, POLL, VIDEO, ALBUM, MARKET, MARKET_ALBUM } = AttachmentType;
 
+const TWITTER_URL = 'https://twitter.com';
+const MAX_FIELD_LENGTH = 1024;
+const ATTACHMENT_FIELD_SAFE_CONTENT_LENGTH = MAX_FIELD_LENGTH - 5;
+
 export class Attachments {
 
     private readonly cluster: ICluster;
@@ -28,16 +33,7 @@ export class Attachments {
         const { discord: { exclude_content } } = this.cluster;
         const [embed] = embeds;
 
-        const attachmentFields: string[] = [];
-
-        const parsedAttachments = attachments
-            // Fix для гифок (если первым вложением гифка, то следующие фотографии переносятся в другой embed)
-            .sort((a, b) => (
-                b.type === DOCUMENT && b.doc.ext === 'gif' ?
-                    -1
-                    :
-                    1
-            ))
+        return attachments
             .reduce<string[]>((parsedAttachments, {
                 type, photo, video, link, doc, audio, poll, album, textlive, market
             }) => {
@@ -52,7 +48,7 @@ export class Attachments {
                         if (sizes) {
                             if (!embed.image) {
                                 embed.setImage(this.popAttachment(sizes))
-                                    .setURL('https://twitter.com');
+                                    .setURL(TWITTER_URL);
                             } else {
                                 embeds.push(
                                     this.createImageEmbed(this.popAttachment(sizes))
@@ -79,14 +75,19 @@ export class Attachments {
                         }
 
                         parsedAttachments.push(
-                            `[${prefix}: ${title}](${LINK_PREFIX}${this.generateAttachmentContext(video)}?z=${VIDEO}${owner_id}_${id})`
+                            hyperlink(
+                                `${prefix}: ${title}`,
+                                `${LINK_PREFIX}${this.generateAttachmentContext(video)}?z=${VIDEO}${owner_id}_${id}`
+                            )
                         );
                         break;
                     }
                     case LINK: {
-                        const { button_text = 'Ссылка', description, title, url } = link;
+                        const { button_text = 'Ссылка', title, url } = link;
 
-                        parsedAttachments.push(`[🔗 ${description || button_text}: ${title}](${url})`);
+                        parsedAttachments.push(
+                            hyperlink(`🔗 ${button_text}: ${title}`, url)
+                        );
                         break;
                     }
                     case DOCUMENT: {
@@ -100,7 +101,8 @@ export class Attachments {
                                     new MessageAttachment(url, filename)
                                 );
 
-                                embed.setImage(`attachment://${filename}`);
+                                embed.setImage(`attachment://${filename}`)
+                                    .setURL(TWITTER_URL);
                             } else if (embeds.length < 10) {
                                 files.push(
                                     new MessageAttachment(url, filename)
@@ -111,7 +113,9 @@ export class Attachments {
                                 );
                             }
                         } else {
-                            parsedAttachments.push(`[📄 Файл: ${title}](${url})`);
+                            parsedAttachments.push(
+                                hyperlink(`📄 Файл: ${title}`, url)
+                            );
                         }
                         break;
                     }
@@ -119,7 +123,10 @@ export class Attachments {
                         const { owner_id, id, artist, title } = audio;
 
                         parsedAttachments.push(
-                            `[🎵 Аудиозапись: ${artist} - ${title}](${LINK_PREFIX}${AUDIO}${owner_id}_${id})`
+                            hyperlink(
+                                `🎵 Аудиозапись: ${artist} - ${title}`,
+                                `${LINK_PREFIX}${AUDIO}${owner_id}_${id}`
+                            )
                         );
                         break;
                     }
@@ -127,7 +134,10 @@ export class Attachments {
                         const { owner_id, id, question } = poll;
 
                         parsedAttachments.push(
-                            `[📊 Опрос: ${question}](${LINK_PREFIX}${this.generateAttachmentContext(poll)}?w=${POLL}${owner_id}_${id})`
+                            hyperlink(
+                                `📊 Опрос: ${question}`,
+                                `${LINK_PREFIX}${this.generateAttachmentContext(poll)}?w=${POLL}${owner_id}_${id}`
+                            )
                         );
                         break;
                     }
@@ -135,7 +145,10 @@ export class Attachments {
                         const { owner_id, id, title } = album;
 
                         parsedAttachments.push(
-                            `[🖼️ Альбом: ${title}](${LINK_PREFIX}${ALBUM}${owner_id}_${id})`
+                            hyperlink(
+                                `🖼️ Альбом: ${title}`,
+                                `${LINK_PREFIX}${ALBUM}${owner_id}_${id}`
+                            )
                         );
                         break;
                     }
@@ -143,7 +156,10 @@ export class Attachments {
                         const { owner_id, id, title } = market;
 
                         parsedAttachments.push(
-                            `[🛍️ Товар: ${title}](${LINK_PREFIX}${MARKET}${owner_id}?w=product${owner_id}_${id})`
+                            hyperlink(
+                                `🛍️ Товар: ${title}`,
+                                `${LINK_PREFIX}${MARKET}${owner_id}?w=product${owner_id}_${id}`
+                            )
                         );
                         break;
                     }
@@ -151,7 +167,10 @@ export class Attachments {
                         const { owner_id, id, title } = market;
 
                         parsedAttachments.push(
-                            `[🛍️ Подборка товаров: ${title}](${LINK_PREFIX}${MARKET}${owner_id}?section=${ALBUM}_${id})`
+                            hyperlink(
+                                `🛍️ Подборка товаров: ${title}`,
+                                `${LINK_PREFIX}${MARKET}${owner_id}?section=${ALBUM}_${id}`
+                            )
                         );
                         break;
                     }
@@ -159,7 +178,10 @@ export class Attachments {
                         const { textlive_id, title } = textlive;
 
                         parsedAttachments.push(
-                            `[📣 Репортаж: ${title}](${LINK_PREFIX}textlive${textlive_id})`
+                            hyperlink(
+                                `📣 Репортаж: ${title}`,
+                                `${LINK_PREFIX}textlive${textlive_id}`
+                            )
                         );
                         break;
                     }
@@ -168,23 +190,19 @@ export class Attachments {
                 return parsedAttachments;
             }, [])
             .sort((a, b) => a.localeCompare(b))
-            .map((attachment) => `\n${attachment}`);
+            .reduce<string[]>((attachments, attachment, index) => {
+                const field = attachments.at(-1);
 
-        parsedAttachments.forEach((attachment, index) => {
-            if (!index) {
-                attachmentFields[0] = '';
-            }
+                if ((field + attachment).length < MAX_FIELD_LENGTH && index) {
+                    attachments[attachments.length - 1] += `\n${attachment}`;
+                } else {
+                    attachments.push(
+                        this.sliceAttachmentTitle(attachment)
+                    );
+                }
 
-            const field = attachmentFields[attachmentFields.length - 1];
-
-            if ((field + attachment).length < 1024) {
-                attachmentFields[attachmentFields.length - 1] += attachment;
-            } else if (attachment.length <= 1024) {
-                attachmentFields.push(attachment);
-            }
-        });
-
-        return attachmentFields;
+                return attachments;
+            }, []);
     }
 
     protected popAttachment(attachment: any[]): string {
@@ -196,7 +214,7 @@ export class Attachments {
 
     protected createImageEmbed(image_url: string): MessageEmbed {
         return new MessageEmbed()
-            .setURL('https://twitter.com')
+            .setURL(TWITTER_URL)
             .setImage(image_url);
     }
 
@@ -204,5 +222,23 @@ export class Attachments {
         const isUser = owner_id > 0;
 
         return `${isUser ? 'id' : 'feed'}${isUser ? Math.abs(owner_id) : ''}`;
+    }
+
+    protected sliceAttachmentTitle(attachment: string): string {
+        if (attachment.length > MAX_FIELD_LENGTH) {
+            const isAttachment = attachment.match(/\[([^]+)]\(([^]+)\)/);
+
+            if (isAttachment) {
+                const [, title, url] = isAttachment;
+
+                const availableLength = ATTACHMENT_FIELD_SAFE_CONTENT_LENGTH - url.length;
+
+                if (title.length > availableLength) {
+                    return hyperlink(`${title.slice(0, availableLength)}…`, url);
+                }
+            }
+        }
+
+        return attachment;
     }
 }
