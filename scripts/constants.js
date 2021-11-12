@@ -1,4 +1,4 @@
-import scriptPackage from '../package.json';
+import scriptPackage from '../package.json' assert { type: 'json' };
 
 const { LATEST_CONFIG_VERSION, engines: { node } } = scriptPackage;
 

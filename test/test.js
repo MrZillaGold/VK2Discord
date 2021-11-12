@@ -2,7 +2,7 @@ import assert from 'assert';
 
 import { Keywords, Markdown, Sender, VK, Storage, FieldType, TokenType } from '../dist/modules';
 
-import payload from './payload.json';
+import payload from './payload.json' assert { type: 'json' };
 
 const cluster = {
     vk: {
