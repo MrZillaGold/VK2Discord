@@ -57,7 +57,6 @@ function createConfig() {
                     filter: true,
                     donut: false,
                     ads: false,
-                    longpoll: false,
                     interval: 30
                 },
                 discord: {
