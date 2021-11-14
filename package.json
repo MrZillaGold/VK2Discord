@@ -27,7 +27,7 @@
     "url": "https://github.com/MrZillaGold/VK2Discord/issues"
   },
   "dependencies": {
-    "@discordjs/builders": "0.7.0",
+    "@discordjs/builders": "0.8.2",
     "discord.js": "^13.2.0",
     "string-replace-async": "^3.0.2",
     "vk-io": "^4.4.0"
