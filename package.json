@@ -1,6 +1,6 @@
 {
   "name": "vk2discord",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "LATEST_CONFIG_VERSION": 5,
   "description": "Автоматическая публикация записей из группы или профиля ВКонтакте в канал Discord.",
   "main": "./build/index.js",
