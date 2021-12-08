@@ -15,11 +15,15 @@ const changes = new Map([
 ]);
 
 if (!clusters || !version_dont_modify_me) {
-    return console.warn('[!] Структура вашего конфига больше не поддерживается скриптом, вам необходимо обновить конфиг вручную следуя инструкции.');
+    console.warn('[!] Структура вашего конфига больше не поддерживается скриптом, вам необходимо обновить конфиг вручную следуя инструкции.');
+
+    process.exit(0);
 }
 
 if (version_dont_modify_me >= LATEST_CONFIG_VERSION) {
-    return console.log('[!] Текущая версия конфига последняя, обновление не требуется.');
+    console.log('[!] Текущая версия конфига последняя, обновление не требуется.');
+
+    process.exit(0);
 }
 
 config.clusters = clusters.map(({ vk, discord }) => {
