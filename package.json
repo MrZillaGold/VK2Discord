@@ -33,7 +33,7 @@
     "vk-io": "^4.4.0"
   },
   "devDependencies": {
-    "@types/node": "^17.0.5",
+    "@types/node": "^17.0.6",
     "@types/ws": "^8.2.2",
     "@typescript-eslint/eslint-plugin": "^5.8.1",
     "@typescript-eslint/parser": "^4.22.1",
