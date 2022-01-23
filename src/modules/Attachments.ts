@@ -21,6 +21,7 @@ const TWITTER_URL = 'https://twitter.com';
 const MAX_FIELD_LENGTH = 1024;
 const ATTACHMENT_FIELD_SAFE_CONTENT_LENGTH = MAX_FIELD_LENGTH - 5;
 
+// noinspection JSMethodCanBeStatic
 export class Attachments {
 
     private readonly cluster: ICluster;
@@ -47,11 +48,11 @@ export class Attachments {
 
                         if (sizes) {
                             if (!embed.image) {
-                                embed.setImage(this.popAttachment(sizes))
+                                embed.setImage(this.#popAttachment(sizes))
                                     .setURL(TWITTER_URL);
                             } else {
                                 embeds.push(
-                                    this.createImageEmbed(this.popAttachment(sizes))
+                                    this.#createImageEmbed(this.#popAttachment(sizes))
                                 );
                             }
                         }
@@ -77,7 +78,7 @@ export class Attachments {
                         parsedAttachments.push(
                             hyperlink(
                                 `${prefix}: ${title}`,
-                                `${LINK_PREFIX}${this.generateAttachmentContext(video)}?z=${VIDEO}${owner_id}_${id}`
+                                `${LINK_PREFIX}${this.#generateAttachmentContext(video)}?z=${VIDEO}${owner_id}_${id}`
                             )
                         );
                         break;
@@ -109,7 +110,7 @@ export class Attachments {
                                 );
 
                                 embeds.push(
-                                    this.createImageEmbed(`attachment://${filename}`)
+                                    this.#createImageEmbed(`attachment://${filename}`)
                                 );
                             }
                         } else {
@@ -136,7 +137,7 @@ export class Attachments {
                         parsedAttachments.push(
                             hyperlink(
                                 `📊 Опрос: ${question}`,
-                                `${LINK_PREFIX}${this.generateAttachmentContext(poll)}?w=${POLL}${owner_id}_${id}`
+                                `${LINK_PREFIX}${this.#generateAttachmentContext(poll)}?w=${POLL}${owner_id}_${id}`
                             )
                         );
                         break;
@@ -197,7 +198,7 @@ export class Attachments {
                     attachments[attachments.length - 1] += `\n${attachment}`;
                 } else {
                     attachments.push(
-                        this.sliceAttachmentTitle(attachment)
+                        this.#sliceAttachmentTitle(attachment)
                     );
                 }
 
@@ -205,26 +206,26 @@ export class Attachments {
             }, []);
     }
 
-    protected popAttachment(attachment: any[]): string {
+    #popAttachment(attachment: any[]): string {
         return attachment
             .sort((a, b) => a.width * a.height - b.width * b.height)
             .pop()
             .url;
     }
 
-    protected createImageEmbed(image_url: string): MessageEmbed {
+    #createImageEmbed(image_url: string): MessageEmbed {
         return new MessageEmbed()
             .setURL(TWITTER_URL)
             .setImage(image_url);
     }
 
-    protected generateAttachmentContext({ owner_id }: ISharedAttachmentPayload): string {
+    #generateAttachmentContext({ owner_id }: ISharedAttachmentPayload): string {
         const isUser = owner_id > 0;
 
         return `${isUser ? 'id' : 'feed'}${isUser ? Math.abs(owner_id) : ''}`;
     }
 
-    protected sliceAttachmentTitle(attachment: string): string {
+    #sliceAttachmentTitle(attachment: string): string {
         if (attachment.length > MAX_FIELD_LENGTH) {
             const isAttachment = attachment.match(/\[([^]+)]\(([^]+)\)/);
 

@@ -14,7 +14,9 @@ export class Markdown {
 
     async fix(text: string): Promise<string> {
         // Fix ссылок
-        text = text.replace(/\[([^[]+?)\|([^]+?)]/g, (match, link, title) => `[${title}](${!link.startsWith(LINK_PREFIX) ? LINK_PREFIX : ''}${link})`);
+        text = text.replace(/\[([^[]+?)\|([^]+?)]/g, (match, link, title) => (
+            `[${title}](${!link.startsWith(LINK_PREFIX) ? LINK_PREFIX : ''}${link})`
+        ));
 
         // Fix хештегов
         text = await replaceAsync(text, /(?:^|\s)#([^\s]+)/g, async (match, hashtag): Promise<string> => {

@@ -1,4 +1,4 @@
-import { MessageAttachment, MessageEmbed } from 'discord.js';
+import { HexColorString, MessageAttachment, MessageEmbed } from 'discord.js';
 import { IWallPostContextPayload } from 'vk-io';
 
 import { Attachment, Attachments } from './Attachments';
@@ -10,6 +10,9 @@ export enum PostType {
     REPOST = 'repost'
 }
 
+const MAX_EMBED_DESCRIPTION_LENGTH = 4096;
+
+// noinspection JSMethodCanBeStatic
 export abstract class Message {
 
     readonly cluster: ICluster;
@@ -29,7 +32,7 @@ export abstract class Message {
         const embed = new MessageEmbed();
 
         if (color) {
-            embed.setColor(color);
+            embed.setColor(color as HexColorString);
         }
 
         this.embeds = [embed];
@@ -70,7 +73,7 @@ export abstract class Message {
             }
         }
 
-        this.sliceMessage();
+        this.#sliceMessage();
     }
 
     private attach(attachmentFields: string[], type: PostType): void {
@@ -104,21 +107,31 @@ export abstract class Message {
         }
     }
 
-    private sliceMessage(): void {
+    #sliceMessage(): void {
         const { post, repost } = this;
 
-        if ((post + repost).length > 4096) {
+        if ((post + repost).length > MAX_EMBED_DESCRIPTION_LENGTH) {
             if (post) {
-                this.post = Message.sliceFix(`${post.slice(0, (repost ? 2048 : 4096) - 3)}…\n`);
+                const suffix = '…\n';
+
+                this.post = this.#sliceFix(`${post.slice(
+                    0, 
+                    (repost ? MAX_EMBED_DESCRIPTION_LENGTH / 2 : MAX_EMBED_DESCRIPTION_LENGTH) - suffix.length
+                )}${suffix}`);
             }
 
             if (repost) {
-                this.repost = Message.sliceFix(`${repost.slice(0, (post ? 2048 : 4096) - 1)}…`);
+                const suffix = '…';
+
+                this.repost = this.#sliceFix(`${repost.slice(
+                    0,
+                    (post ? MAX_EMBED_DESCRIPTION_LENGTH / 2 : MAX_EMBED_DESCRIPTION_LENGTH) - suffix.length
+                )}${suffix}`);
             }
         }
     }
 
-    private static sliceFix(text: string): string {
+    #sliceFix(text: string): string {
         return text.replace(/\[([^\])]+)?]?\(?([^()\][]+)?…/g, '$1…');
     }
 }

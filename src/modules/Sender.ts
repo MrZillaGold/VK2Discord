@@ -54,18 +54,18 @@ export class Sender extends Message {
         if (hasKeywords && notHasBlacklistWords) {
             await this.parsePost();
 
-            return this.send();
+            return this.#send();
         }
 
         return console.log(`[!] Новая запись в кластере #${index} не соответствует ключевым словам, игнорируем ее.`);
     }
 
-    private async send(): Promise<void> {
+    async #send(): Promise<void> {
         const { post, repost, embeds: [embed], cluster: { index, discord: { webhook_urls, content, username, avatar_url: avatarURL } } } = this;
 
         embed.setDescription(post + repost);
 
-        await this.pushDate();
+        await this.#pushDate();
 
         if (
             !embed.description &&
@@ -102,7 +102,7 @@ export class Sender extends Message {
         console.log(`[VK2Discord] Запись в кластере #${index} опубликована.`);
     }
 
-    private async pushDate(): Promise<void> {
+    async #pushDate(): Promise<void> {
         const { cluster: { vk: { group_id }, storage }, payload: { date } } = this;
 
         const published = await storage.get(`${group_id}-published`, FieldType.ARRAY_NUMBER);

@@ -3,17 +3,12 @@ import { Handler, ICluster, Storage } from './modules';
 // @ts-ignore
 import config from '../config.json' assert { type: 'json' };
 
-export interface IConfig {
-    clusters: ICluster[];
-    version_dont_modify_me: number;
-}
-
-const { clusters } = config as unknown as IConfig;
+const { clusters } = config;
 
 console.log('[VK2Discord] Запущен.');
 
 const handlers = await Promise.all(
-    clusters.map((cluster: Pick<ICluster, 'vk' | 'discord'>, index: number) => (
+    clusters.map((cluster, index) => (
         new Handler({
             ...cluster,
             index: index + 1

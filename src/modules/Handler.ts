@@ -1,13 +1,14 @@
+import { HexColorString, MessageEmbed } from 'discord.js';
 import { IWallPostContextPayload } from 'vk-io';
 import { GroupsGetByIdObjectLegacyResponse, UsersGetResponse } from 'vk-io/lib/api/schemas/responses';
-import { HexColorString, MessageEmbed } from 'discord.js';
+import { GroupsGroupFull } from 'vk-io/lib/api/schemas/objects';
 
 import { Sender } from './Sender';
 import { Storage } from './Storage';
 import { VK, TokenType } from './VK';
 import { AttachmentTypeUnion } from './Attachments';
 
-import { getById, getPostAuthor, getPostLink, getResourceId, IGetPostLinkOptions } from '../utils';
+import { getById, getPostAuthor, getPostLink, getResourceId, IProfile } from '../utils';
 
 export interface IVKParams {
     token: string;
@@ -17,7 +18,7 @@ export interface IVKParams {
     filter: boolean;
     donut: boolean;
     ads: boolean;
-    longpoll: boolean;
+    longpoll?: boolean;
     interval: number;
 }
 
@@ -33,7 +34,7 @@ export interface IDiscordParams {
     username: string;
     avatar_url: string;
     content: string;
-    color: HexColorString;
+    color: string | HexColorString;
     author: boolean;
     copyright: boolean;
     date: boolean;
@@ -49,6 +50,7 @@ export interface ICluster {
     index: number;
 }
 
+// noinspection JSMethodCanBeStatic
 export class Handler {
 
     readonly cluster: Pick<ICluster, 'vk' | 'discord' | 'index'>;
@@ -92,7 +94,7 @@ export class Handler {
             this.VK.setTokenType(TokenType.USER);
             this.storage.setPrefix(String(id));
 
-            this.startInterval();
+            this.#startInterval();
         } else if (groups?.length) {
             const [{ id }] = groups;
 
@@ -101,7 +103,7 @@ export class Handler {
             this.VK.setTokenType(TokenType.GROUP);
             this.storage.setPrefix(`-${id}`);
 
-            this.startPolling();
+            this.#startPolling();
         } else {
             this.storage.setPrefix(this.cluster.vk.token);
         }
@@ -109,7 +111,7 @@ export class Handler {
         return this;
     }
 
-    private startInterval(): void {
+    #startInterval(): void {
         const { index, vk: { interval, group_id, filter }, discord: { author, copyright, date } } = this.cluster;
 
         console.log(`[VK2Discord] Кластер #${index} будет проверять новые записи с интервалом в ${interval} секунд.`);
@@ -149,26 +151,22 @@ export class Handler {
                                 items[0]
                         ) as IWallPostContextPayload;
 
-                        const sender = this.createSender(payload);
+                        const sender = this.#createSender(payload);
 
                         const [embed] = sender.embeds;
 
                         if (date) {
-                            embed.setTimestamp(payload.date as number * 1_000);
+                            embed.setTimestamp(payload.date! * 1_000);
                         }
 
                         if (author) {
                             const postAuthor = getPostAuthor(payload as IWallPostContextPayload, profiles, groups);
 
-                            if (postAuthor) {
-                                const { name, photo_50 } = postAuthor;
-
-                                embed.setAuthor(name, photo_50, getPostLink(payload as IGetPostLinkOptions));
-                            }
+                            this.#setAuthor(payload, embed, postAuthor);
                         }
 
                         if (copyright) {
-                            await this.setCopyright(payload as IWallPostContextPayload, embed);
+                            await this.#setCopyright(payload as IWallPostContextPayload, embed);
                         }
 
                         return sender.handle();
@@ -183,14 +181,14 @@ export class Handler {
         }, interval * 1000);
     }
 
-    private startPolling(): void {
+    #startPolling(): void {
         const { index, discord: { author, copyright, date } } = this.cluster;
 
         this.VK.updates.on('wall_post_new', async (context) => {
             const payload = context['payload'];
 
             if (payload.post_type === 'post') {
-                const sender = this.createSender(payload);
+                const sender = this.#createSender(payload);
 
                 const [embed] = sender.embeds;
 
@@ -199,17 +197,13 @@ export class Handler {
                 }
 
                 if (author) {
-                    const postAuthor = await getById(this.VK.api, payload.from_id as number);
+                    const postAuthor = await getById(this.VK.api, payload.from_id);
 
-                    if (postAuthor) {
-                        const { photo_50, name } = postAuthor;
-
-                        embed.setAuthor(name, photo_50, getPostLink(payload));
-                    }
+                    this.#setAuthor(payload, embed, postAuthor);
                 }
 
                 if (copyright) {
-                    await this.setCopyright(payload, embed);
+                    await this.#setCopyright(payload, embed);
                 }
 
                 return sender.handle();
@@ -224,7 +218,7 @@ export class Handler {
             });
     }
 
-    private createSender(payload: Sender['payload']): Sender {
+    #createSender(payload: Sender['payload']): Sender {
         const { cluster, VK, storage } = this;
 
         return new Sender({
@@ -234,17 +228,35 @@ export class Handler {
         }, payload);
     }
 
-    private async setCopyright({ copyright, signer_id }: IWallPostContextPayload, embed: MessageEmbed): Promise<void> {
+    async #setCopyright({ copyright, signer_id }: IWallPostContextPayload, embed: MessageEmbed): Promise<void> {
         if (signer_id) {
             const user = await getById(this.VK.api, signer_id);
 
-            embed.setFooter(user?.name as string, user?.photo_50);
+            embed.setFooter({
+                text: user?.name!,
+                iconURL: user?.photo_50
+            });
         }
 
         if (copyright) {
             const group = await getById(this.VK.api, copyright.id);
 
-            embed.setFooter(`${embed.footer?.text ? `${embed.footer.text} • ` : ''}Источник: ${copyright.name}`, embed.footer?.iconURL || group?.photo_50);
+            embed.setFooter({
+                text: `${embed.footer?.text ? `${embed.footer.text} • ` : ''}Источник: ${copyright.name}`,
+                iconURL: embed.footer?.iconURL || group?.photo_50
+            });
+        }
+    }
+
+    #setAuthor(payload: IWallPostContextPayload, embed: MessageEmbed, author?: IProfile | GroupsGroupFull | null): void {
+        if (author) {
+            const { name, photo_50 } = author;
+
+            embed.setAuthor({
+                name,
+                iconURL: photo_50,
+                url: getPostLink(payload)
+            });
         }
     }
 }

@@ -15,6 +15,7 @@ export interface ReturnType {
     [FieldType.NUMBER]: number;
 }
 
+// noinspection JSMethodCanBeStatic
 export class Storage {
 
     static readonly cache = new Map<string, any>();
