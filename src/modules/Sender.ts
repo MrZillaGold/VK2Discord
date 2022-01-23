@@ -21,8 +21,8 @@ export class Sender extends Message {
         const { date, owner_id, from_id, marked_as_ads, donut, text } = this.payload;
 
         const [last, published] = await Promise.all([
-            storage.get<number>(`${group_id}-last`, FieldType.NUMBER),
-            storage.get<number[]>(`${group_id}-published`, FieldType.ARRAY_NUMBER)
+            storage.get(`${group_id}-last`, FieldType.NUMBER),
+            storage.get(`${group_id}-published`, FieldType.ARRAY_NUMBER)
         ]);
 
         const hasInCache = last === date || published.includes(date as number);
@@ -105,7 +105,7 @@ export class Sender extends Message {
     private async pushDate(): Promise<void> {
         const { cluster: { vk: { group_id }, storage }, payload: { date } } = this;
 
-        const published = await storage.get<number[]>(`${group_id}-published`, FieldType.ARRAY_NUMBER);
+        const published = await storage.get(`${group_id}-published`, FieldType.ARRAY_NUMBER);
 
         await Promise.all([
             storage.set(`${group_id}-last`, date),

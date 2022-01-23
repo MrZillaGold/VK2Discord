@@ -10,6 +10,11 @@ export enum FieldType {
     NUMBER = 'number'
 }
 
+export interface ReturnType {
+    [FieldType.ARRAY_NUMBER]: number[];
+    [FieldType.NUMBER]: number;
+}
+
 export class Storage {
 
     static readonly cache = new Map<string, any>();
@@ -31,17 +36,17 @@ export class Storage {
         this.prefix = prefix;
     }
 
-    get<T>(key: string, type: FieldType): Promise<T> {
-        const cachedKey = this.buildCacheKey(key);
+    get<T extends FieldType>(key: string, type: T): Promise<ReturnType[T]> {
+        const cachedKey = this.#buildCacheKey(key);
         const cachedValue = Storage.cache.get(cachedKey);
 
         if (cachedValue) {
-            return Promise.resolve(cachedValue as T);
+            return Promise.resolve(cachedValue as ReturnType[T]);
         }
 
         return this.vk.api.storage.get({
-            key: this.buildPrefixedKey(key),
-            user_id: this.userId
+            key: this.#buildPrefixedKey(key),
+            user_id: this.#userId
         })
             .then((values) => {
                 const [{ value }] = values;
@@ -61,7 +66,7 @@ export class Storage {
                     default:
                         return value;
                 }
-            }) as Promise<T>;
+            }) as Promise<ReturnType[T]>;
     }
 
     set(key: string, value?: any): Promise<void> {
@@ -69,7 +74,7 @@ export class Storage {
             key = key.replace(Storage.PREFIX, '');
         }
 
-        const cachedKey = this.buildCacheKey(key);
+        const cachedKey = this.#buildCacheKey(key);
 
         Storage.cache.set(cachedKey, value);
 
@@ -82,8 +87,8 @@ export class Storage {
         }
 
         return this.vk.api.storage.set({
-            key: this.buildPrefixedKey(key),
-            user_id: this.userId,
+            key: this.#buildPrefixedKey(key),
+            user_id: this.#userId,
             value
         })
             .then();
@@ -91,23 +96,23 @@ export class Storage {
 
     getKeys(): Promise<string[]> {
         return this.vk.api.storage.getKeys({
-            user_id: this.userId,
+            user_id: this.#userId,
             count: 1_000
         });
     }
 
-    private get userId(): number | undefined {
+    get #userId(): number | undefined {
         return this.vk.tokenType !== TokenType.USER ?
             1
             :
             undefined;
     }
 
-    private buildCacheKey(key: string): string {
+    #buildCacheKey(key: string): string {
         return `${this.prefix}-${key}`;
     }
 
-    private buildPrefixedKey(key: string): string {
+    #buildPrefixedKey(key: string): string {
         return `${Storage.PREFIX}${key}`;
     }
 }

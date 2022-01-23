@@ -7,7 +7,7 @@ export async function getResourceId(vk: VK, resource: string): Promise<number | 
     });
 
     const cacheKey = `${resource}-id`;
-    const cachedId = await storage.get<number>(cacheKey, FieldType.NUMBER);
+    const cachedId = await storage.get(cacheKey, FieldType.NUMBER);
 
     if (cachedId) {
         return cachedId;
