@@ -168,6 +168,9 @@ if (process.env.TOKEN) {
     describe('Sender', () => {
         describe('post();', () => {
             it('Проверка на отсутствие ошибок при отправке записи в Discord', async () => {
+                storage.set(`${group_id}-last`, 0);
+                storage.set(`${group_id}-published`, []);
+
                 await sender.handle();
             });
         });
