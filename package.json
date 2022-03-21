@@ -35,7 +35,7 @@
   "devDependencies": {
     "@types/node": "^17.0.18",
     "@types/ws": "^8.2.2",
-    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/eslint-plugin": "^5.16.0",
     "@typescript-eslint/parser": "^5.12.0",
     "eslint": "^8.9.0",
     "mocha": "^9.2.0",
