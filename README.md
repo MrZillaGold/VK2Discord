@@ -51,13 +51,6 @@
 <table>
   <tr>
     <td align="center">
-      <a href="https://discord.gg/tAca6dX">
-        <img src="https://i.imgur.com/ExjWQCI.png" height="100" width="100" alt="MINECRAFT RU"/>
-        <br/>
-        <sub><b>MINECRAFT RU</b></sub>
-      </a>
-    </td>
-    <td align="center">
       <a href="https://vk.com/globalloot">
         <img src="https://i.imgur.com/m1EF3pN.jpg" height="100" width="100" alt="GLL"/>
         <br/>
