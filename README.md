@@ -58,7 +58,7 @@
       </a>
     </td>
     <td align="center">
-      <a href="https://discord.com/invite/morsy">
+      <a href="https://discord.com/invite/tTxgXAB">
         <img src="https://i.imgur.com/C0dVbYL.png" height="100" width="100" alt="GLL"/>
         <br/>
         <sub><b>Канал Morsy</b></sub>
