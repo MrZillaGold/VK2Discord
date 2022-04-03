@@ -106,6 +106,8 @@ export class Handler {
             this.#startPolling();
         } else {
             this.storage.setPrefix(this.cluster.vk.token);
+
+            this.#startInterval();
         }
 
         return this;
