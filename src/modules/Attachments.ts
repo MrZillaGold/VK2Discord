@@ -7,7 +7,10 @@ import { ICluster } from './Handler';
 
 import { generateRandomString, LINK_PREFIX } from '../utils';
 
-export type AttachmentTypeUnion = AttachmentTypeString | 'textlive';
+const TEXTLIVE = 'textlive';
+const PODCAST = 'podcast';
+
+export type AttachmentTypeUnion = AttachmentTypeString | typeof TEXTLIVE | typeof PODCAST;
 
 export type Attachment = {
     type: AttachmentTypeUnion;
@@ -36,7 +39,17 @@ export class Attachments {
 
         return attachments
             .reduce<string[]>((parsedAttachments, {
-                type, photo, video, link, doc, audio, poll, album, textlive, market
+                type,
+                photo,
+                video,
+                link,
+                doc,
+                audio,
+                poll,
+                album,
+                textlive,
+                market,
+                podcast
             }) => {
                 if (exclude_content.includes(type)) {
                     return parsedAttachments;
@@ -120,13 +133,19 @@ export class Attachments {
                         }
                         break;
                     }
-                    case AUDIO: {
-                        const { owner_id, id, artist, title } = audio;
+                    case AUDIO:
+                    case PODCAST: {
+                        const { owner_id, id, artist, title } = audio || podcast;
+
+                        const prefix = audio ?
+                            '🎵 Аудиозапись'
+                            :
+                            '🎙️ Подкаст';
 
                         parsedAttachments.push(
                             hyperlink(
-                                `🎵 Аудиозапись: ${artist} - ${title}`,
-                                `${LINK_PREFIX}${AUDIO}${owner_id}_${id}`
+                                `${prefix}: ${artist} - ${title}`,
+                                `${LINK_PREFIX}${type}${owner_id}_${id}`
                             )
                         );
                         break;
@@ -137,7 +156,7 @@ export class Attachments {
                         parsedAttachments.push(
                             hyperlink(
                                 `📊 Опрос: ${question}`,
-                                `${LINK_PREFIX}${this.#generateAttachmentContext(poll)}?w=${POLL}${owner_id}_${id}`
+                                `${LINK_PREFIX}${this.#generateAttachmentContext(poll)}?w=${type}${owner_id}_${id}`
                             )
                         );
                         break;
@@ -148,7 +167,7 @@ export class Attachments {
                         parsedAttachments.push(
                             hyperlink(
                                 `🖼️ Альбом: ${title}`,
-                                `${LINK_PREFIX}${ALBUM}${owner_id}_${id}`
+                                `${LINK_PREFIX}${type}${owner_id}_${id}`
                             )
                         );
                         break;
@@ -159,7 +178,7 @@ export class Attachments {
                         parsedAttachments.push(
                             hyperlink(
                                 `🛍️ Товар: ${title}`,
-                                `${LINK_PREFIX}${MARKET}${owner_id}?w=product${owner_id}_${id}`
+                                `${LINK_PREFIX}${type}${owner_id}?w=product${owner_id}_${id}`
                             )
                         );
                         break;
@@ -170,18 +189,18 @@ export class Attachments {
                         parsedAttachments.push(
                             hyperlink(
                                 `🛍️ Подборка товаров: ${title}`,
-                                `${LINK_PREFIX}${MARKET}${owner_id}?section=${ALBUM}_${id}`
+                                `${LINK_PREFIX}${type}${owner_id}?section=${ALBUM}_${id}`
                             )
                         );
                         break;
                     }
-                    case 'textlive': {
+                    case TEXTLIVE: {
                         const { textlive_id, title } = textlive;
 
                         parsedAttachments.push(
                             hyperlink(
                                 `📣 Репортаж: ${title}`,
-                                `${LINK_PREFIX}textlive${textlive_id}`
+                                `${LINK_PREFIX}${type}${textlive_id}`
                             )
                         );
                         break;
