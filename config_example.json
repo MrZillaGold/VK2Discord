@@ -21,7 +21,8 @@
         "color": "#aabbcc",
         "author": true,
         "copyright": false,
-        "date": false
+        "date": false,
+        "exclude_content": []
       }
     },
     {
@@ -47,7 +48,10 @@
         "color": "#ffbbff",
         "author": true,
         "copyright": true,
-        "date": true
+        "date": true,
+        "exclude_content": [
+          "photo"
+        ]
       }
     }
   ],
