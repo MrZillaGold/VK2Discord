@@ -1,4 +1,4 @@
-export interface IKeywordOptions {
+export interface KeywordOptions {
     keywords: string[];
     type: KeywordsType;
 }
@@ -10,10 +10,10 @@ export enum KeywordsType {
 
 export class Keywords {
 
-    readonly #keywords: IKeywordOptions['keywords'];
-    readonly #type: IKeywordOptions['type'];
+    readonly #keywords: KeywordOptions['keywords'];
+    readonly #type: KeywordOptions['type'];
 
-    constructor({ keywords, type }: IKeywordOptions) {
+    constructor({ keywords, type }: KeywordOptions) {
         this.#keywords = keywords;
         this.#type = type;
     }

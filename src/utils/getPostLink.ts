@@ -1,6 +1,6 @@
 export interface IGetPostLinkOptions {
-    owner_id: number;
-    id: number;
+    owner_id?: number;
+    id?: number;
 }
 
 export const LINK_PREFIX = 'https://vk.com/';

@@ -1,4 +1,4 @@
-import { Handler, ICluster, Storage } from './modules';
+import { Handler, Cluster, Storage } from './modules';
 
 // @ts-ignore
 import config from '../config.json' assert { type: 'json' };
@@ -17,7 +17,7 @@ const handlers = await Promise.all(
     ))
 );
 
-const uniqueHandlers = handlers.reduce<[Storage, ICluster['vk']['group_id'][]][]>((handlers, handler) => {
+const uniqueHandlers = handlers.reduce<[Storage, Cluster['vk']['group_id'][]][]>((handlers, handler) => {
     const instanceIndex = handlers.findIndex(([{ prefix }]) => (
         prefix === handler.storage.prefix
     ));

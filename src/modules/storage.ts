@@ -1,4 +1,4 @@
-import { TokenType, VK } from './VK';
+import { TokenType, VK } from './vk';
 
 export interface IStorageOptions {
     vk: VK;
@@ -54,11 +54,11 @@ export class Storage {
 
                 switch (type) {
                     case FieldType.ARRAY_NUMBER: {
-                        const values = value.split(Storage.ARRAY_ITEMS_SEPARATOR);
+                        const values = value?.split(Storage.ARRAY_ITEMS_SEPARATOR);
 
                         switch (type) {
                             case FieldType.ARRAY_NUMBER:
-                                return values.map(Number);
+                                return values?.map(Number);
                         }
                         break;
                     }

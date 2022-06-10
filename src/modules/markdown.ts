@@ -1,6 +1,6 @@
 import replaceAsync from 'string-replace-async';
 
-import { VK } from './VK';
+import { VK } from './vk';
 
 import { LINK_PREFIX } from '../utils';
 

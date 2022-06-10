@@ -1,9 +1,10 @@
 import { HexColorString, MessageAttachment, MessageEmbed } from 'discord.js';
 import { IWallPostContextPayload } from 'vk-io';
+import { WallWallpostFull } from 'vk-io/lib/api/schemas/objects';
 
-import { Attachment, Attachments } from './Attachments';
-import { Markdown } from './Markdown';
-import { Exclude, ICluster } from './Handler';
+import { Attachment, Attachments } from './attachments';
+import { Markdown } from './markdown';
+import { Exclude, Cluster } from './handler';
 
 export enum PostType {
     POST = 'post',
@@ -15,8 +16,8 @@ const MAX_EMBED_DESCRIPTION_LENGTH = 4096;
 // noinspection JSMethodCanBeStatic
 export abstract class Message {
 
-    readonly cluster: ICluster;
-    readonly abstract payload: IWallPostContextPayload;
+    readonly cluster: Cluster;
+    readonly abstract payload: WallWallpostFull | IWallPostContextPayload;
 
     protected post = '';
     protected repost = '';
@@ -24,7 +25,7 @@ export abstract class Message {
     embeds: MessageEmbed[];
     files: MessageAttachment[] = [];
 
-    protected constructor(cluster: ICluster) {
+    protected constructor(cluster: Cluster) {
         const { discord: { color } } = cluster;
 
         this.cluster = cluster;

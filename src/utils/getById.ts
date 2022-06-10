@@ -7,6 +7,7 @@ export function getById(api: API, id?: number): Promise<IProfile | GroupsGroupFu
     return id ?
         id > 0 ?
             api.users.get({
+                // @ts-ignore
                 user_ids: String(id),
                 fields: ['photo_50']
             })

@@ -1,16 +1,16 @@
 import { HexColorString, MessageEmbed } from 'discord.js';
 import { IWallPostContextPayload } from 'vk-io';
 import { GroupsGetByIdObjectLegacyResponse, UsersGetResponse } from 'vk-io/lib/api/schemas/responses';
-import { GroupsGroupFull } from 'vk-io/lib/api/schemas/objects';
+import { GroupsGroupFull, WallWallpostFull } from 'vk-io/lib/api/schemas/objects';
 
-import { Sender } from './Sender';
-import { Storage } from './Storage';
-import { VK, TokenType } from './VK';
-import { AttachmentTypeUnion } from './Attachments';
+import { Sender } from './sender';
+import { Storage } from './storage';
+import { VK, TokenType } from './vk';
+import { AttachmentTypeUnion } from './attachments';
 
 import { getById, getPostAuthor, getPostLink, getResourceId, IProfile } from '../utils';
 
-export interface IVKParams {
+export interface VKParams {
     token: string;
     group_id: string;
     keywords: string[];
@@ -29,7 +29,7 @@ export enum Exclude {
     REPOST_ATTACHMENTS = 'repost_attachments'
 }
 
-export interface IDiscordParams {
+export interface DiscordParams {
     webhook_urls: string[];
     username: string;
     avatar_url: string;
@@ -41,9 +41,9 @@ export interface IDiscordParams {
     exclude_content: (AttachmentTypeUnion | Exclude)[];
 }
 
-export interface ICluster {
-    vk: IVKParams;
-    discord: IDiscordParams;
+export interface Cluster {
+    vk: VKParams;
+    discord: DiscordParams;
 
     VK: VK;
     storage: Storage;
@@ -53,7 +53,7 @@ export interface ICluster {
 // noinspection JSMethodCanBeStatic
 export class Handler {
 
-    readonly cluster: Pick<ICluster, 'vk' | 'discord' | 'index'>;
+    readonly cluster: Pick<Cluster, 'vk' | 'discord' | 'index'>;
 
     protected VK: VK;
     readonly storage: Storage;
@@ -151,7 +151,7 @@ export class Handler {
                                 items[1]
                                 :
                                 items[0]
-                        ) as IWallPostContextPayload;
+                        );
 
                         const sender = this.#createSender(payload);
 
@@ -162,13 +162,13 @@ export class Handler {
                         }
 
                         if (author) {
-                            const postAuthor = getPostAuthor(payload as IWallPostContextPayload, profiles, groups);
+                            const postAuthor = getPostAuthor(payload, profiles, groups);
 
                             this.#setAuthor(payload, embed, postAuthor);
                         }
 
                         if (copyright) {
-                            await this.#setCopyright(payload as IWallPostContextPayload, embed);
+                            await this.#setCopyright(payload, embed);
                         }
 
                         return sender.handle();
@@ -227,10 +227,10 @@ export class Handler {
             ...cluster,
             VK,
             storage
-        }, payload);
+        }, payload as WallWallpostFull);
     }
 
-    async #setCopyright({ copyright, signer_id }: IWallPostContextPayload, embed: MessageEmbed): Promise<void> {
+    async #setCopyright({ copyright, signer_id }: WallWallpostFull | IWallPostContextPayload, embed: MessageEmbed): Promise<void> {
         if (signer_id) {
             const user = await getById(this.VK.api, signer_id);
 
@@ -250,12 +250,12 @@ export class Handler {
         }
     }
 
-    #setAuthor(payload: IWallPostContextPayload, embed: MessageEmbed, author?: IProfile | GroupsGroupFull | null): void {
+    #setAuthor(payload: WallWallpostFull | IWallPostContextPayload, embed: MessageEmbed, author?: IProfile | GroupsGroupFull | null): void {
         if (author) {
             const { name, photo_50 } = author;
 
             embed.setAuthor({
-                name,
+                name: name!,
                 iconURL: photo_50,
                 url: getPostLink(payload)
             });

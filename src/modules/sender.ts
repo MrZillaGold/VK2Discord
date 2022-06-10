@@ -1,16 +1,16 @@
 import { WebhookClient } from 'discord.js';
-import { IWallPostContextPayload } from 'vk-io';
+import { WallWallpostFull } from 'vk-io/lib/api/schemas/objects';
 
-import { Keywords, KeywordsType } from './Keywords';
-import { Message } from './Message';
-import { FieldType } from './Storage';
-import { ICluster } from './Handler';
+import { Keywords, KeywordsType } from './keywords';
+import { Message } from './message';
+import { FieldType } from './storage';
+import { Cluster } from './handler';
 
 export class Sender extends Message {
 
     readonly payload: Message['payload'];
 
-    constructor(cluster: ICluster, payload: IWallPostContextPayload) {
+    constructor(cluster: Cluster, payload: WallWallpostFull) {
         super(cluster);
 
         this.payload = payload;

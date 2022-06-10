@@ -1,16 +1,13 @@
 import { MessageEmbed, MessageAttachment } from 'discord.js';
 import { hyperlink } from '@discordjs/builders';
-import { AttachmentType, ISharedAttachmentPayload, AttachmentTypeString } from 'vk-io';
+import { AttachmentType, ISharedAttachmentPayload } from 'vk-io';
 
-import { Message } from './Message';
-import { ICluster } from './Handler';
+import { Message } from './message';
+import { Cluster } from './handler';
 
 import { generateRandomString, LINK_PREFIX } from '../utils';
 
-const TEXTLIVE = 'textlive';
-const PODCAST = 'podcast';
-
-export type AttachmentTypeUnion = AttachmentTypeString | typeof TEXTLIVE | typeof PODCAST;
+export type AttachmentTypeUnion = `${AttachmentType}`;
 
 export type Attachment = {
     type: AttachmentTypeUnion;
@@ -18,7 +15,7 @@ export type Attachment = {
     [key in AttachmentTypeUnion]: any;
 };
 
-const { AUDIO, DOCUMENT, LINK, PHOTO, POLL, VIDEO, ALBUM, MARKET, MARKET_ALBUM } = AttachmentType;
+const { AUDIO, DOCUMENT, LINK, PHOTO, POLL, VIDEO, ALBUM, MARKET, MARKET_ALBUM, TEXTLIVE, PODCAST } = AttachmentType;
 
 const TWITTER_URL = 'https://twitter.com';
 const MAX_FIELD_LENGTH = 1024;
@@ -27,7 +24,7 @@ const ATTACHMENT_FIELD_SAFE_CONTENT_LENGTH = MAX_FIELD_LENGTH - 5;
 // noinspection JSMethodCanBeStatic
 export class Attachments {
 
-    private readonly cluster: ICluster;
+    private readonly cluster: Cluster;
 
     constructor(cluster: Attachments['cluster']) {
         this.cluster = cluster;
