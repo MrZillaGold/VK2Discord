@@ -114,6 +114,6 @@ export class Storage {
     }
 
     #buildPrefixedKey(key: string): string {
-        return `${Storage.PREFIX}${key}`.replaceAll(/[^a-zA-Z_\-\d]/g, '/');
+        return `${Storage.PREFIX}${key}`.replaceAll(/[^a-zA-Z_\-\d]/g, '-');
     }
 }

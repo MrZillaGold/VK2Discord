@@ -1,6 +1,6 @@
 {
   "name": "vk2discord",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "LATEST_CONFIG_VERSION": 5,
   "description": "Автоматическая публикация записей из группы или профиля ВКонтакте в канал Discord.",
   "main": "./build/index.js",
@@ -28,18 +28,18 @@
   },
   "dependencies": {
     "@discordjs/builders": "^0.15.0",
-    "discord.js": "^13.8.0",
+    "discord.js": "^13.8.1",
     "string-replace-async": "^3.0.2",
     "vk-io": "^4.6.0"
   },
   "devDependencies": {
-    "@types/node": "^17.0.44",
+    "@types/node": "^18.0.0",
     "@types/ws": "^8.5.3",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
-    "@typescript-eslint/parser": "^5.28.0",
-    "eslint": "^8.17.0",
+    "@typescript-eslint/parser": "^5.29.0",
+    "eslint": "^8.18.0",
     "mocha": "^10.0.0",
-    "typescript": "^4.7.3"
+    "typescript": "^4.7.4"
   },
   "engines": {
     "node": "17.1.0"
