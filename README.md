@@ -51,17 +51,10 @@
 <table>
   <tr>
     <td align="center">
-      <a href="https://vk.com/globalloot">
-        <img src="https://i.imgur.com/m1EF3pN.jpg" height="100" width="100" alt="GLL"/>
+      <a href="https://discord.gg/nKd48js2fG">
+        <img src="https://i.imgur.com/OmQDLzL.jpg" height="100" width="100" alt="BORDERLANDS"/>
         <br/>
-        <sub><b>GLL</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://discord.com/invite/tTxgXAB">
-        <img src="https://i.imgur.com/C0dVbYL.png" height="100" width="100" alt="GLL"/>
-        <br/>
-        <sub><b>Канал Morsy</b></sub>
+        <sub><b>BORDERLANDS</b></sub>
       </a>
     </td>
     <td align="center">
