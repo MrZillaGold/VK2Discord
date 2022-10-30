@@ -3,12 +3,12 @@ import { IWallPostContextPayload } from 'vk-io';
 import { GroupsGetByIdObjectLegacyResponse, UsersGetResponse } from 'vk-io/lib/api/schemas/responses';
 import { GroupsGroupFull, WallWallpostFull } from 'vk-io/lib/api/schemas/objects';
 
-import { Sender } from './sender';
-import { Storage } from './storage';
-import { VK, TokenType } from './vk';
-import { AttachmentTypeUnion } from './attachments';
+import { Sender } from './sender.js';
+import { Storage } from './storage.js';
+import { VK, TokenType } from './vk.js';
+import { AttachmentTypeUnion } from './attachments.js';
 
-import { getById, getPostAuthor, getPostLink, getResourceId, IProfile } from '../utils';
+import { getById, getPostAuthor, getPostLink, getResourceId, IProfile } from '../utils/index.js';
 
 export interface VKParams {
     token: string;

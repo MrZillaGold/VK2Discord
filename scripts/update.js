@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-import { LATEST_CONFIG_VERSION } from './constants';
+import { LATEST_CONFIG_VERSION } from './constants.js';
 
 import config from '../config.json' assert { type: 'json' };
 

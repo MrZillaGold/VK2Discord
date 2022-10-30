@@ -1,6 +1,7 @@
 import assert from 'assert';
 
-import { Keywords, Markdown, Sender, VK, Storage, FieldType, TokenType } from '../dist/modules';
+import { LINK_PREFIX } from '../dist/utils/index.js';
+import { Keywords, Markdown, Sender, VK, Storage, FieldType, TokenType } from '../dist/modules/index.js';
 
 import payload from './payload.json' assert { type: 'json' };
 
@@ -18,7 +19,7 @@ const cluster = {
         webhook_urls: [
             process.env.WEBHOOK
         ],
-        username: 'VK2Discord CI',
+        username: 'CI',
         avatar_url: '',
         content: '',
         color: '#ffbbff',
@@ -86,7 +87,7 @@ describe('Markdown', () => {
             assert.deepStrictEqual(
                 await new Markdown(vk)
                     .fix('#hashtag'),
-                '[#hashtag](https://vk.com/feed?section=search&q=%23hashtag)'
+                `[#hashtag](${LINK_PREFIX}feed?section=search&q=%23hashtag)`
             );
         });
 
@@ -94,7 +95,7 @@ describe('Markdown', () => {
             assert.deepStrictEqual(
                 await new Markdown(vk)
                     .fix('Очень длинный текст #hashtag'),
-                'Очень длинный текст [#hashtag](https://vk.com/feed?section=search&q=%23hashtag)'
+                `Очень длинный текст [#hashtag](${LINK_PREFIX}feed?section=search&q=%23hashtag)`
             );
         });
 
@@ -102,7 +103,7 @@ describe('Markdown', () => {
             assert.deepStrictEqual(
                 await new Markdown(vk)
                     .fix('Очень длинный текст\n#hashtag'),
-                'Очень длинный текст\n[#hashtag](https://vk.com/feed?section=search&q=%23hashtag)'
+                `Очень длинный текст\n[#hashtag](${LINK_PREFIX}feed?section=search&q=%23hashtag)`
             );
         });
 
@@ -111,7 +112,7 @@ describe('Markdown', () => {
                 assert.deepStrictEqual(
                     await new Markdown(vk)
                         .fix('#test@stevebot'),
-                    '[#test@stevebot](https://vk.com/stevebot/test)'
+                    `[#test@stevebot](${LINK_PREFIX}stevebot/test)`
                 );
             });
 
@@ -119,7 +120,7 @@ describe('Markdown', () => {
                 assert.deepStrictEqual(
                     await new Markdown(vk)
                         .fix('#тест@stevebot'),
-                    '[#тест@stevebot](https://vk.com/wall-175914098?q=%23тест)'
+                    `[#тест@stevebot](${LINK_PREFIX}wall-175914098?q=%23тест)`
                 );
             });
 
@@ -127,15 +128,15 @@ describe('Markdown', () => {
                 assert.deepStrictEqual(
                     await new Markdown(vk)
                         .fix('#Очень длинный текст #hashtag\n#hello #test@stevebot\nПродолжение #тест@apiclub'),
-                    '[#Очень](https://vk.com/feed?section=search&q=%23Очень) длинный текст [#hashtag](https://vk.com/feed?section=search&q=%23hashtag)\n[#hello](https://vk.com/feed?section=search&q=%23hello) [#test@stevebot](https://vk.com/stevebot/test)\nПродолжение [#тест@apiclub](https://vk.com/wall-1?q=%23тест)'
+                    `[#Очень](${LINK_PREFIX}feed?section=search&q=%23Очень) длинный текст [#hashtag](${LINK_PREFIX}feed?section=search&q=%23hashtag)\n[#hello](${LINK_PREFIX}feed?section=search&q=%23hello) [#test@stevebot](${LINK_PREFIX}stevebot/test)\nПродолжение [#тест@apiclub](${LINK_PREFIX}wall-1?q=%23тест)`
                 );
             });
 
             it('Проверка текста c Wiki-ссылками и #хештегами разного формата', async () => {
                 assert.deepStrictEqual(
                     await new Markdown(vk)
-                        .fix('#hello #test@stevebot\n#тест@apiclub Очень длинный текст [club1|VK API]\n[https://vk.com/stevebot|Steve - Minecraft Бот] [id1|test]'),
-                    '[#hello](https://vk.com/feed?section=search&q=%23hello) [#test@stevebot](https://vk.com/stevebot/test)\n[#тест@apiclub](https://vk.com/wall-1?q=%23тест) Очень длинный текст [VK API](https://vk.com/club1)\n[Steve - Minecraft Бот](https://vk.com/stevebot) [test](https://vk.com/id1)'
+                        .fix(`#hello #test@stevebot\n#тест@apiclub Очень длинный текст [club1|VK API]\n[${LINK_PREFIX}stevebot|Steve - Minecraft Бот] [id1|test]`),
+                    `[#hello](${LINK_PREFIX}feed?section=search&q=%23hello) [#test@stevebot](${LINK_PREFIX}stevebot/test)\n[#тест@apiclub](${LINK_PREFIX}wall-1?q=%23тест) Очень длинный текст [VK API](${LINK_PREFIX}club1)\n[Steve - Minecraft Бот](${LINK_PREFIX}stevebot) [test](${LINK_PREFIX}id1)`
                 );
             });
         }
@@ -144,7 +145,7 @@ describe('Markdown', () => {
             assert.deepStrictEqual(
                 await new Markdown(vk)
                     .fix('[id1|test]'),
-                '[test](https://vk.com/id1)'
+                `[test](${LINK_PREFIX}id1)`
             );
         });
     });

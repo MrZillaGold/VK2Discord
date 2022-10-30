@@ -1,4 +1,4 @@
-import { FieldType, Storage, VK } from '../modules';
+import { FieldType, Storage, VK } from '../modules/index.js';
 
 export async function getResourceId(vk: VK, resource: string): Promise<number | null> {
     const storage = new Storage({

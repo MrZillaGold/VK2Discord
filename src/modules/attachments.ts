@@ -2,10 +2,10 @@ import { MessageEmbed, MessageAttachment } from 'discord.js';
 import { hyperlink } from '@discordjs/builders';
 import { AttachmentType, ISharedAttachmentPayload } from 'vk-io';
 
-import { Message } from './message';
-import { Cluster } from './handler';
+import { Message } from './message.js';
+import { Cluster } from './handler.js';
 
-import { generateRandomString, LINK_PREFIX } from '../utils';
+import { generateRandomString, LINK_PREFIX } from '../utils/index.js';
 
 export type AttachmentTypeUnion = `${AttachmentType}`;
 

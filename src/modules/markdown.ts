@@ -1,8 +1,8 @@
 import replaceAsync from 'string-replace-async';
 
-import { VK } from './vk';
+import { VK } from './vk.js';
 
-import { LINK_PREFIX } from '../utils';
+import { LINK_PREFIX } from '../utils/index.js';
 
 export class Markdown {
 
@@ -38,14 +38,14 @@ export class Markdown {
 
                 if (resource?.type === 'group') {
                     if (hashtag.match(/[a-zA-Z]+/)) {
-                        return `${space}[#${hashtag}@${group}](https://vk.com/${group}/${hashtag})`;
+                        return `${space}[#${hashtag}@${group}](${LINK_PREFIX}${group}/${hashtag})`;
                     }
 
-                    return `${space}[#${hashtag}@${group}](https://vk.com/wall-${resource.id}?q=%23${hashtag})`;
+                    return `${space}[#${hashtag}@${group}](${LINK_PREFIX}wall-${resource.id}?q=%23${hashtag})`;
                 }
             }
 
-            return `${space}[#${hashtag}](https://vk.com/feed?section=search&q=%23${hashtag})`;
+            return `${space}[#${hashtag}](${LINK_PREFIX}feed?section=search&q=%23${hashtag})`;
         });
 
         try {

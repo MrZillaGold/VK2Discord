@@ -1,5 +1,5 @@
 # Builder stage
-FROM node:17-alpine AS builder
+FROM node:19-alpine AS builder
 WORKDIR /usr/src/vk2discord
 
 COPY package*.json ./

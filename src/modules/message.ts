@@ -2,9 +2,9 @@ import { HexColorString, MessageAttachment, MessageEmbed } from 'discord.js';
 import { IWallPostContextPayload } from 'vk-io';
 import { WallWallpostFull } from 'vk-io/lib/api/schemas/objects';
 
-import { Attachment, Attachments } from './attachments';
-import { Markdown } from './markdown';
-import { Exclude, Cluster } from './handler';
+import { Attachment, Attachments } from './attachments.js';
+import { Markdown } from './markdown.js';
+import { Exclude, Cluster } from './handler.js';
 
 export enum PostType {
     POST = 'post',

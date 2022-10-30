@@ -1,16 +1,16 @@
 {
   "name": "vk2discord",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "LATEST_CONFIG_VERSION": 5,
   "description": "Автоматическая публикация записей из группы или профиля ВКонтакте в канал Discord.",
   "main": "./build/index.js",
   "type": "module",
   "scripts": {
-    "start": "node --experimental-modules --experimental-json-modules --unhandled-rejections=warn --es-module-specifier-resolution=node ./dist/index.js",
-    "prestart": "node --experimental-modules --experimental-json-modules --unhandled-rejections=warn --es-module-specifier-resolution=node ./scripts/check.js",
+    "start": "node --experimental-modules --experimental-json-modules --unhandled-rejections=warn ./dist/index.js",
+    "prestart": "node --experimental-modules --experimental-json-modules --unhandled-rejections=warn ./scripts/check.js",
     "prebuild": "node ./scripts/buildInit.js",
     "build": "tsc",
-    "update": "node --experimental-modules --experimental-json-modules --unhandled-rejections=warn --es-module-specifier-resolution=node ./scripts/update.js",
+    "update": "node --experimental-modules --experimental-json-modules --unhandled-rejections=warn ./scripts/update.js",
     "pretest": "npm run-script build",
     "test": "mocha --package ./package.json",
     "eslint:github-action": "eslint ./src/**/*",
@@ -42,7 +42,7 @@
     "typescript": "^4.7.4"
   },
   "engines": {
-    "node": "17.1.0"
+    "node": ">=19.0.0"
   },
   "mocha": {
     "exit": true,

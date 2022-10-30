@@ -1,10 +1,10 @@
 import { WebhookClient } from 'discord.js';
 import { WallWallpostFull } from 'vk-io/lib/api/schemas/objects';
 
-import { Keywords, KeywordsType } from './keywords';
-import { Message } from './message';
-import { FieldType } from './storage';
-import { Cluster } from './handler';
+import { Message } from './message.js';
+import { Cluster } from './handler.js';
+import { FieldType } from './storage.js';
+import { Keywords, KeywordsType } from './keywords.js';
 
 export class Sender extends Message {
 

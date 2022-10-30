@@ -1,4 +1,4 @@
-import { Handler, Cluster, Storage } from './modules';
+import { Handler, Cluster, Storage } from './modules/index.js';
 
 // @ts-ignore
 import config from '../config.json' assert { type: 'json' };

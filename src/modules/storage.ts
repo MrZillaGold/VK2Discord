@@ -1,4 +1,4 @@
-import { TokenType, VK } from './vk';
+import { TokenType, VK } from './vk.js';
 
 export interface IStorageOptions {
     vk: VK;

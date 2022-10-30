@@ -1,7 +1,7 @@
 import { API } from 'vk-io';
 import { GroupsGroupFull } from 'vk-io/lib/api/schemas/objects';
 
-import { IProfile } from './getPostAuthor';
+import { IProfile } from './getPostAuthor.js';
 
 export function getById(api: API, id?: number): Promise<IProfile | GroupsGroupFull | null> {
     return id ?

@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
 
-import { LATEST_CONFIG_VERSION, NODE_MAJOR_VERSION, ENGINE_SUPPORT_VERSION } from './constants';
+import { LATEST_CONFIG_VERSION, NODE_MAJOR_VERSION, ENGINE_SUPPORT_VERSION } from './constants.js';
 
 if (NODE_MAJOR_VERSION < ENGINE_SUPPORT_VERSION) {
     throw `\n\n[!] Для запуска скрипта необходим Node.js ${ENGINE_SUPPORT_VERSION} или выше!\n\n`;
@@ -29,8 +29,8 @@ if (files) {
             })
             .catch(async (error) => {
                 console.log(error);
-              /*  await rename();
-                await createConfig();*/
+                await rename();
+                await createConfig();
 
                 console.error('\n\n[!] Конфиг поврежден либо настроен неправильно, файл был переименован в config_old.json. Был создан новый файл, настройте его следуя инструкции.\n\n');
 
