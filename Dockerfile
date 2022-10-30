@@ -11,7 +11,7 @@ COPY ./scripts ./scripts
 RUN npm ci --quiet && npm run build
 
 # Production stage
-FROM node:17-alpine
+FROM node:19-alpine
 WORKDIR /usr/src/vk2discord
 
 ENV NODE_ENV=production
