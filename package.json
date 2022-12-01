@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@discordjs/builders": "^0.15.0",
-    "discord.js": "^13.8.1",
+    "discord.js": "^14.7.1",
     "string-replace-async": "^3.0.2",
     "vk-io": "^4.6.0"
   },
