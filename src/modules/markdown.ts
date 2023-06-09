@@ -28,7 +28,7 @@ export class Markdown {
                     :
                     '';
 
-            const isNavigationHashtag = match.match(/#([^\s]+)@([a-zA-Z_]+)/);
+            const isNavigationHashtag = match.match(/#([^\s]+)@([a-zA-Z_\d]+)/);
 
             if (isNavigationHashtag) {
                 const [, hashtag, group] = isNavigationHashtag;
